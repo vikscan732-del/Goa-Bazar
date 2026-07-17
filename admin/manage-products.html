@@ -1,61 +1,33 @@
-import { db } from "./firebase.js";
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manage Products</title>
 
-import {
-collection,
-getDocs,
-deleteDoc,
-doc
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f2f7f2;
+padding:20px;
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-async function loadProducts(){
-
-const list=document.getElementById("products");
-
-list.innerHTML="Loading...";
-
-const snapshot=await getDocs(collection(db,"products"));
-
-list.innerHTML="";
-
-snapshot.forEach((item)=>{
-
-const p=item.data();
-
-list.innerHTML+=`
-
-<div class="card">
-
-<div class="name">${p.name}</div>
-
-<div class="price">₹ ${p.price}</div>
-
-<div>${p.category}</div>
-
-<button class="delete" onclick="deleteProduct('${item.id}')">
-
-Delete
-
-</button>
-
-</div>
-
-`;
-
-});
-
+.card{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
+</style>
 
-window.deleteProduct=async(id)=>{
+</head>
+<body>
 
-if(confirm("Delete this product?")){
+<h2>Manage Products</h2>
 
-await deleteDoc(doc(db,"products",id));
+<div id="products"></div>
 
-loadProducts();
+<script type="module" src="../js/manage-products.js"></script>
 
-}
-
-}
-
-loadProducts();
+</body>
+</html>
