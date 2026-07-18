@@ -291,3 +291,179 @@ cursor:pointer;
 margin-bottom:8px;
 }
 
+/* ===========================
+PRODUCT DETAILS NEW UI
+=========================== */
+
+.detail-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:18px;
+background:#138808;
+color:#fff;
+border-bottom-left-radius:22px;
+border-bottom-right-radius:22px;
+}
+
+.back-btn,
+.fav-btn{
+width:42px;
+height:42px;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.18);
+color:#fff;
+font-size:22px;
+cursor:pointer;
+}
+
+.detail-header h2{
+font-size:20px;
+font-weight:600;
+}
+
+.top-card{
+margin:18px;
+padding:18px;
+background:#fff;
+border-radius:20px;
+display:flex;
+gap:18px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.detail-image{
+width:120px;
+height:120px;
+border-radius:18px;
+object-fit:cover;
+background:#eee;
+}
+
+.top-right{
+flex:1;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.title-small{
+font-size:13px;
+color:#777;
+}
+
+#todayPrice{
+font-size:34px;
+font-weight:700;
+color:#138808;
+margin:6px 0;
+}
+
+.price-green{
+color:#16a34a;
+font-weight:600;
+}
+
+.updated{
+font-size:13px;
+color:#666;
+margin-top:10px;
+}
+
+.stats-row{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+padding:0 18px;
+margin-bottom:18px;
+}
+
+.stat-box{
+background:#fff;
+padding:15px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.stat-box p{
+font-size:12px;
+color:#777;
+margin-bottom:8px;
+}
+
+.stat-box h3{
+font-size:18px;
+color:#138808;
+}
+
+.filter-row{
+display:flex;
+overflow:auto;
+gap:10px;
+padding:0 18px 18px;
+}
+
+.filter-row button{
+border:none;
+padding:10px 18px;
+border-radius:25px;
+background:#f0f0f0;
+font-weight:600;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.filter-row button:first-child{
+background:#138808;
+color:#fff;
+}
+
+.graph-card{
+margin:0 18px 18px;
+background:#fff;
+padding:18px;
+border-radius:20px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.info-card{
+margin:0 18px 20px;
+background:#fff;
+padding:18px;
+border-radius:20px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.info-card h3{
+margin-bottom:15px;
+}
+
+.info-row{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
+}
+
+.info-row:last-child{
+border:none;
+}
+
+@media(max-width:480px){
+
+.detail-image{
+width:100px;
+height:100px;
+}
+
+#todayPrice{
+font-size:28px;
+}
+
+.stats-row{
+grid-template-columns:1fr;
+}
+
+}
