@@ -209,7 +209,8 @@ color:#dc2626;
 .arrow-box{
 display:flex;
 align-items:center;
-justify-content:center;
+gap:16px;
+margin-right:10px;
 }
 
 .arrow-circle{
