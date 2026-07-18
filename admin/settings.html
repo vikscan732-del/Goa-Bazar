@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Settings</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+padding:20px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+h2{
+text-align:center;
+color:#2e7d32;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:6px;
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+}
+
+button{
+width:100%;
+margin-top:25px;
+padding:14px;
+background:#2e7d32;
+color:#fff;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1b5e20;
+}
+
+#status{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Website Settings</h2>
+
+<label>Website Name</label>
+<input id="siteName" type="text">
+
+<label>Developer Name</label>
+<input id="developerName" type="text">
+
+<label>Logo URL</label>
+<input id="logoUrl" type="text">
+
+<label>Footer Text</label>
+<input id="footerText" type="text">
+
+<button onclick="saveSettings()">
+💾 Save Settings
+</button>
+
+<p id="status"></p>
+
+</div>
+
+<script type="module" src="../js/settings.js"></script>
+
+</body>
+</html>
