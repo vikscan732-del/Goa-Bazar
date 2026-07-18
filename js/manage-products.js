@@ -9,18 +9,14 @@ const list = document.getElementById("products");
 
 async function loadProducts() {
 
-  list.innerHTML =
-  "<h3 style='text-align:center'>Loading products...</h3>";
+  list.innerHTML = "<h3 style='text-align:center'>Loading products...</h3>";
 
-  const snapshot = await getDocs(
-    collection(db, "products")
-  );
+  const snapshot = await getDocs(collection(db, "products"));
 
   list.innerHTML = "";
 
   if (snapshot.empty) {
-    list.innerHTML =
-    "<h3>No products found</h3>";
+    list.innerHTML = "<h3>No products found</h3>";
     return;
   }
 
@@ -29,34 +25,27 @@ async function loadProducts() {
     const p = item.data();
 
     list.innerHTML += `
+      <div class="card">
 
+        <h3>${p.name || "No Name"}</h3>
 
-    
-    `;<div class="card">
+        <p><b>₹ ${p.price || "-"}</b></p>
 
-  <h3>${p.name}</h3>
+        <p>${p.category || "-"}</p>
 
-  <p class="price"><b>₹ ${p.price}</b></p>
+        <button
+          style="background:#1976d2;color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;"
+          onclick="editProduct('${item.id}')">
+          ✏️ Edit
+        </button>
 
-  <p class="category">${p.category}</p>
-
-  <div class="buttons">
-    <button class="edit" onclick="editProduct('${item.id}')">
-      ✏️ Edit
-    </button>
-  </div>
-
-</div>
-
+      </div>
+    `;
   });
-
 }
 
-window.editProduct = function(id){
-
-  window.location.href =
-  "edit-product.html?id=" + id;
-
-}
+window.editProduct = function(id) {
+  window.location.href = "edit-product.html?id=" + id;
+};
 
 loadProducts();
