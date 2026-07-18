@@ -507,3 +507,18 @@ font-size:20px;
 font-weight:700;
 line-height:1.2;
 }
+
+.graph-card{
+    margin:0 18px 18px;
+    background:#fff;
+    padding:18px;
+    border-radius:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    height:320px;
+}
+
+#priceChart{
+    width:100% !important;
+    height:260px !important;
+    display:block;
+}
