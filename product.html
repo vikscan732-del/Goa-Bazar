@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mr">
 
 <head>
 
@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Product Details</title>
+<title>गोवा बाजार</title>
 
 <meta name="theme-color" content="#138808">
 
@@ -25,175 +25,160 @@
 
 <div class="app">
 
-<header class="header">
+<header class="detail-header">
 
-<div class="header-top">
+<button onclick="history.back()" class="back-btn">←</button>
 
-<button onclick="history.back()" class="menu-btn">
+<h2 id="productName">उत्पादन</h2>
 
-←
-
-</button>
-
-<div class="header-text">
-
-<h1>
-
-Product Details
-
-</h1>
-
-<p>
-
-Today's Market Price
-
-</p>
-
-</div>
-
-<div style="width:42px;"></div>
-
-</div>
+<button class="fav-btn">🤍</button>
 
 </header>
 
-<section class="product-detail">
+<section class="top-card">
+
+<div class="top-left">
 
 <img
-
 id="productImage"
-
 src="assets/no-image.png"
-
 class="detail-image"
-
 alt="Product">
 
-<h2 id="productName">
+</div>
 
-Loading...
+<div class="top-right">
 
-</h2>
-
-<p id="productCategory">
-
-Loading...
-
+<p class="title-small">
+आजचा भाव
 </p>
-
-<div class="price-card">
 
 <h1 id="todayPrice">
-
-₹0.00
-
+₹0
 </h1>
 
-<p>
+<p id="priceChange" class="price-green">
+₹0 (0%)
+</p>
 
-Current Market Price
-
+<p class="updated">
+शेवटचे अपडेट :
+<span id="lastUpdated">
+Loading...
+</span>
 </p>
 
 </div>
 
-<div class="stats-grid">
+</section>
+
+<section class="stats-row">
 
 <div class="stat-box">
 
-<h4>
+<p>कालचा भाव</p>
 
-Highest
+<h3 id="yesterdayPrice">
+₹0
+</h3>
 
-</h4>
+</div>
+
+<div class="stat-box">
+
+<p>कमाल भाव</p>
 
 <h3 id="highestPrice">
-
 ₹0
-
 </h3>
 
 </div>
 
 <div class="stat-box">
 
-<h4>
-
-Lowest
-
-</h4>
+<p>किमान भाव</p>
 
 <h3 id="lowestPrice">
-
 ₹0
-
 </h3>
 
 </div>
 
-<div class="stat-box">
+</section>
 
-<h4>
+<section class="filter-row">
 
-Farmer Price
+<button>७ दिवस</button>
 
-</h4>
+<button>३० दिवस</button>
 
-<h3 id="farmerPrice">
+<button>६ महिने</button>
 
-₹0
+<button>१ वर्ष</button>
 
-</h3>
+<button>सर्व</button>
 
-</div>
-
-<div class="stat-box">
-
-<h4>
-
-Change
-
-</h4>
-
-<h3 id="priceChange">
-
-₹0
-
-</h3>
-
-</div>
-
-</div>
+</section>
 
 <section class="graph-card">
 
 <h3>
-
-Price Trend
-
+भाव इतिहास (₹/किलो)
 </h3>
 
 <canvas id="priceChart"></canvas>
 
 </section>
 
-<section class="update-card">
+<section class="info-card">
 
-<p>
-
-Last Updated
-
-</p>
-
-<h3 id="lastUpdated">
-
-Loading...
-
+<h3>
+अधिक माहिती
 </h3>
 
-</section>
+<div class="info-row">
+
+<span>सरासरी भाव</span>
+
+<strong id="averagePrice">
+₹0
+</strong>
+
+</div>
+
+<div class="info-row">
+
+<span>आजचा बदल</span>
+
+<strong id="todayChange">
+₹0
+</strong>
+
+</div>
+
+<div class="info-row">
+
+<span>शेतकरी भाव</span>
+
+<strong id="farmerPrice">
+₹0
+</strong>
+
+</div>
+
+<div class="info-row">
+
+<span>वर्ग</span>
+
+<strong id="productCategory">
+Loading...
+</strong>
+
+</div>
 
 </section>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
