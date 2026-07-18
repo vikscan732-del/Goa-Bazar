@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Favourite Products</title>
+
+<meta name="theme-color" content="#138808">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
+<div class="header-top">
+
+<button class="menu-btn" onclick="history.back()">
+
+←
+
+</button>
+
+<div class="header-text">
+
+<h1>
+
+Favourite
+
+</h1>
+
+<p>
+
+Saved Products
+
+</p>
+
+</div>
+
+<div style="width:42px;"></div>
+
+</div>
+
+</header>
+
+<section class="product-container" id="favContainer">
+
+</section>
+
+<div id="emptyFavourite" class="empty-box" style="display:none;">
+
+<img src="assets/empty.png" alt="No favourites">
+
+<h2>
+
+No Favourite Products
+
+</h2>
+
+<p>
+
+Tap the ❤️ icon on a product to save it here.
+
+</p>
+
+</div>
+
+<nav class="bottom-nav">
+
+<a href="index.html">
+
+🏠
+
+<span>Home</span>
+
+</a>
+
+<a class="active" href="favorites.html">
+
+❤️
+
+<span>Favourite</span>
+
+</a>
+
+<a href="info.html">
+
+ℹ️
+
+<span>Info</span>
+
+</a>
+
+</nav>
+
+<script>
+
+const container=document.getElementById("favContainer");
+
+const favourites=JSON.parse(localStorage.getItem("favourites"))||[];
+
+if(favourites.length===0){
+
+document.getElementById("emptyFavourite").style.display="block";
+
+}else{
+
+favourites.forEach(product=>{
+
+container.innerHTML+=`
+
+<div class="product-card" onclick="location.href='product.html?id=${product.id}'">
+
+<div class="product-image">
+
+<img src="${product.image}">
+
+</div>
+
+<div class="product-info">
+
+<h3>${product.name}</h3>
+
+<p class="product-category">${product.category}</p>
+
+<div class="price">
+
+₹${product.price}
+
+<span>/kg</span>
+
+</div>
+
+</div>
+
+<div class="arrow-box">
+
+<div class="arrow-circle">
+
+➜
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
