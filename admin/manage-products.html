@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Products - Goa Bazar</title>
+<title>Manage Products</title>
 
 <style>
 *{
@@ -14,12 +14,12 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#f5f7f5;
+background:#f4f6f9;
 padding:20px;
 }
 
 h2{
-color:#1b5e20;
+color:#2e7d32;
 margin-bottom:20px;
 }
 
@@ -35,15 +35,15 @@ outline:none;
 
 #products{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
 gap:15px;
 }
 
 .card{
 background:#fff;
-padding:15px;
 border-radius:12px;
-box-shadow:0 2px 8px rgba(0,0,0,.12);
+padding:15px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
 .card img{
@@ -52,37 +52,44 @@ height:180px;
 object-fit:cover;
 border-radius:10px;
 margin-bottom:10px;
+background:#eee;
 }
 
 .card h3{
+color:#2e7d32;
 margin-bottom:10px;
-color:#1b5e20;
 }
 
 .price{
 font-size:18px;
 font-weight:bold;
-color:#e53935;
+color:#d32f2f;
 margin-bottom:8px;
 }
 
 .category{
-color:#666;
+color:#555;
+margin-bottom:5px;
+}
+
+.status{
 margin-bottom:10px;
+font-weight:bold;
 }
 
 .buttons{
 display:flex;
-gap:8px;
 flex-wrap:wrap;
+gap:10px;
+margin-top:15px;
 }
 
 button{
-padding:10px 15px;
 border:none;
+padding:10px 14px;
 border-radius:8px;
+color:white;
 cursor:pointer;
-color:#fff;
 font-size:14px;
 }
 
@@ -97,6 +104,10 @@ background:#d32f2f;
 .hide{
 background:#f57c00;
 }
+
+.show{
+background:#388e3c;
+}
 </style>
 
 </head>
@@ -105,16 +116,12 @@ background:#f57c00;
 <h2>Manage Products</h2>
 
 <input
-type="text"
 id="search"
+type="text"
 placeholder="Search products...">
 
 <div id="products">
-
-<h3 style="text-align:center;">
-Loading products...
-</h3>
-
+<h3>Loading products...</h3>
 </div>
 
 <script type="module" src="../js/manage-products.js"></script>
