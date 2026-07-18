@@ -1,22 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Manage Products</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Products - Goa Bazar</title>
 
 <style>
-body{
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
-background:#f2f7f2;
+}
+
+body{
+background:#f5f7f5;
 padding:20px;
 }
-.card{
-background:white;
-padding:15px;
-margin-bottom:10px;
+
+h2{
+color:#1b5e20;
+margin-bottom:20px;
+}
+
+#search{
+width:100%;
+padding:12px;
+font-size:16px;
+border:1px solid #ccc;
 border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
+margin-bottom:20px;
+outline:none;
+}
+
+#products{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:15px;
+}
+
+.card{
+background:#fff;
+padding:15px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.card h3{
+margin-bottom:10px;
+color:#1b5e20;
+}
+
+.price{
+font-size:18px;
+font-weight:bold;
+color:#e53935;
+margin-bottom:8px;
+}
+
+.category{
+color:#666;
+margin-bottom:10px;
+}
+
+.buttons{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:#fff;
+font-size:14px;
+}
+
+.edit{
+background:#1976d2;
+}
+
+.delete{
+background:#d32f2f;
+}
+
+.hide{
+background:#f57c00;
 }
 </style>
 
@@ -25,7 +104,18 @@ box-shadow:0 2px 8px rgba(0,0,0,.1);
 
 <h2>Manage Products</h2>
 
-<div id="products"></div>
+<input
+type="text"
+id="search"
+placeholder="Search products...">
+
+<div id="products">
+
+<h3 style="text-align:center;">
+Loading products...
+</h3>
+
+</div>
 
 <script type="module" src="../js/manage-products.js"></script>
 
