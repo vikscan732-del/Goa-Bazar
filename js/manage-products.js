@@ -30,21 +30,23 @@ async function loadProducts() {
 
     list.innerHTML += `
 
-    <div class="card">
 
-      <h3>${p.name}</h3>
+    
+    `;<div class="card">
 
-      <p><b>₹ ${p.price}</b></p>
+  <h3>${p.name}</h3>
 
-      <p>${p.category}</p>
+  <p class="price"><b>₹ ${p.price}</b></p>
 
-      <button onclick="editProduct('${item.id}')">
-        Edit
-      </button>
+  <p class="category">${p.category}</p>
 
-    </div>
+  <div class="buttons">
+    <button class="edit" onclick="editProduct('${item.id}')">
+      ✏️ Edit
+    </button>
+  </div>
 
-    `;
+</div>
 
   });
 
