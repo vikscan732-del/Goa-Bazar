@@ -14,96 +14,110 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#f2f7f2;
-}
-
-header{
-background:#0b7a19;
-color:#fff;
-padding:18px;
-font-size:22px;
-font-weight:bold;
-text-align:center;
-}
-
-.container{
+background:#f4f6f9;
 padding:20px;
+}
+
+h1{
+color:#2e7d32;
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:15px;
+margin-bottom:25px;
 }
 
 .card{
 background:#fff;
 border-radius:12px;
-padding:18px;
-margin-bottom:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
+padding:20px;
+text-align:center;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
 .card h2{
-font-size:18px;
+font-size:32px;
+color:#2e7d32;
 margin-bottom:8px;
 }
 
-.value{
-font-size:28px;
-font-weight:bold;
-color:#0b7a19;
+.card p{
+color:#555;
+}
+
+.buttons{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
 }
 
 .btn{
 display:block;
-width:100%;
-padding:15px;
-margin-top:12px;
-border:none;
-border-radius:10px;
-background:#0b7a19;
+text-decoration:none;
+background:#2e7d32;
 color:#fff;
+padding:15px;
+text-align:center;
+border-radius:10px;
 font-size:17px;
 font-weight:bold;
-cursor:pointer;
 }
 
-.logout{
-background:#d32f2f;
+.btn:hover{
+background:#1b5e20;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<header>
-Goa Bazar Admin
-</header>
+<h1>Goa Bazar Admin</h1>
 
-<div class="container">
+<div class="grid">
 
 <div class="card">
-<h2>Total Products</h2>
-<div class="value" id="totalProducts">0</div>
+<h2 id="totalProducts">0</h2>
+<p>Total Products</p>
 </div>
 
 <div class="card">
-<h2>Today's Updates</h2>
-<div class="value">0</div>
+<h2 id="hiddenProducts">0</h2>
+<p>Hidden Products</p>
 </div>
 
-<button class="btn" onclick="location.href='add-product.html'">
+<div class="card">
+<h2 id="todayUpdates">0</h2>
+<p>Today's Updates</p>
+</div>
+
+</div>
+
+<div class="buttons">
+
+<a class="btn" href="add-product.html">
 ➕ Add Product
-</button>
+</a>
 
-<button class="btn" onclick="location.href='manage-products.html'">
+<a class="btn" href="manage-products.html">
 📦 Manage Products
-</button>
+</a>
 
-<button class="btn">
+<a class="btn" href="settings.html">
 ⚙ Website Settings
-</button>
+</a>
 
-<button class="btn logout">
-Logout
-</button>
+<a class="btn" href="login.html">
+🚪 Logout
+</a>
 
 </div>
+
+<script type="module" src="../js/dashboard.js"></script>
+
+  
 
 </body>
 </html>
