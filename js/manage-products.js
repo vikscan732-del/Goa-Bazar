@@ -1,130 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Products</title>
+import { db } from "./firebase.js";
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const list = document.getElementById("products");
+const search = document.getElementById("search");
+
+let products = [];
+
+async function loadProducts(){
+
+try{
+
+list.innerHTML="<h3>Loading products...</h3>";
+
+const snapshot=await getDocs(collection(db,"products"));
+
+products=[];
+
+snapshot.forEach((item)=>{
+
+products.push({
+id:item.id,
+...item.data()
+});
+
+});
+
+renderProducts(products);
+
+}catch(e){
+
+list.innerHTML="<h3 style='color:red'>"+e.message+"</h3>";
+
 }
 
-body{
-background:#f4f6f9;
-padding:20px;
 }
 
-h2{
-color:#2e7d32;
-margin-bottom:20px;
+function renderProducts(data){
+
+list.innerHTML="";
+
+if(data.length===0){
+
+list.innerHTML="<h3>No products found.</h3>";
+return;
+
 }
 
-#search{
-width:100%;
-padding:12px;
-font-size:16px;
-border:1px solid #ccc;
-border-radius:10px;
-margin-bottom:20px;
-outline:none;
-}
+data.forEach((p)=>{
 
-#products{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-gap:15px;
-}
+const status=p.visible===false
+?"Hidden"
+:"Visible";
 
-.card{
-background:#fff;
-border-radius:12px;
-padding:15px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
-}
+const btnClass=p.visible===false
+?"show"
+:"hide";
 
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:10px;
-margin-bottom:10px;
-background:#eee;
-}
+const btnText=p.visible===false
+?"👁 Show"
+:"🙈 Hide";
 
-.card h3{
-color:#2e7d32;
-margin-bottom:10px;
-}
+list.innerHTML+=`
 
-.price{
-font-size:18px;
-font-weight:bold;
-color:#d32f2f;
-margin-bottom:8px;
-}
+<div class="card">
 
-.category{
-color:#555;
-margin-bottom:5px;
-}
+<img src="${p.image || 'https://via.placeholder.com/300x180?text=No+Image'}">
 
-.status{
-margin-bottom:10px;
-font-weight:bold;
-}
+<h3>${p.name || "No Name"}</h3>
 
-.buttons{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:15px;
-}
+<p class="price">₹ ${p.price || "-"}</p>
 
-button{
-border:none;
-padding:10px 14px;
-border-radius:8px;
-color:white;
-cursor:pointer;
-font-size:14px;
-}
+<p class="category">${p.category || "-"}</p>
 
-.edit{
-background:#1976d2;
-}
+<p class="status">
+Status :
+<b>${status}</b>
+</p>
 
-.delete{
-background:#d32f2f;
-}
+<div class="buttons">
 
-.hide{
-background:#f57c00;
-}
+<button
+class="edit"
+onclick="editProduct('${p.id}')">
+✏ Edit
+</button>
 
-.show{
-background:#388e3c;
-}
-</style>
+<button
+class="delete"
+onclick="deleteProduct('${p.id}')">
+🗑 Delete
+</button>
 
-</head>
-<body>
+<button
+class="${btnClass}"
+onclick="toggleProduct('${p.id}',${p.visible===false})">
+${btnText}
+</button>
 
-<h2>Manage Products</h2>
-
-<input
-id="search"
-type="text"
-placeholder="Search products...">
-
-<div id="products">
-<h3>Loading products...</h3>
 </div>
 
-<script type="module" src="../js/manage-products.js"></script>
+</div>
 
-</body>
-</html>
+`;
+
+});
+
+}
+
+window.editProduct = function(id){
+  window.location.href = "edit-product.html?id=" + id;
+};
+
+window.deleteProduct = async function(id){
+
+  const ok = confirm("Delete this product?");
+
+  if(!ok) return;
+
+  try{
+
+    await deleteDoc(doc(db,"products",id));
+
+    alert("Product deleted successfully.");
+
+    loadProducts();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+};
+
+window.toggleProduct = async function(id,currentHidden){
+
+  try{
+
+    await updateDoc(doc(db,"products",id),{
+
+      visible: currentHidden,
+      updatedDate: new Date().toISOString().split("T")[0]
+
+    });
+
+    loadProducts();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+};
+
+search.addEventListener("input",()=>{
+
+  const keyword = search.value.toLowerCase();
+
+  const filtered = products.filter((p)=>{
+
+    return (
+      (p.name || "").toLowerCase().includes(keyword) ||
+      (p.category || "").toLowerCase().includes(keyword)
+    );
+
+  });
+
+  renderProducts(filtered);
+
+});
+
+loadProducts();
