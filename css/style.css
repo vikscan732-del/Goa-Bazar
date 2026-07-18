@@ -461,6 +461,11 @@ height:100px;
 #todayPrice{
 font-size:28px;
 }
+.graph-filter.active{
+background:#138808;
+color:#fff;
+}
+  
 
 .stats-row{
 grid-template-columns:1fr;
