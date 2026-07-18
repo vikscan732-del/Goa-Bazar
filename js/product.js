@@ -19,6 +19,7 @@ const priceChange = document.getElementById("priceChange");
 const lastUpdated = document.getElementById("lastUpdated");
 
 let chart;
+let fullHistory = [];
 
 async function loadProduct() {
 
@@ -43,13 +44,9 @@ async function loadProduct() {
     productCategory.textContent = data.category || "Goa Market";
 
     todayPrice.textContent = "₹" + (data.price || "0");
-
     highestPrice.textContent = "₹" + (data.highest || data.price || "0");
-
     lowestPrice.textContent = "₹" + (data.lowest || data.price || "0");
-
     farmerPrice.textContent = "₹" + (data.farmerPrice || data.price || "0");
-
     priceChange.textContent = data.change || "0";
 
     if (data.updated?.toDate) {
@@ -59,7 +56,11 @@ async function loadProduct() {
       lastUpdated.textContent = "Recently";
     }
 
-    drawChart(data.history || []);
+    fullHistory = data.history || [];
+
+    drawChart(fullHistory);
+
+    setupGraphFilters();
 
   } catch (e) {
 
@@ -67,6 +68,36 @@ async function loadProduct() {
     alert("Unable to load product.");
 
   }
+
+}
+
+function setupGraphFilters() {
+
+  const buttons = document.querySelectorAll(".graph-filter");
+
+  buttons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      buttons.forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      const days = Number(btn.dataset.days);
+
+      if (days === 0) {
+
+        drawChart(fullHistory);
+
+      } else {
+
+        drawChart(fullHistory.slice(-days));
+
+      }
+
+    });
+
+  });
 
 }
 
@@ -83,36 +114,57 @@ function drawChart(history) {
   if (!history.length) {
 
     history = [
-      { day: "Mon", price: 0 },
-      { day: "Tue", price: 0 },
-      { day: "Wed", price: 0 },
-      { day: "Thu", price: 0 },
-      { day: "Fri", price: 0 },
-      { day: "Sat", price: 0 },
-      { day: "Sun", price: 0 }
+      { date: "Mon", price: 0 },
+      { date: "Tue", price: 0 },
+      { date: "Wed", price: 0 },
+      { date: "Thu", price: 0 },
+      { date: "Fri", price: 0 },
+      { date: "Sat", price: 0 },
+      { date: "Sun", price: 0 }
     ];
 
   }
 
   chart = new Chart(ctx, {
+
     type: "line",
+
     data: {
-      labels: history.map(x => x.day),
+
+      labels: history.map(x => x.date),
+
       datasets: [{
+
         data: history.map(x => x.price),
+
         borderColor: "#138808",
+
+        backgroundColor: "rgba(19,136,8,0.15)",
+
         fill: true,
+
         tension: 0.4
+
       }]
+
     },
+
     options: {
+
       responsive: true,
+
       plugins: {
+
         legend: {
+
           display: false
+
         }
+
       }
+
     }
+
   });
 
 }
