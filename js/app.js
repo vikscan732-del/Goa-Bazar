@@ -174,11 +174,9 @@ ${changeIcon}
 
 <div class="arrow-box">
 
-<div class="arrow-circle">
+<div class="heart-circle">❤️</div>
 
-➜
-
-</div>
+<div class="arrow-circle">➜</div>
 
 </div>
 
@@ -188,6 +186,39 @@ card.addEventListener("click",()=>{
 
 window.location.href=
 `product.html?id=${product.id}`;
+
+});
+
+  const heart = card.querySelector(".heart-circle");
+
+heart.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+let favourites =
+JSON.parse(localStorage.getItem("favourites")) || [];
+
+const index =
+favourites.findIndex(p => p.id === product.id);
+
+if(index === -1){
+
+    favourites.push(product);
+
+    heart.textContent = "❤️";
+
+}else{
+
+    favourites.splice(index,1);
+
+    heart.textContent = "🤍";
+
+}
+
+localStorage.setItem(
+"favourites",
+JSON.stringify(favourites)
+);
 
 });
 
