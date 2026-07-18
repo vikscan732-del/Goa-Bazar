@@ -19,7 +19,6 @@ const lastUpdated = document.getElementById("lastUpdated");
 
 const changeIcon = document.getElementById("changeIcon");
 const changeValue = document.getElementById("changeValue");
-const changeText = document.getElementById("changeText");
 
 let chart;
 let fullHistory = [];
@@ -60,33 +59,26 @@ async function loadProduct() {
       changeIcon.style.background = "#16a34a";
 
       changeValue.style.color = "#16a34a";
-      changeValue.textContent = `+₹${change} (${percent}%)`;
+      changeValue.innerHTML =
+        `+₹${change} (${percent}%) <span style="font-size:16px;font-weight:600;">कालपेक्षा वाढ</span>`;
 
-      changeText.textContent = "कालपेक्षा वाढ";
-
-    }
-
-    else if (change < 0) {
+    } else if (change < 0) {
 
       changeIcon.textContent = "↓";
       changeIcon.style.background = "#dc2626";
 
       changeValue.style.color = "#dc2626";
-      changeValue.textContent = `-₹${Math.abs(change)} (${Math.abs(percent)}%)`;
+      changeValue.innerHTML =
+        `-₹${Math.abs(change)} (${Math.abs(percent)}%) <span style="font-size:16px;font-weight:600;">कालपेक्षा घट</span>`;
 
-      changeText.textContent = "कालपेक्षा घट";
-
-    }
-
-    else {
+    } else {
 
       changeIcon.textContent = "→";
       changeIcon.style.background = "#9ca3af";
 
       changeValue.style.color = "#555";
-      changeValue.textContent = "₹0 (0%)";
-
-      changeText.textContent = "बदल नाही";
+      changeValue.innerHTML =
+        `₹0 (0%) <span style="font-size:16px;font-weight:600;">बदल नाही</span>`;
 
     }
 
@@ -176,7 +168,8 @@ function drawChart(history) {
         borderColor: "#138808",
         backgroundColor: "rgba(19,136,8,0.15)",
         fill: true,
-        tension: 0.4
+        tension: 0.4,
+        pointRadius: 4
 
       }]
 
