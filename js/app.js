@@ -72,7 +72,7 @@ category: data.category || "",
 
 image: data.image || "assets/no-image.png",
 
-change: data.change || 0,
+change: Number(data.change || 0),
 
 updated: data.updated || ""
 
@@ -119,15 +119,16 @@ emptyBox.style.display="none";
 
 products.forEach(product=>{
 
-const priceClass =
-Number(product.change)>=0
-? "price-up"
-: "price-down";
+let priceClass = "price-flat";
+let changeIcon = "⚪";
 
-const changeIcon =
-Number(product.change)>=0
-? "🟢"
-: "🔴";
+if (Number(product.change) > 0) {
+  priceClass = "price-up";
+  changeIcon = "🟢";
+} else if (Number(product.change) < 0) {
+  priceClass = "price-down";
+  changeIcon = "🔴";
+}
 
 const card=document.createElement("div");
 
