@@ -484,29 +484,26 @@ grid-template-columns:1fr;
 .price-change{
 display:flex;
 align-items:center;
-gap:10px;
-margin-top:12px;
+gap:12px;
+margin-top:14px;
 }
 
 .change-icon{
-width:28px;
-height:28px;
+width:36px;
+height:36px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:16px;
+font-size:22px;
 font-weight:bold;
 background:#9ca3af;
 color:#fff;
+flex-shrink:0;
 }
 
-#changeValue{
+.change-value{
 font-size:20px;
 font-weight:700;
-}
-
-#changeText{
-font-size:13px;
-color:#666;
+line-height:1.2;
 }
