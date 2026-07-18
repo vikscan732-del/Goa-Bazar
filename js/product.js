@@ -15,8 +15,11 @@ const todayPrice = document.getElementById("todayPrice");
 const highestPrice = document.getElementById("highestPrice");
 const lowestPrice = document.getElementById("lowestPrice");
 const farmerPrice = document.getElementById("farmerPrice");
-const priceChange = document.getElementById("priceChange");
 const lastUpdated = document.getElementById("lastUpdated");
+
+const changeIcon = document.getElementById("changeIcon");
+const changeValue = document.getElementById("changeValue");
+const changeText = document.getElementById("changeText");
 
 let chart;
 let fullHistory = [];
@@ -47,7 +50,45 @@ async function loadProduct() {
     highestPrice.textContent = "₹" + (data.highest || data.price || "0");
     lowestPrice.textContent = "₹" + (data.lowest || data.price || "0");
     farmerPrice.textContent = "₹" + (data.farmerPrice || data.price || "0");
-    priceChange.textContent = data.change || "0";
+
+    const change = Number(data.change || 0);
+    const percent = Number(data.changePercent || 0);
+
+    if (change > 0) {
+
+      changeIcon.textContent = "↑";
+      changeIcon.style.background = "#16a34a";
+
+      changeValue.style.color = "#16a34a";
+      changeValue.textContent = `+₹${change} (${percent}%)`;
+
+      changeText.textContent = "कालपेक्षा वाढ";
+
+    }
+
+    else if (change < 0) {
+
+      changeIcon.textContent = "↓";
+      changeIcon.style.background = "#dc2626";
+
+      changeValue.style.color = "#dc2626";
+      changeValue.textContent = `-₹${Math.abs(change)} (${Math.abs(percent)}%)`;
+
+      changeText.textContent = "कालपेक्षा घट";
+
+    }
+
+    else {
+
+      changeIcon.textContent = "→";
+      changeIcon.style.background = "#9ca3af";
+
+      changeValue.style.color = "#555";
+      changeValue.textContent = "₹0 (0%)";
+
+      changeText.textContent = "बदल नाही";
+
+    }
 
     if (data.updated?.toDate) {
       lastUpdated.textContent =
@@ -80,19 +121,14 @@ function setupGraphFilters() {
     btn.addEventListener("click", () => {
 
       buttons.forEach(b => b.classList.remove("active"));
-
       btn.classList.add("active");
 
       const days = Number(btn.dataset.days);
 
       if (days === 0) {
-
         drawChart(fullHistory);
-
       } else {
-
         drawChart(fullHistory.slice(-days));
-
       }
 
     });
@@ -138,11 +174,8 @@ function drawChart(history) {
         data: history.map(x => x.price),
 
         borderColor: "#138808",
-
         backgroundColor: "rgba(19,136,8,0.15)",
-
         fill: true,
-
         tension: 0.4
 
       }]
