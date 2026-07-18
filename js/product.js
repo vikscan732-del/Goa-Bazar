@@ -11,10 +11,16 @@ const productId = params.get("id");
 const productImage = document.getElementById("productImage");
 const productName = document.getElementById("productName");
 const productCategory = document.getElementById("productCategory");
+
 const todayPrice = document.getElementById("todayPrice");
+const yesterdayPrice = document.getElementById("yesterdayPrice");
 const highestPrice = document.getElementById("highestPrice");
 const lowestPrice = document.getElementById("lowestPrice");
+
+const averagePrice = document.getElementById("averagePrice");
+const todayChange = document.getElementById("todayChange");
 const farmerPrice = document.getElementById("farmerPrice");
+
 const lastUpdated = document.getElementById("lastUpdated");
 
 const changeIcon = document.getElementById("changeIcon");
@@ -42,18 +48,37 @@ async function loadProduct() {
     const data = snap.data();
 
     productImage.src = data.image || "assets/no-image.png";
-    productName.textContent = data.name || "-";
-    productCategory.textContent = data.category || "Goa Market";
 
-    todayPrice.textContent = "₹" + (data.price || "0");
-    highestPrice.textContent = "₹" + (data.highest || data.price || "0");
-    lowestPrice.textContent = "₹" + (data.lowest || data.price || "0");
-    farmerPrice.textContent = "₹" + (data.farmerPrice || data.price || "0");
+    productName.textContent = data.name || "-";
+
+    productCategory.textContent =
+      data.category || "Goa Market";
+
+    todayPrice.textContent =
+      "₹" + (data.price || 0);
+
+    yesterdayPrice.textContent =
+      "₹" + (data.yesterdayPrice || data.price || 0);
+
+    highestPrice.textContent =
+      "₹" + (data.highest || data.price || 0);
+
+    lowestPrice.textContent =
+      "₹" + (data.lowest || data.price || 0);
+
+    averagePrice.textContent =
+      "₹" + (data.average || data.price || 0);
+
+    farmerPrice.textContent =
+      "₹" + (data.farmerPrice || data.price || 0);
+
+    todayChange.textContent =
+      "₹" + (data.change || 0);
 
     const change = Number(data.change || 0);
     const percent = Number(data.changePercent || 0);
 
-    if (change > 0) {
+      if (change > 0) {
 
       changeIcon.textContent = "↑";
       changeIcon.style.background = "#16a34a";
@@ -83,10 +108,14 @@ async function loadProduct() {
     }
 
     if (data.updated?.toDate) {
+
       lastUpdated.textContent =
         data.updated.toDate().toLocaleString("en-IN");
+
     } else {
+
       lastUpdated.textContent = "Recently";
+
     }
 
     fullHistory = data.history || [];
@@ -98,11 +127,13 @@ async function loadProduct() {
   } catch (e) {
 
     console.error(e);
-    alert("Unable to load product.");
+
+    alert(e.message);
 
   }
 
 }
+
 
 function setupGraphFilters() {
 
@@ -118,9 +149,13 @@ function setupGraphFilters() {
       const days = Number(btn.dataset.days);
 
       if (days === 0) {
+
         drawChart(fullHistory);
+
       } else {
+
         drawChart(fullHistory.slice(-days));
+
       }
 
     });
@@ -139,7 +174,7 @@ function drawChart(history) {
 
   if (chart) chart.destroy();
 
-  if (!history.length) {
+  if (!history || history.length === 0) {
 
     history = [
       { date: "Mon", price: 0 },
@@ -159,31 +194,58 @@ function drawChart(history) {
 
     data: {
 
-      labels: history.map(x => x.date),
+      labels: history.map(item => item.date),
 
       datasets: [{
 
-        data: history.map(x => x.price),
+        label: "Price",
+
+        data: history.map(item => item.price),
 
         borderColor: "#138808",
+
         backgroundColor: "rgba(19,136,8,0.15)",
+
         fill: true,
+
         tension: 0.4,
+
         pointRadius: 4
 
       }]
 
     },
 
-    options: {
+
+        options: {
 
       responsive: true,
+
+      maintainAspectRatio: false,
 
       plugins: {
 
         legend: {
 
           display: false
+
+        }
+
+      },
+
+      scales: {
+
+        y: {
+
+          beginAtZero: false,
+
+          ticks: {
+
+            callback: function(value) {
+              return "₹" + value;
+            }
+
+          }
 
         }
 
