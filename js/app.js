@@ -6,13 +6,6 @@ getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
-
-// ===============================
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
 // ===============================
 
 const todayDate = document.getElementById("todayDate");
