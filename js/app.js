@@ -1,31 +1,11 @@
 // Firebase Imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
+import { db } from "./firebase.js";
 import {
-getFirestore,
 collection,
 getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-// ===============================
-// FIREBASE CONFIG
-// ===============================
 
-const firebaseConfig = {
-
-apiKey: "YOUR_API_KEY",
-
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-projectId: "YOUR_PROJECT",
-
-storageBucket: "YOUR_PROJECT.firebasestorage.app",
-
-messagingSenderId: "YOUR_SENDER_ID",
-
-appId: "YOUR_APP_ID"
-
-};
 
 // ===============================
 
