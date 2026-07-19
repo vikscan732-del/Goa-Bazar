@@ -4,7 +4,7 @@ import {
   doc,
   getDoc,
   updateDoc
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
@@ -15,40 +15,49 @@ const category = document.getElementById("category");
 const image = document.getElementById("image");
 
 async function loadProduct() {
+  try {
+    if (!id) {
+      alert("Product ID not found.");
+      return;
+    }
 
-  if (!id) {
-    alert("Product ID not found");
-    return;
+    const ref = doc(db, "products", id);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      alert("Product not found.");
+      return;
+    }
+
+    const p = snap.data();
+
+    name.value = p.name || "";
+    price.value = p.price || "";
+    category.value = p.category || "";
+    image.value = p.image || "";
+
+  } catch (e) {
+    alert(e.message);
   }
-
-  const ref = doc(db, "products", id);
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) {
-    alert("Product not found");
-    return;
-  }
-
-  const p = snap.data();
-
-  name.value = p.name || "";
-  price.value = p.price || "";
-  category.value = p.category || "";
-  image.value = p.image || "";
 }
 
 window.saveProduct = async function () {
+  try {
+    await updateDoc(doc(db, "products", id), {
+      name: name.value.trim(),
+      price: Number(price.value),
+      category: category.value.trim(),
+      image: image.value.trim(),
+      updated: new Date()
+    });
 
-  await updateDoc(doc(db, "products", id), {
-    name: name.value,
-    price: Number(price.value),
-    category: category.value,
-    image: image.value
-  });
+    alert("✅ Product updated successfully!");
+    window.location.href = "manage-products.html";
 
-  alert("Product updated successfully!");
-
-  window.location.href = "manage-products.html";
+  } catch (e) {
+    alert("Error: " + e.message);
+    console.error(e);
+  }
 };
 
 loadProduct();
