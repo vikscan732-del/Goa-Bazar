@@ -6,7 +6,7 @@ import {
   deleteDoc,
   updateDoc,
   doc
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const list = document.getElementById("products");
 const search = document.getElementById("search");
