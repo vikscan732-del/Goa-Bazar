@@ -84,21 +84,27 @@ list.innerHTML+=`
 <div class="veg-card"
 onclick="openVegetable('${encodeURIComponent(v.name)}')">
 
+<div class="veg-top">
+
 <div class="veg-left">
 
 <div class="veg-emoji">
-
-${v.emoji||"🥬"}
-
+${v.emoji || "🥬"}
 </div>
-
-<div>
 
 <div class="veg-name">
-
 ${v.name}
+</div>
 
 </div>
+
+<div class="veg-price">
+₹${v.price}<span>/${v.unit || "kg"}</span>
+</div>
+
+</div>
+
+<div class="veg-bottom">
 
 <div class="veg-status"
 style="color:${statusColor};">
@@ -107,18 +113,13 @@ ${statusText}
 
 </div>
 
+<div class="veg-arrow">
+➜
 </div>
 
 </div>
 
-<div class="veg-price">
-
-₹${v.price}<span>/${v.unit||"kg"}</span>
-
 </div>
-
-</div>
-
 `;
 
 });
