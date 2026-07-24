@@ -1,3 +1,182 @@
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2A
+=========================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+
+background:#f3f7f4;
+color:#222;
+
+}
+
+.app{
+
+max-width:700px;
+margin:auto;
+padding-bottom:90px;
+
+}
+
+/* HERO */
+
+.hero{
+
+background:linear-gradient(135deg,#0F9D58,#148814);
+
+padding:24px 20px;
+
+border-bottom-left-radius:28px;
+border-bottom-right-radius:28px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.12);
+
+}
+
+/* TITLE */
+
+.hero-title{
+
+display:flex;
+align-items:center;
+
+gap:15px;
+
+margin-bottom:22px;
+
+}
+
+.hero-logo{
+
+width:60px;
+height:60px;
+
+border-radius:18px;
+
+background:#ffffff22;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:32px;
+
+backdrop-filter:blur(5px);
+
+}
+
+.hero-title h1{
+
+color:#fff;
+
+font-size:30px;
+
+font-weight:700;
+
+margin-bottom:4px;
+
+}
+
+.hero-title p{
+
+color:#e9ffe9;
+
+font-size:15px;
+
+}
+
+/* UPDATE CARD */
+
+.update-card{
+
+background:#fff;
+
+border-radius:22px;
+
+padding:18px;
+
+display:flex;
+
+justify-content:space-between;
+
+gap:15px;
+
+box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.update-left,
+.update-right{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+flex:1;
+
+}
+
+/* ICONS */
+
+.clock,
+.calendar{
+
+width:48px;
+height:48px;
+
+border-radius:14px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:24px;
+
+}
+
+.clock{
+
+background:#e8f5e9;
+
+}
+
+.calendar{
+
+background:#fff8e1;
+
+}
+
+.update-card span{
+
+font-size:13px;
+
+color:#777;
+
+display:block;
+
+margin-bottom:4px;
+
+}
+
+.update-card h2{
+
+font-size:18px;
+
+font-weight:700;
+
+color:#148814;
+
+}
+
 *{
 margin:0;
 padding:0;
@@ -716,3 +895,713 @@ align-items:center;
 .veg-emoji{
 font-size:32px;
 }
+
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2B
+=========================== */
+
+/* SOURCE CARD */
+
+.source-card{
+
+background:#fff;
+
+margin:20px;
+
+padding:18px;
+
+border-radius:20px;
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.source-icon{
+
+width:58px;
+height:58px;
+
+border-radius:16px;
+
+background:#E8F5E9;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:30px;
+
+}
+
+.source-card h2{
+
+font-size:18px;
+
+font-weight:700;
+
+color:#222;
+
+margin-bottom:5px;
+
+}
+
+.source-card p{
+
+font-size:14px;
+
+color:#777;
+
+line-height:1.5;
+
+}
+
+/* SECTION */
+
+.list-section{
+
+padding:0 20px 20px;
+
+}
+
+.section-title{
+
+font-size:24px;
+
+font-weight:700;
+
+color:#148814;
+
+margin-bottom:18px;
+
+}
+
+/* LOADING */
+
+.loading{
+
+background:#fff;
+
+border-radius:20px;
+
+padding:40px 20px;
+
+text-align:center;
+
+box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.loading p{
+
+margin-top:15px;
+
+font-size:15px;
+
+color:#777;
+
+}
+
+.loader{
+
+width:42px;
+height:42px;
+
+margin:auto;
+
+border:4px solid #E8F5E9;
+
+border-top:4px solid #148814;
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+0%{
+
+transform:rotate(0deg);
+
+}
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* VEGETABLE LIST */
+
+.vegetable-list{
+
+display:flex;
+
+flex-direction:column;
+
+gap:16px;
+
+}
+
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2C
+=========================== */
+
+/* VEGETABLE CARD */
+
+.veg-card{
+
+background:#ffffff;
+
+border-radius:22px;
+
+padding:18px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+cursor:pointer;
+
+transition:.25s;
+
+border:1px solid #eef2f3;
+
+}
+
+.veg-card:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 12px 24px rgba(0,0,0,.12);
+
+}
+
+.veg-top{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:14px;
+
+}
+
+.veg-left{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+}
+
+.veg-emoji{
+
+width:54px;
+height:54px;
+
+border-radius:16px;
+
+background:#E8F5E9;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:30px;
+
+flex-shrink:0;
+
+}
+
+.veg-name{
+
+font-size:21px;
+
+font-weight:700;
+
+color:#222;
+
+line-height:1.2;
+
+}
+
+.veg-price{
+
+font-size:30px;
+
+font-weight:700;
+
+color:#148814;
+
+text-align:right;
+
+white-space:nowrap;
+
+}
+
+.veg-price span{
+
+display:block;
+
+font-size:13px;
+
+font-weight:500;
+
+color:#888;
+
+margin-top:4px;
+
+}
+
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2D
+=========================== */
+
+/* CARD FOOTER */
+
+.veg-bottom{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-top:14px;
+
+padding-top:14px;
+
+border-top:1px solid #F1F3F4;
+
+}
+
+/* PRICE STATUS */
+
+.veg-status{
+
+font-size:15px;
+
+font-weight:700;
+
+line-height:1.5;
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.veg-status small{
+
+font-size:13px;
+
+font-weight:600;
+
+margin-top:3px;
+
+opacity:.9;
+
+}
+
+/* GREEN */
+
+.status-up{
+
+color:#16A34A;
+
+}
+
+/* RED */
+
+.status-down{
+
+color:#DC2626;
+
+}
+
+/* BLUE */
+
+.status-same{
+
+color:#2563EB;
+
+}
+
+/* RIGHT ARROW */
+
+.veg-arrow{
+
+width:42px;
+
+height:42px;
+
+border-radius:12px;
+
+background:#E8F5E9;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+font-weight:700;
+
+color:#148814;
+
+transition:.25s;
+
+}
+
+.veg-card:hover .veg-arrow{
+
+background:#148814;
+
+color:#fff;
+
+transform:translateX(3px);
+
+}
+
+/* ACTIVE CLICK */
+
+.veg-card:active{
+
+transform:scale(.98);
+
+}
+
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2E
+=========================== */
+
+/* BOTTOM NAVIGATION */
+
+.bottom-nav{
+
+position:fixed;
+
+bottom:0;
+left:0;
+right:0;
+
+max-width:700px;
+margin:auto;
+
+height:72px;
+
+background:#fff;
+
+display:flex;
+
+justify-content:space-around;
+align-items:center;
+
+border-top:1px solid #ECECEC;
+
+box-shadow:0 -8px 20px rgba(0,0,0,.08);
+
+z-index:999;
+
+}
+
+.bottom-nav a{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+text-decoration:none;
+
+color:#888;
+
+font-size:24px;
+
+transition:.25s;
+
+}
+
+.bottom-nav span{
+
+font-size:12px;
+
+margin-top:4px;
+
+font-weight:600;
+
+}
+
+.bottom-nav a.active{
+
+color:#148814;
+
+}
+
+.bottom-nav a.active span{
+
+color:#148814;
+
+}
+
+.bottom-nav a:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* PAGE ANIMATION */
+
+.hero,
+.source-card,
+.veg-card{
+
+animation:fadeUp .45s ease;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* SMOOTH SCROLL */
+
+html{
+
+scroll-behavior:smooth;
+
+}
+/* ===========================
+   GOA BAZAR PREMIUM UI
+   PART 2F
+=========================== */
+
+/* MOBILE */
+
+@media (max-width:600px){
+
+.hero{
+
+padding:20px 16px;
+
+}
+
+.hero-title h1{
+
+font-size:24px;
+
+}
+
+.hero-title p{
+
+font-size:13px;
+
+}
+
+.hero-logo{
+
+width:52px;
+height:52px;
+
+font-size:28px;
+
+}
+
+.update-card{
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.source-card{
+
+margin:16px;
+
+padding:16px;
+
+}
+
+.list-section{
+
+padding:0 16px 90px;
+
+}
+
+.section-title{
+
+font-size:22px;
+
+}
+
+.veg-card{
+
+padding:16px;
+
+border-radius:18px;
+
+}
+
+.veg-emoji{
+
+width:48px;
+height:48px;
+
+font-size:26px;
+
+}
+
+.veg-name{
+
+font-size:18px;
+
+}
+
+.veg-price{
+
+font-size:24px;
+
+}
+
+.veg-price span{
+
+font-size:12px;
+
+}
+
+.veg-status{
+
+font-size:14px;
+
+}
+
+.veg-arrow{
+
+width:38px;
+height:38px;
+
+font-size:20px;
+
+}
+
+.bottom-nav{
+
+height:68px;
+
+}
+
+}
+
+/* NICE SELECTION */
+
+::selection{
+
+background:#148814;
+
+color:#fff;
+
+}
+
+/* REMOVE TAP HIGHLIGHT */
+
+*{
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+/* IMAGE SAFE */
+
+img{
+
+max-width:100%;
+
+display:block;
+
+}
+
+/* LINKS */
+
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+}
+
+/* FINAL TOUCH */
+
+.veg-card{
+
+overflow:hidden;
+
+}
+
+.veg-card::before{
+
+content:"";
+
+display:block;
+
+height:4px;
+
+background:linear-gradient(90deg,#16A34A,#34D399);
+
+margin:-18px -18px 18px -18px;
+
+}
+
+@media(max-width:600px){
+
+.veg-card::before{
+
+margin:-16px -16px 16px -16px;
+
+}
+
+}
+
+
