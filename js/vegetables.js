@@ -1,6 +1,6 @@
 let vegetables = [];
 
-fetch("prices.json")
+fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/prices.json")
 .then(response => response.json())
 .then(data => {
 
