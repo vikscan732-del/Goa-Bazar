@@ -2,21 +2,21 @@ let vegetables = [];
 let historyData = {};
 
 Promise.all([
-fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/prices.json").then(r=>r.json()),
-fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/history.json").then(r=>r.json())
+fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/prices.json").then(r => r.json()),
+fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/history.json").then(r => r.json())
 ])
 
-.then(([priceData,history])=>{
+.then(([priceData, history]) => {
 
-historyData=history;
+historyData = history;
 
-document.getElementById("updateTime").textContent=
-priceData.updatedAt||"-";
+document.getElementById("updateTime").textContent =
+priceData.updatedAt || "-";
 
-document.getElementById("vegDate").textContent=
-priceData.priceDate||"-";
+document.getElementById("vegDate").textContent =
+priceData.priceDate || "-";
 
-vegetables=(priceData.vegetables||[]).sort((a,b)=>
+vegetables = (priceData.vegetables || []).sort((a, b) =>
 a.name.localeCompare(b.name)
 );
 
@@ -24,65 +24,61 @@ renderVegetables();
 
 })
 
-.catch(error=>{
+.catch(error => {
 
 console.error(error);
 
-document.getElementById("vegetableList").innerHTML=`
-
-<div class="empty-box">
-
-<h3>❌ Unable to load prices</h3>
-
-<p>Please try again later.</p>
-
+document.getElementById("vegetableList").innerHTML = `
+<div class="loading">
+<div class="loader"></div>
+<p>Unable to load prices.<br>Please try again later.</p>
 </div>
-
 `;
 
 });
 
-function renderVegetables(){
+function renderVegetables() {
 
-const list=document.getElementById("vegetableList");
+const list = document.getElementById("vegetableList");
 
-list.innerHTML="";
+list.innerHTML = "";
 
-vegetables.forEach(v=>{
+vegetables.forEach(v => {
 
-const history=historyData[v.name]||[];
+const history = historyData[v.name] || [];
 
-let statusText="🔵 ● No Change";
-let statusColor="#2563EB";
+let statusClass = "status-same";
+let statusTop = "🔵 ● ₹0";
+let statusBottom = "No Change";
 
-if(history.length>=2){
+if (history.length >= 2) {
 
-const today=history[history.length-1].price;
+const today = history[history.length - 1].price;
+const yesterday = history[history.length - 2].price;
 
-const yesterday=history[history.length-2].price;
+const diff = today - yesterday;
 
-const diff=today-yesterday;
+if (diff > 0) {
 
-if(diff>0){
-
-statusText=`🟢 ▲ +₹${diff}<br>Price Increased`;
-statusColor="#16A34A";
-
-}
-
-else if(diff<0){
-
-statusText=`🔴 ▼ -₹${Math.abs(diff)}<br>Price Decreased`;
-statusColor="#DC2626";
+statusClass = "status-up";
+statusTop = `🟢 ▲ +₹${diff}`;
+statusBottom = "Price Increased";
 
 }
 
+else if (diff < 0) {
+
+statusClass = "status-down";
+statusTop = `🔴 ▼ -₹${Math.abs(diff)}`;
+statusBottom = "Price Decreased";
+
 }
 
-list.innerHTML+=`
+}
 
-<div class="veg-card"
-onclick="openVegetable('${encodeURIComponent(v.name)}')">
+list.innerHTML += `
+
+<div class="veg-card" onclick="openVegetable('${v.name}')">
 
 <div class="veg-top">
 
@@ -99,18 +95,17 @@ ${v.name}
 </div>
 
 <div class="veg-price">
-₹${v.price}<span>/${v.unit || "kg"}</span>
+₹${v.price}
+<span>/${v.unit || "kg"}</span>
 </div>
 
 </div>
 
 <div class="veg-bottom">
 
-<div class="veg-status"
-style="color:${statusColor};">
-
-${statusText}
-
+<div class="veg-status ${statusClass}">
+${statusTop}
+<small>${statusBottom}</small>
 </div>
 
 <div class="veg-arrow">
@@ -120,15 +115,16 @@ ${statusText}
 </div>
 
 </div>
+
 `;
 
 });
 
-}function openVegetable(name){
-
-window.location.href=
-"vegetable.html?name="+encodeURIComponent(name);
-
 }
 
+function openVegetable(name) {
 
+window.location.href =
+"vegetable.html?name=" + encodeURIComponent(name);
+
+}
