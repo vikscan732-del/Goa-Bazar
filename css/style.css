@@ -522,3 +522,135 @@ line-height:1.2;
     height:260px !important;
     display:block;
 }
+
+/* ===========================
+VEGETABLE PAGE (Goa Bazar)
+=========================== */
+
+.source-card{
+margin:18px;
+padding:18px;
+background:#fff;
+border-radius:20px;
+display:flex;
+align-items:center;
+gap:16px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.source-logo{
+width:58px;
+height:58px;
+border-radius:50%;
+background:#138808;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+color:#fff;
+flex-shrink:0;
+}
+
+.source-info{
+flex:1;
+}
+
+.source-info h3{
+font-size:17px;
+font-weight:600;
+margin-bottom:4px;
+color:#222;
+}
+
+.source-info p{
+font-size:13px;
+color:#666;
+margin-bottom:10px;
+}
+
+.source-meta{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:8px;
+font-size:13px;
+color:#555;
+}
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+padding:0 18px 18px;
+}
+
+.stats-grid .stat-box{
+padding:14px;
+}
+
+.veg-title{
+padding:0 18px 12px;
+font-size:20px;
+font-weight:700;
+color:#222;
+}
+
+.veg-card{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:15px;
+margin:0 18px 14px;
+background:#fff;
+border-radius:18px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+cursor:pointer;
+transition:.25s;
+}
+
+.veg-card:hover{
+transform:translateY(-2px);
+}
+
+.veg-left{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.veg-emoji{
+font-size:34px;
+}
+
+.veg-name{
+font-size:17px;
+font-weight:600;
+}
+
+.veg-price{
+font-size:22px;
+font-weight:700;
+color:#138808;
+}
+
+.veg-unit{
+font-size:13px;
+color:#666;
+}
+
+@media(max-width:480px){
+
+.stats-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.source-card{
+flex-direction:column;
+text-align:center;
+}
+
+.source-meta{
+justify-content:center;
+}
+
+}
