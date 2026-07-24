@@ -6,31 +6,26 @@
 <title>Vegetables</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0}
-.header{background:#138808;color:#fff;padding:18px}
-.header h1{margin:0}
-.header p{margin:6px 0 0}
-.wrap{padding:15px}
-.card{background:#fff;border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.stat{text-align:center;background:#fff;border-radius:10px;padding:10px}
-.list .item{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:14px;margin:10px 0}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #ddd}
-.bottom-nav a{text-decoration:none;color:#555}
-.bottom-nav .active{color:#138808;font-weight:bold}
+body{margin:0;font-family:Arial;background:#f3f5f7}
+header{background:#138808;color:#fff;padding:18px}
+.card{background:#fff;margin:16px;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px}
+.stat{background:#fff;padding:12px;border-radius:10px;text-align:center}
+.item{display:flex;justify-content:space-between;background:#fff;margin:10px 16px;padding:14px;border-radius:12px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#fff;padding:10px;border-top:1px solid #ddd}
+.active{color:#138808;font-weight:bold}
 </style>
 </head>
 <body>
-<header class="header">
-<h1>🥬 Vegetables</h1>
-<p>Daily Market Price</p>
+<header>
+<h2>🥬 Vegetables</h2>
+<div>Daily Market Price</div>
 </header>
 
-<div class="wrap">
 <div class="card">
 <b>🌿 Goa Horticulture Corporation Ltd.</b><br>
 Government of Goa<br><br>
-📅 <span id="priceDate">Loading...</span> &nbsp;&nbsp; 🕒 <span id="updateTime">Loading...</span>
+📅 <span id="d">Loading...</span> &nbsp; 🕒 <span id="t">Loading...</span>
 </div>
 
 <div class="stats">
@@ -40,9 +35,7 @@ Government of Goa<br><br>
 <div class="stat">📦<br><span id="total">0</span></div>
 </div>
 
-<h3>Today's Vegetable Prices</h3>
-<div class="list" id="vegList"></div>
-</div>
+<div id="list"></div>
 
 <nav class="bottom-nav">
 <a href="index.html">🏠<br>Home</a>
@@ -51,17 +44,15 @@ Government of Goa<br><br>
 </nav>
 
 <script>
-fetch('prices.json').then(r=>r.json()).then(data=>{
-document.getElementById('priceDate').textContent=data.priceDate||'-';
-document.getElementById('updateTime').textContent=data.updatedAt||'-';
+fetch("prices.json").then(r=>r.json()).then(data=>{
+d.textContent=data.priceDate||"-";
+t.textContent=data.updatedAt||"-";
 const arr=data.vegetables||[];
-document.getElementById('total').textContent=arr.length;
-const list=document.getElementById('vegList');
+total.textContent=arr.length;
 arr.forEach(v=>{
-list.innerHTML+=`<div class="item"><div>${v.emoji||'🥬'} ${v.name}</div><b>₹${v.price}/${v.unit||'kg'}</b></div>`;
+list.innerHTML+=`<div class="item"><span>${v.emoji||"🥬"} ${v.name}</span><b>₹${v.price}/${v.unit||"kg"}</b></div>`;
 });
-}).catch(()=>{
-document.getElementById('vegList').innerHTML="<div class='card'>prices.json not found.</div>";
 });
 </script>
-</body></html>
+</body>
+</html>
