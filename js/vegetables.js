@@ -1,77 +1,110 @@
 let vegetables = [];
+let historyData = {};
 
-fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/prices.json")
-.then(response => response.json())
-.then(data => {
+Promise.all([
+fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/prices.json").then(r=>r.json()),
+fetch("https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/history.json").then(r=>r.json())
+])
 
-document.getElementById("updateTime").textContent =
-data.updatedAt || "-";
+.then(([priceData,history])=>{
 
-document.getElementById("vegDate").textContent =
-data.priceDate || "-";
+historyData=history;
 
-vegetables = (data.vegetables || []).sort((a, b) =>
+document.getElementById("updateTime").textContent=
+priceData.updatedAt||"-";
+
+document.getElementById("vegDate").textContent=
+priceData.priceDate||"-";
+
+vegetables=(priceData.vegetables||[]).sort((a,b)=>
 a.name.localeCompare(b.name)
 );
 
-document.getElementById("vegCount").textContent =
-vegetables.length + " Items";
-
-renderVegetables(vegetables);
-updateStats(vegetables);
+renderVegetables();
 
 })
-.catch(error => {
+
+.catch(error=>{
 
 console.error(error);
 
-document.getElementById("vegetableList").innerHTML = `
+document.getElementById("vegetableList").innerHTML=`
+
 <div class="empty-box">
+
 <h3>❌ Unable to load prices</h3>
-<p>Please check prices.json</p>
+
+<p>Please try again later.</p>
+
 </div>
+
 `;
 
 });
 
-function renderVegetables(arr){
+function renderVegetables(){
 
 const list=document.getElementById("vegetableList");
 
-if(arr.length===0){
+list.innerHTML="";
 
-list.innerHTML=`
-<div class="empty-box">
-<h3>No Vegetables Found</h3>
-</div>
-`;
+vegetables.forEach(v=>{
 
-return;
+const history=historyData[v.name]||[];
+
+let statusText="🔵 ● No Change";
+let statusColor="#2563EB";
+
+if(history.length>=2){
+
+const today=history[history.length-1].price;
+
+const yesterday=history[history.length-2].price;
+
+const diff=today-yesterday;
+
+if(diff>0){
+
+statusText=`🟢 ▲ +₹${diff}<br>Price Increased`;
+statusColor="#16A34A";
 
 }
 
-list.innerHTML="";
+else if(diff<0){
 
-arr.forEach(v=>{
+statusText=`🔴 ▼ -₹${Math.abs(diff)}<br>Price Decreased`;
+statusColor="#DC2626";
+
+}
+
+}
 
 list.innerHTML+=`
 
-<div class="veg-card" onclick="openVegetable('${encodeURIComponent(v.name)}')">
+<div class="veg-card"
+onclick="openVegetable('${encodeURIComponent(v.name)}')">
 
 <div class="veg-left">
 
 <div class="veg-emoji">
-${v.emoji || "🥬"}
+
+${v.emoji||"🥬"}
+
 </div>
 
 <div>
 
 <div class="veg-name">
+
 ${v.name}
+
 </div>
 
-<div class="veg-unit">
-${v.unit || "kg"}
+<div class="veg-status"
+style="color:${statusColor};">
+
+${statusText}
+
 </div>
 
 </div>
@@ -79,7 +112,9 @@ ${v.unit || "kg"}
 </div>
 
 <div class="veg-price">
-₹${v.price}<span>/${v.unit || "kg"}</span>
+
+₹${v.price}<span>/${v.unit||"kg"}</span>
+
 </div>
 
 </div>
@@ -88,64 +123,11 @@ ${v.unit || "kg"}
 
 });
 
-}
+}function openVegetable(name){
 
-function updateStats(arr){
-
-document.getElementById("totalVeg").textContent = arr.length;
-
-if(arr.length===0){
-
-document.getElementById("avgPrice").textContent="₹0";
-document.getElementById("highPrice").textContent="₹0";
-document.getElementById("lowPrice").textContent="₹0";
-
-return;
+window.location.href=
+"vegetable.html?name="+encodeURIComponent(name);
 
 }
 
-const prices = arr
-.map(v=>Number(v.price))
-.filter(v=>!isNaN(v));
 
-const total = prices.reduce((a,b)=>a+b,0);
-
-const avg = Math.round(total/prices.length);
-
-const high = Math.max(...prices);
-
-const low = Math.min(...prices);
-
-document.getElementById("avgPrice").textContent =
-"₹"+avg;
-
-document.getElementById("highPrice").textContent =
-"₹"+high;
-
-document.getElementById("lowPrice").textContent =
-"₹"+low;
-
-}
-
-function searchVegetables(){
-
-const query=document
-.getElementById("searchInput")
-.value
-.trim()
-.toLowerCase();
-
-const filtered=vegetables.filter(v=>
-
-v.name.toLowerCase().includes(query)
-
-);
-
-renderVegetables(filtered);
-
-}
-
-function openVegetable(name) {
-    window.location.href =
-        "vegetable.html?name=" + encodeURIComponent(name);
-}
