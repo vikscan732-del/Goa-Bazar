@@ -2,57 +2,143 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vegetables</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vegetable Prices</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-body{margin:0;font-family:Arial;background:#f3f5f7}
-header{background:#138808;color:#fff;padding:18px}
-.card{background:#fff;margin:16px;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px}
-.stat{background:#fff;padding:12px;border-radius:10px;text-align:center}
-.item{display:flex;justify-content:space-between;background:#fff;margin:10px 16px;padding:14px;border-radius:12px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#fff;padding:10px;border-top:1px solid #ddd}
-.active{color:#138808;font-weight:bold}
-</style>
 </head>
+
 <body>
-<header>
-<h2>🥬 Vegetables</h2>
-<div>Daily Market Price</div>
-</header>
 
-<div class="card">
-<b>🌿 Goa Horticulture Corporation Ltd.</b><br>
-Government of Goa<br><br>
-📅 <span id="d">Loading...</span> &nbsp; 🕒 <span id="t">Loading...</span>
+<div class="app">
+
+<div class="header">
+
+<div class="header-top">
+<div class="header-text">
+<h1>🥬 Vegetable Prices</h1>
+<p>Goa Horticulture Corporation Ltd.</p>
+</div>
 </div>
 
-<div class="stats">
-<div class="stat">⬆️<br><span id="inc">0</span></div>
-<div class="stat">⬇️<br><span id="dec">0</span></div>
-<div class="stat">➖<br><span id="same">0</span></div>
-<div class="stat">📦<br><span id="total">0</span></div>
+<div class="date-card">
+<div>
+<div class="label">Last Updated</div>
+<h3 id="updateTime">Loading...</h3>
 </div>
 
-<div id="list"></div>
+<div class="calendar">🥕</div>
+</div>
+
+</div>
+
+<div class="source-card">
+
+<div class="source-logo">
+🥬
+</div>
+
+<div class="source-info">
+
+<h3>Goa Horticulture Corporation Ltd.</h3>
+
+<p>Official Daily Vegetable Prices</p>
+
+<div class="source-meta">
+
+<span id="vegDate">--</span>
+
+<span id="vegCount">0 Items</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="search-section">
+
+<div class="search-box">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search Vegetable..."
+onkeyup="searchVegetables()">
+
+<button>
+🔍
+</button>
+
+</div>
+
+</div>
+
+<div class="stats-grid">
+
+<div class="stat-box">
+<p>Total</p>
+<h3 id="totalVeg">0</h3>
+</div>
+
+<div class="stat-box">
+<p>Average</p>
+<h3 id="avgPrice">₹0</h3>
+</div>
+
+<div class="stat-box">
+<p>Highest</p>
+<h3 id="highPrice">₹0</h3>
+</div>
+
+<div class="stat-box">
+<p>Lowest</p>
+<h3 id="lowPrice">₹0</h3>
+</div>
+
+</div>
+
+<div class="veg-title">
+Today's Vegetables
+</div>
+
+<div
+id="vegetableList"
+class="product-container">
+
+<div class="loading-box">
+
+<div class="loader"></div>
+
+<p>Loading prices...</p>
+
+</div>
+
+</div>
 
 <nav class="bottom-nav">
-<a href="index.html">🏠<br>Home</a>
-<a class="active" href="favourite.html">🥬<br>Vegetables</a>
-<a href="info.html">ℹ️<br>Info</a>
+
+<a href="index.html">
+🏠
+<span>Home</span>
+</a>
+
+<a
+href="favourite.html"
+class="active">
+🥬
+<span>Vegetables</span>
+</a>
+
+<a href="info.html">
+ℹ️
+<span>Info</span>
+</a>
+
 </nav>
 
-<script>
-fetch("prices.json").then(r=>r.json()).then(data=>{
-d.textContent=data.priceDate||"-";
-t.textContent=data.updatedAt||"-";
-const arr=data.vegetables||[];
-total.textContent=arr.length;
-arr.forEach(v=>{
-list.innerHTML+=`<div class="item"><span>${v.emoji||"🥬"} ${v.name}</span><b>₹${v.price}/${v.unit||"kg"}</b></div>`;
-});
-});
-</script>
+</div>
+
+<script src="js/vegetables.js"></script>
+
 </body>
 </html>
