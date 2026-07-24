@@ -56,7 +56,7 @@ arr.forEach(v=>{
 
 list.innerHTML+=`
 
-<div class="veg-card" onclick="openVegetable('${v.name}')">
+<div class="veg-card" onclick="openVegetable('${encodeURIComponent(v.name)}')">
 
 <div class="veg-left">
 
