@@ -56,7 +56,7 @@ arr.forEach(v=>{
 
 list.innerHTML+=`
 
-<div class="veg-card">
+<div class="veg-card" onclick="openVegetable('${v.name}')">
 
 <div class="veg-left">
 
@@ -143,4 +143,9 @@ v.name.toLowerCase().includes(query)
 
 renderVegetables(filtered);
 
+}
+
+function openVegetable(name) {
+    window.location.href =
+        "vegetable.html?name=" + encodeURIComponent(name);
 }
