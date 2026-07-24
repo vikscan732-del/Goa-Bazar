@@ -1,93 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
 <title>Vegetable Prices</title>
-<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet"
+href="css/style.css">
+
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="header">
+<header class="hero">
 
-<div class="header-top">
-<div class="header-text">
-<h1>🥬 Vegetable Prices</h1>
-<p>Goa Horticulture Corporation Ltd.</p>
-</div>
-</div>
+<div class="hero-title">
 
-<div class="date-card">
-<div>
-<div class="label">Last Updated</div>
-<h3 id="updateTime">Loading...</h3>
-</div>
-
-<div class="calendar">🥕</div>
-</div>
-
-</div>
-
-<div class="source-card">
-
-<div class="source-logo">
+<div class="hero-logo">
 🥬
 </div>
 
-<div class="source-info">
+<div>
 
-<h3>Goa Horticulture Corporation Ltd.</h3>
+<h1>Vegetable Prices</h1>
 
-<p>Official Daily Vegetable Prices</p>
-
-<div class="source-meta">
-
-<span id="vegDate">--</span>
-
-
+<p>Goa Horticulture Corporation Ltd.</p>
 
 </div>
 
 </div>
 
-<div> class="veg-title">
+<div class="update-card">
+
+<div class="update-left">
+
+<div class="clock">
+🕒
+</div>
+
+<div>
+
+<span>Last Updated</span>
+
+<h2 id="updateTime">
+
+Loading...
+
+</h2>
+
+</div>
+
+</div>
+
+<div class="update-right">
+
+<div class="calendar">
+
+📅
+
+</div>
+
+<div>
+
+<span>Price Date</span>
+
+<h2 id="vegDate">
+
+--
+
+</h2>
+
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<section class="source-card">
+
+<div class="source-icon">
+
+🥬
+
+</div>
+
+<div>
+
+<h2>
+
+Goa Horticulture Corporation Ltd.
+
+</h2>
+
+<p>
+
+Official Daily Vegetable Prices
+
+</p>
+
+</div>
+
+</section>
+
+<section class="list-section">
+
+<h2 class="section-title">
+
 Today's Vegetables
-</div>
+
+</h2>
 
 <div
 id="vegetableList"
-class="product-container">
+class="vegetable-list">
 
-<div class="loading-box">
+<div class="loading">
 
 <div class="loader"></div>
 
-<p>Loading prices...</p>
+<p>
+
+Loading today's prices...
+
+</p>
 
 </div>
 
 </div>
+
+</section>
 
 <nav class="bottom-nav">
 
 <a href="index.html">
+
 🏠
+
 <span>Home</span>
+
 </a>
 
 <a
-href="favourite.html"
-class="active">
+class="active"
+href="favourite.html">
+
 🥬
+
 <span>Vegetables</span>
+
 </a>
 
 <a href="info.html">
+
 ℹ️
+
 <span>Info</span>
+
 </a>
 
 </nav>
@@ -97,4 +174,5 @@ class="active">
 <script src="js/vegetables.js"></script>
 
 </body>
+
 </html>
