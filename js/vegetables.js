@@ -1,7 +1,7 @@
 let vegetables = [];
 
 fetch("prices.json")
-.then(res => res.json())
+.then(response => response.json())
 .then(data => {
 
 document.getElementById("updateTime").textContent =
@@ -10,22 +10,25 @@ data.updatedAt || "-";
 document.getElementById("vegDate").textContent =
 data.priceDate || "-";
 
-vegetables = data.vegetables || [];
+vegetables = (data.vegetables || []).sort((a, b) =>
+a.name.localeCompare(b.name)
+);
 
 document.getElementById("vegCount").textContent =
 vegetables.length + " Items";
 
 renderVegetables(vegetables);
-
 updateStats(vegetables);
 
 })
-.catch(() => {
+.catch(error => {
+
+console.error(error);
 
 document.getElementById("vegetableList").innerHTML = `
 <div class="empty-box">
-<h3>No Data Found</h3>
-<p>prices.json could not be loaded.</p>
+<h3>❌ Unable to load prices</h3>
+<p>Please check prices.json</p>
 </div>
 `;
 
@@ -33,7 +36,7 @@ document.getElementById("vegetableList").innerHTML = `
 
 function renderVegetables(arr){
 
-const list = document.getElementById("vegetableList");
+const list=document.getElementById("vegetableList");
 
 if(arr.length===0){
 
@@ -76,7 +79,7 @@ ${v.unit || "kg"}
 </div>
 
 <div class="veg-price">
-₹${v.price}
+₹${v.price}<span>/${v.unit || "kg"}</span>
 </div>
 
 </div>
@@ -91,9 +94,19 @@ function updateStats(arr){
 
 document.getElementById("totalVeg").textContent = arr.length;
 
-if(arr.length===0) return;
+if(arr.length===0){
 
-const prices = arr.map(v=>Number(v.price));
+document.getElementById("avgPrice").textContent="₹0";
+document.getElementById("highPrice").textContent="₹0";
+document.getElementById("lowPrice").textContent="₹0";
+
+return;
+
+}
+
+const prices = arr
+.map(v=>Number(v.price))
+.filter(v=>!isNaN(v));
 
 const total = prices.reduce((a,b)=>a+b,0);
 
@@ -116,14 +129,15 @@ document.getElementById("lowPrice").textContent =
 
 function searchVegetables(){
 
-const q = document
+const query=document
 .getElementById("searchInput")
 .value
+.trim()
 .toLowerCase();
 
-const filtered = vegetables.filter(v=>
+const filtered=vegetables.filter(v=>
 
-v.name.toLowerCase().includes(q)
+v.name.toLowerCase().includes(query)
 
 );
 
