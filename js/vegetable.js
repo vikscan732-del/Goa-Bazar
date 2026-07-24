@@ -136,6 +136,66 @@ document.getElementById("monthPrice").textContent=
 "₹"+Math.min(...prices)+" - ₹"+Math.max(...prices);
 
 }
+// Draw Price Chart
+
+const labels = history.map(item => item.date);
+
+const values = history.map(item => item.price);
+
+new Chart(
+document.getElementById("priceChart"),
+{
+type:"line",
+
+data:{
+
+labels:labels,
+
+datasets:[{
+
+label:"Price (₹)",
+
+data:values,
+
+borderColor:"#148814",
+
+backgroundColor:"rgba(20,136,20,.15)",
+
+fill:true,
+
+tension:.35,
+
+pointRadius:4
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+
+legend:{
+display:false
+}
+
+},
+
+scales:{
+
+y:{
+beginAtZero:false
+}
+
+}
+
+}
+
+});
 
 const historyBox=document.getElementById("history");
 
