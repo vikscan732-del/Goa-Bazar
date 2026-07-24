@@ -1,3 +1,4 @@
+
 let vegetables = [];
 let historyData = {};
 
@@ -16,7 +17,7 @@ priceData.updatedAt || "-";
 document.getElementById("vegDate").textContent =
 priceData.priceDate || "-";
 
-vegetables = (priceData.vegetables || []).sort((a, b) =>
+vegetables = (priceData.vegetables || []).sort((a,b)=>
 a.name.localeCompare(b.name)
 );
 
@@ -24,11 +25,11 @@ renderVegetables();
 
 })
 
-.catch(error => {
+.catch(err=>{
 
-console.error(error);
+console.error(err);
 
-document.getElementById("vegetableList").innerHTML = `
+document.getElementById("vegetableList").innerHTML=`
 <div class="loading">
 <div class="loader"></div>
 <p>Unable to load prices.<br>Please try again later.</p>
@@ -37,48 +38,48 @@ document.getElementById("vegetableList").innerHTML = `
 
 });
 
-function renderVegetables() {
+function renderVegetables(){
 
-const list = document.getElementById("vegetableList");
+const list=document.getElementById("vegetableList");
 
-list.innerHTML = "";
+list.innerHTML="";
 
-vegetables.forEach(v => {
+vegetables.forEach(v=>{
 
-const history = historyData[v.name] || [];
+const history=historyData[v.name]||[];
 
-let statusClass = "status-same";
-let statusTop = "🔵 ● ₹0";
-let statusBottom = "No Change";
+let statusClass="status-same";
+let statusTop="🔵 ● ₹0";
+let statusBottom="No Change";
 
-if (history.length >= 2) {
+if(history.length>=2){
 
-const today = history[history.length - 1].price;
-const yesterday = history[history.length - 2].price;
+const today=history[history.length-1].price;
+const yesterday=history[history.length-2].price;
 
-const diff = today - yesterday;
+const diff=today-yesterday;
 
-if (diff > 0) {
+if(diff>0){
 
-statusClass = "status-up";
-statusTop = `🟢 ▲ +₹${diff}`;
-statusBottom = "Price Increased";
-
-}
-
-else if (diff < 0) {
-
-statusClass = "status-down";
-statusTop = `🔴 ▼ -₹${Math.abs(diff)}`;
-statusBottom = "Price Decreased";
+statusClass="status-up";
+statusTop=`🟢 ▲ +₹${diff}`;
+statusBottom="Price Increased";
 
 }
 
+else if(diff<0){
+
+statusClass="status-down";
+statusTop=`🔴 ▼ -₹${Math.abs(diff)}`;
+statusBottom="Price Decreased";
+
 }
 
-list.innerHTML += `
+}
 
-<div class="veg-card" onclick="openVegetable('${v.name}')">
+list.innerHTML+=`
+
+<div class="veg-card" onclick="openVegetable('${encodeURIComponent(v.name)}')">
 
 <div class="veg-top">
 
@@ -88,8 +89,17 @@ list.innerHTML += `
 ${v.emoji || "🥬"}
 </div>
 
+<div class="veg-info">
+
 <div class="veg-name">
 ${v.name}
+</div>
+
+<div class="veg-status ${statusClass}">
+${statusTop}
+<small>${statusBottom}</small>
+</div>
+
 </div>
 
 </div>
@@ -103,10 +113,7 @@ ${v.name}
 
 <div class="veg-bottom">
 
-<div class="veg-status ${statusClass}">
-${statusTop}
-<small>${statusBottom}</small>
-</div>
+<div></div>
 
 <div class="veg-arrow">
 ➜
@@ -122,9 +129,8 @@ ${statusTop}
 
 }
 
-function openVegetable(name) {
+function openVegetable(name){
 
-window.location.href =
-"vegetable.html?name=" + encodeURIComponent(name);
+window.location.href="vegetable.html?name="+encodeURIComponent(name);
 
 }
