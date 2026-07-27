@@ -955,34 +955,25 @@ ol{
 
 /* ---------- PRICE CHANGE ---------- */
 
-.price-up,
-.price-down,
-.price-same{
+.price-up{
     margin-top:10px;
+    color:#16a34a;
     font-size:14px;
     font-weight:700;
-    line-height:1.5;
-}
-
-.price-up{
-    color:#16a34a;
 }
 
 .price-down{
+    margin-top:10px;
     color:#dc2626;
+    font-size:14px;
+    font-weight:700;
 }
 
 .price-same{
+    margin-top:10px;
     color:#2563eb;
-}
-
-.price-up small,
-.price-down small,
-.price-same small{
-    display:block;
-    margin-top:3px;
-    font-size:12px;
-    font-weight:600;
+    font-size:14px;
+    font-weight:700;
 }
 
 /* ---------- RIGHT ---------- */
