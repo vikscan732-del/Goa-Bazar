@@ -2,93 +2,182 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Goa Bazar</title>
 
-<meta name="theme-color" content="#138808">
+<meta name="theme-color"
+content="#138808">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
 
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="css/style.css">
+
 </head>
 
 <body>
 
 <div class="app">
 
-<header class="header">
+<header class="hero">
 
-<div class="header-top">
+<div class="hero-title">
 
-<button class="menu-btn">
-☰
-</button>
+<div class="hero-logo">
 
-<div class="header-text">
-<h1>Goa Bazar</h1>
-<p>Daily Market Price</p>
+🧺
+
 </div>
 
-<button class="notify-btn">
+<div class="hero-text">
+
+<h1>
+Goa Bazar
+</h1>
+
+<p>
+Daily Market Price
+</p>
+
+<div class="meta-chip">
+
+🌴 Goa Farmers Market
+
+</div>
+
+</div>
+
+<div class="hero-action">
+
 🔔
-</button>
 
-</div>
-
-<div class="date-card">
-
-<div>
-
-<p class="label">
-Today's Date
-</p>
-
-<h3 id="todayDate">
-Loading...
-</h3>
-
-<p id="updateTime">
-Fetching latest prices...
-</p>
-
-</div>
-
-<div class="calendar">
-📅
 </div>
 
 </div>
 
 </header>
 
+<section class="update-card">
+
+<div class="update-left">
+
+<div class="update-icon">
+
+📅
+
+</div>
+
+<div class="update-info">
+
+<div class="update-label">
+
+Today's Date
+
+</div>
+
+<div
+class="update-value"
+id="todayDate">
+
+Loading...
+
+</div>
+
+<div
+class="update-sub">
+
+Government Market Rates
+
+</div>
+
+</div>
+
+</div>
+
+<div class="update-right">
+
+<div class="update-icon">
+
+🕒
+
+</div>
+
+<div class="update-info">
+
+<div class="update-label">
+
+Last Updated
+
+</div>
+
+<div
+class="update-value"
+id="updateTime">
+
+Loading...
+
+</div>
+
+<div class="status-live">
+
+Live Market Prices
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
 <section class="search-section">
 
 <div class="search-box">
 
 <input
+
 type="text"
+
 id="searchInput"
+
 placeholder="Search products...">
 
-<button id="searchBtn">
+<button
+id="searchBtn">
+
 🔍
+
 </button>
 
 </div>
 
 </section>
 
-<section id="loadingBox" class="loading-box">
+  <section
+id="loadingBox"
+class="loading-box">
 
 <div class="loader"></div>
 
+<h3>
+Loading Products
+</h3>
+
 <p>
-Loading products...
+Please wait while we fetch today's latest market prices...
 </p>
 
 </section>
@@ -98,50 +187,108 @@ id="emptyBox"
 class="empty-box"
 style="display:none;">
 
-<img
-src="assets/empty.png"
-alt="No Data">
+<div class="empty-icon">
+📦
+</div>
 
 <h2>
 No Products Found
 </h2>
 
 <p>
-Please try another search.
+Try another product name or check again later.
 </p>
 
 </section>
+
+<section class="list-section">
+
+<div class="section-title">
+
+<div>
+
+<h2>
+Today's Market
+</h2>
+
+<div class="section-divider"></div>
+
+</div>
+
+<span>
+Live Prices
+</span>
+
+</div>
 
 <section
 id="productContainer"
 class="product-container">
 
-<!-- Product cards loaded by JavaScript -->
+<!-- Products loaded from Firebase -->
+
+</section>
 
 </section>
 
 <nav class="bottom-nav">
 
-<a class="active" href="index.html">
+<a
+href="index.html"
+class="active">
+
 🏠
-<span>Home</span>
+
+<span>
+Home
+</span>
+
 </a>
 
-<a href="favourite.html">
+<a
+href="favourite.html">
+
 🥬
-<span>Vegetables</span>
+
+<span>
+Vegetables
+</span>
+
 </a>
 
-<a href="info.html">
+<a
+href="info.html">
+
 ℹ️
-<span>Info</span>
+
+<span>
+Info
+</span>
+
 </a>
 
 </nav>
 
-<script type="module" src="js/app.js"></script>
+  <footer class="footer">
+
+<p>
+
+Made with ❤️ for Goa Farmers
+
+</p>
+
+<p>
+
+<strong>Goa Bazar</strong> • Daily Market Prices
+
+</p>
+
+</footer>
 
 </div>
 
+<script type="module" src="js/app.js"></script>
+
 </body>
+
 </html>
