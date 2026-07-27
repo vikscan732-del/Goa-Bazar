@@ -875,106 +875,143 @@ ol{
 
 }
 
-.product-price span{
 
-    display:block;
+/* ---------- PRODUCT CARD ---------- */
 
-    font-size:13px;
-
-    font-weight:500;
-
-    color:#777;
-
-    margin-top:4px;
-
+.product-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px;
+    background:#fff;
+    border-radius:22px;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    transition:all .25s ease;
 }
 
-/* ---------- CHANGE ---------- */
+.product-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 24px rgba(0,0,0,.12);
+}
+
+.product-card:active{
+    transform:scale(.98);
+}
+
+/* ---------- IMAGE ---------- */
+
+.product-image{
+    width:78px;
+    height:78px;
+    border-radius:18px;
+    overflow:hidden;
+    background:#f3f3f3;
+    flex-shrink:0;
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ---------- INFO ---------- */
+
+.product-info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+.product-name{
+    font-size:19px;
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:6px;
+}
+
+.product-category{
+    font-size:13px;
+    color:var(--text-light);
+    margin-bottom:8px;
+}
+
+.product-price{
+    margin-top:10px;
+    font-size:28px;
+    font-weight:700;
+    color:var(--primary);
+    line-height:1.2;
+}
+
+.product-price span{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+    color:var(--text-light);
+}
+
+/* ---------- PRICE CHANGE ---------- */
+
+.price-up,
+.price-down,
+.price-same{
+    margin-top:10px;
+    font-size:14px;
+    font-weight:700;
+    line-height:1.5;
+}
 
 .price-up{
-
-    margin-top:10px;
-
     color:#16a34a;
-
-    font-size:14px;
-
-    font-weight:700;
-
 }
 
 .price-down{
-
-    margin-top:10px;
-
     color:#dc2626;
-
-    font-size:14px;
-
-    font-weight:700;
-
 }
 
 .price-same{
-
-    margin-top:10px;
-
     color:#2563eb;
+}
 
-    font-size:14px;
-
-    font-weight:700;
-
+.price-up small,
+.price-down small,
+.price-same small{
+    display:block;
+    margin-top:3px;
+    font-size:12px;
+    font-weight:600;
 }
 
 /* ---------- RIGHT ---------- */
 
 .product-right{
-
     display:flex;
-
-    flex-direction:column;
-
     align-items:center;
-
     justify-content:center;
-
-    gap:10px;
-
+    margin-left:auto;
 }
 
 .arrow-circle{
-
     width:44px;
-
     height:44px;
-
     border-radius:50%;
-
     background:var(--primary-light);
-
     color:var(--primary);
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     font-size:22px;
-
     font-weight:700;
-
-    transition:.25s;
-
+    transition:all .25s ease;
 }
 
 .product-card:hover .arrow-circle{
-
     background:var(--primary);
-
     color:#fff;
-
+    transform:translateX(4px);
 }
 
 /* ---------- MOBILE ---------- */
