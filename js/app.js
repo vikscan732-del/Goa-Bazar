@@ -105,36 +105,47 @@ loadingBox.style.display="none";
 
 function renderProducts(products){
 
-productContainer.innerHTML="";
+productContainer.innerHTML = "";
 
-if(products.length===0){
+if(products.length === 0){
 
-emptyBox.style.display="block";
+emptyBox.style.display = "block";
 
 return;
 
 }
 
-emptyBox.style.display="none";
+emptyBox.style.display = "none";
 
 products.forEach(product=>{
 
-let priceClass = "price-flat";
-let changeIcon = "⚪";
+let statusClass = "price-same";
+let statusIcon = "🔵";
+let statusText = "No Change";
 
-if (Number(product.change) > 0) {
-  priceClass = "price-up";
-  changeIcon = "🟢";
-} else if (Number(product.change) < 0) {
-  priceClass = "price-down";
-  changeIcon = "🔴";
+const change = Number(product.change);
+
+if(change > 0){
+
+statusClass = "price-up";
+statusIcon = "🟢 ▲";
+statusText = "Price Increased";
+
 }
 
-const card=document.createElement("div");
+else if(change < 0){
 
-card.className="product-card";
+statusClass = "price-down";
+statusIcon = "🔴 ▼";
+statusText = "Price Decreased";
 
-card.innerHTML=`
+}
+
+const card = document.createElement("div");
+
+card.className = "product-card fade-up";
+
+card.innerHTML = `
 
 <div class="product-image">
 
@@ -148,7 +159,11 @@ onerror="this.src='assets/no-image.png'">
 
 <div class="product-info">
 
-<h3>${product.name}</h3>
+<h3 class="product-name">
+
+${product.name}
+
+</h3>
 
 <p class="product-category">
 
@@ -156,28 +171,38 @@ ${product.category}
 
 </p>
 
-<div class="price">
+<div class="${statusClass}">
+
+${statusIcon}
+₹${Math.abs(change)}
+
+<br>
+
+<small>
+
+${statusText}
+
+</small>
+
+</div>
+
+<div class="product-price">
 
 ₹${Number(product.price).toFixed(2)}
 
-<span>/kg</span>
-
-</div>
-
-<div class="${priceClass}">
-
-${changeIcon}
-₹${product.change}
+<span>per kg</span>
 
 </div>
 
 </div>
 
-<div class="arrow-box">
+<div class="product-right">
 
-<div class="heart-circle">❤️</div>
+<div class="arrow-circle">
 
-<div class="arrow-circle">➜</div>
+➜
+
+</div>
 
 </div>
 
@@ -185,41 +210,8 @@ ${changeIcon}
 
 card.addEventListener("click",()=>{
 
-window.location.href=
+window.location.href =
 `product.html?id=${product.id}`;
-
-});
-
-  const heart = card.querySelector(".heart-circle");
-
-heart.addEventListener("click",(e)=>{
-
-e.stopPropagation();
-
-let favourites =
-JSON.parse(localStorage.getItem("favourites")) || [];
-
-const index =
-favourites.findIndex(p => p.id === product.id);
-
-if(index === -1){
-
-    favourites.push(product);
-
-    heart.textContent = "❤️";
-
-}else{
-
-    favourites.splice(index,1);
-
-    heart.textContent = "🤍";
-
-}
-
-localStorage.setItem(
-"favourites",
-JSON.stringify(favourites)
-);
 
 });
 
@@ -228,41 +220,31 @@ productContainer.appendChild(card);
 });
 
 }
+
 // ===============================
 // Search Products
 // ===============================
 
-searchInput.addEventListener("input",(e)=>{
+searchInput.addEventListener("input", (e) => {
 
-const keyword=e.target.value
+const keyword = e.target.value
 .trim()
 .toLowerCase();
 
-if(keyword===""){
+if(keyword === ""){
 
 renderProducts(allProducts);
-
 return;
 
 }
 
-const filtered=allProducts.filter(product=>{
+const filtered = allProducts.filter(product =>
 
-return(
+product.name.toLowerCase().includes(keyword) ||
 
-product.name
-.toLowerCase()
-.includes(keyword)
-
-||
-
-product.category
-.toLowerCase()
-.includes(keyword)
+product.category.toLowerCase().includes(keyword)
 
 );
-
-});
 
 renderProducts(filtered);
 
@@ -272,30 +254,28 @@ renderProducts(filtered);
 // Refresh Products
 // ===============================
 
-function refreshProducts(){
+async function refreshProducts(){
 
-loadProducts();
+updateTime.textContent = "Refreshing...";
+
+productContainer.classList.add("fade");
+
+await loadProducts();
+
+productContainer.classList.remove("fade");
 
 }
 
 // Refresh when app becomes active
-window.addEventListener("focus",()=>{
-
-refreshProducts();
-
-});
+window.addEventListener("focus", refreshProducts);
 
 // Refresh when internet returns
-window.addEventListener("online",()=>{
+window.addEventListener("online", refreshProducts);
 
-refreshProducts();
+// Offline message
+window.addEventListener("offline", () => {
 
-});
-
-// Offline Message
-window.addEventListener("offline",()=>{
-
-updateTime.textContent="Offline Mode";
+updateTime.textContent = "Offline Mode";
 
 });
 
@@ -303,19 +283,19 @@ updateTime.textContent="Offline Mode";
 // Pull To Refresh
 // ===============================
 
-let startY=0;
+let startY = 0;
 
-window.addEventListener("touchstart",(e)=>{
+window.addEventListener("touchstart", (e) => {
 
-startY=e.touches[0].clientY;
+startY = e.touches[0].clientY;
 
 });
 
-window.addEventListener("touchend",(e)=>{
+window.addEventListener("touchend", (e) => {
 
-const endY=e.changedTouches[0].clientY;
+const endY = e.changedTouches[0].clientY;
 
-if(endY-startY>120){
+if(endY - startY > 120){
 
 refreshProducts();
 
@@ -328,6 +308,3 @@ refreshProducts();
 // ===============================
 
 loadProducts();
-
-
-
