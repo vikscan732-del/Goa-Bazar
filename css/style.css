@@ -4077,3 +4077,31 @@ body{
    GOA BAZAR PREMIUM UI
    STYLE.CSS COMPLETED
 ===================================================== */
+
+.price-change{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    margin-top:8px;
+    padding:4px 10px;
+    background:#e8f7ea;
+    color:#198754;
+    border-radius:999px;
+    font-size:15px;
+    font-weight:700;
+}
+
+.price-change.up{
+    color:#198754;
+    background:#e8f7ea;
+}
+
+.price-change.down{
+    color:#dc3545;
+    background:#fdeaea;
+}
+
+.price-change.same{
+    color:#666;
+    background:#f2f2f2;
+}
