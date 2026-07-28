@@ -8,6 +8,7 @@ const BASE = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/
 
 const weatherURL = BASE + "weather.json";
 const fuelURL = BASE + "fuel.json";
+const fuelHistoryURL = BASE + "fuel-history.json";
 const lpgURL = BASE + "lpg.json";
 const goldURL = BASE + "gold_silver.json";
 
@@ -128,26 +129,77 @@ ${getIcon(day.weather_code)}
 
 async function loadFuel(){
 
-    const res = await fetch(fuelURL);
-    const data = await res.json();
+    const [fuelRes, historyRes] = await Promise.all([
+        fetch(fuelURL),
+        fetch(fuelHistoryURL)
+    ]);
 
-    document.getElementById("petrolPanjim").textContent =
-        "₹" + data.petrol.Panjim;
+    const data = await fuelRes.json();
+    const history = await historyRes.json();
 
-    document.getElementById("petrolMargao").textContent =
-        "₹" + data.petrol.Margao;
+    const today = history[history.length-1];
+    const yesterday =
+        history.length>1
+        ? history[history.length-2]
+        : today;
 
-    document.getElementById("dieselPanjim").textContent =
-        "₹" + data.diesel.Panjim;
+    function format(price,diff){
 
-    document.getElementById("dieselMargao").textContent =
-        "₹" + data.diesel.Margao;
+        const arrow =
+            diff>0 ? "▲" :
+            diff<0 ? "▼" : "➜";
 
-    document.getElementById("cngPrice").textContent =
-        "₹" + data.cng.Panjim;
+        const sign =
+            diff>0 ? "+" : "";
 
-    document.getElementById("autogasPrice").textContent =
-        "₹" + data.autogas.Panjim;
+        return `
+        ₹${price}
+        <br>
+        <span class="${
+            diff>0?"up":
+            diff<0?"down":"same"
+        }">
+        ${arrow} ${sign}₹${Math.abs(diff).toFixed(2)}
+        </span>
+        `;
+
+    }
+
+    document.getElementById("petrolPanjim").innerHTML =
+        format(
+            data.petrol.Panjim,
+            today.petrol.Panjim-yesterday.petrol.Panjim
+        );
+
+    document.getElementById("petrolMargao").innerHTML =
+        format(
+            data.petrol.Margao,
+            today.petrol.Margao-yesterday.petrol.Margao
+        );
+
+    document.getElementById("dieselPanjim").innerHTML =
+        format(
+            data.diesel.Panjim,
+            today.diesel.Panjim-yesterday.diesel.Panjim
+        );
+
+    document.getElementById("dieselMargao").innerHTML =
+        format(
+            data.diesel.Margao,
+            today.diesel.Margao-yesterday.diesel.Margao
+        );
+
+    document.getElementById("cngPrice").innerHTML =
+        format(
+            data.cng.Panjim,
+            today.cng.Panjim-yesterday.cng.Panjim
+        );
+
+    document.getElementById("autogasPrice").innerHTML =
+        format(
+            data.autogas.Panjim,
+            today.autogas.Panjim-yesterday.autogas.Panjim
+        );
 
 }
 
