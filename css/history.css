@@ -109,3 +109,74 @@ h1{
 }
 
 }
+
+.summary-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.summary-price h2{
+    margin:8px 0;
+    font-size:32px;
+    font-weight:700;
+}
+
+.summary-price .label{
+    color:#666;
+    font-size:14px;
+}
+
+.summary-price small{
+    color:#888;
+}
+
+.summary-trend{
+    text-align:right;
+}
+
+.trend-icon{
+    font-size:34px;
+    margin-bottom:6px;
+}
+
+.summary-trend h3{
+    margin:0;
+    font-size:20px;
+}
+
+.summary-trend p{
+    margin-top:8px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.trend-up{
+    color:#16a34a;
+}
+
+.trend-down{
+    color:#dc2626;
+}
+
+.trend-same{
+    color:#2563eb;
+}
+
+@media(max-width:700px){
+    .summary-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .summary-trend{
+        text-align:left;
+    }
+}
