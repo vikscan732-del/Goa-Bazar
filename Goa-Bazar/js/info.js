@@ -41,6 +41,50 @@ async function loadAll(){
 
 // ================= WEATHER =================
 
+function getWeatherIcon(code){
+
+    if(code===0)
+        return "☀️";
+
+    if(code===1 || code===2)
+        return "🌤️";
+
+    if(code===3)
+        return "☁️";
+
+    if(code===45 || code===48)
+        return "🌫️";
+
+    if(code>=51 && code<=67)
+        return "🌦️";
+
+    if(code>=71 && code<=77)
+        return "❄️";
+
+    if(code>=80 && code<=82)
+        return "🌧️";
+
+    if(code>=95)
+        return "⛈️";
+
+    return "🌤️";
+}
+
+function dayName(date){
+
+    const days=[
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+    return days[new Date(date).getDay()];
+}
+
 async function loadWeather(){
 
     const res=await fetch(weatherURL);
@@ -60,11 +104,15 @@ async function loadWeather(){
 
         <div class="weatherCard">
 
-            <h3>${day.date}</h3>
+            <div style="font-size:42px">
+                ${getWeatherIcon(day.weather_code)}
+            </div>
 
-            <h1>${day.max}°</h1>
+            <h3>${dayName(day.date)}</h3>
 
-            <p>${day.min}°</p>
+            <h2>${day.max}°C</h2>
+
+            <p>Min ${day.min}°C</p>
 
             <small>${day.weather}</small>
 
