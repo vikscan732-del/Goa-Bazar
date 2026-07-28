@@ -9,68 +9,142 @@
 
 <link rel="stylesheet" href="css/history.css">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
+<header class="topbar">
+
+<button id="backBtn">←</button>
+
+<h1 id="pageTitle">Price History</h1>
+
+</header>
+
 <div class="container">
 
-<h1 id="pageTitle">Loading...</h1>
+<!-- Summary -->
 
-<button id="backBtn">
-⬅ Back
-</button>
+<div class="summary-card">
+
+<div class="summary-left">
+<div class="small">Today's Price</div>
+<h2 id="todayPrice">₹0.00</h2>
+<div id="updatedDate">Updated: --</div>
+</div>
+
+<div class="summary-right">
+
+<div id="trendIcon" class="trendIcon">🟢</div>
+
+<div id="trendTitle">No Change</div>
+
+<div id="trendValue">₹0.00</div>
+
+</div>
+
+</div>
+
+<!-- Trend -->
+
+<h2 class="sectionTitle">Price Trend</h2>
 
 <div class="chartCard">
 
-<div class="summary-card">
-  <div class="summary-price">
-    <span class="label">Today's Price</span>
-    <h2 id="todayPrice">₹0.00</h2>
-    <small id="updatedDate">Updated: --</small>
-  </div>
+<svg id="trendChart"
+viewBox="0 0 360 220"
+preserveAspectRatio="none">
 
-  <div class="summary-trend">
-    <div id="trendIcon" class="trend-icon">🟢 ⬆️</div>
-    <h3 id="trendTitle">Price Increased</h3>
-    <p id="trendValue">+₹0.00 (0.00%)</p>
-  </div>
+<defs>
+
+<linearGradient id="fillGradient"
+x1="0"
+y1="0"
+x2="0"
+y2="1">
+
+<stop offset="0%"
+stop-color="#1b8f2a"
+stop-opacity="0.35"/>
+
+<stop offset="100%"
+stop-color="#1b8f2a"
+stop-opacity="0.05"/>
+
+</linearGradient>
+
+</defs>
+
+<!-- Grid -->
+<g id="gridLines"></g>
+
+<!-- Filled Area -->
+<path
+id="areaPath"
+fill="url(#fillGradient)">
+</path>
+
+<!-- Trend Line -->
+<path
+id="linePath"
+fill="none"
+stroke="#198d24"
+stroke-width="3.5"
+stroke-linecap="round"
+stroke-linejoin="round">
+</path>
+
+<!-- Points -->
+<g id="pointGroup"></g>
+
+<!-- X Labels -->
+<g id="xLabels"></g>
+
+<!-- Y Labels -->
+<g id="yLabels"></g>
+
+</svg>
+
 </div>
 
-</div>
+<!-- Statistics -->
+
+<h2 class="sectionTitle">Statistics</h2>
 
 <div class="statsGrid">
 
-<div class="stat">
+<div class="statCard">
 <div class="label">Today</div>
-<div id="todayPriceStat">--</div>
+<div id="todayPriceStat">₹0.00</div>
 </div>
 
-<div class="stat">
+<div class="statCard">
 <div class="label">Yesterday</div>
-<div id="yesterdayPrice">--</div>
+<div id="yesterdayPrice">₹0.00</div>
 </div>
 
-<div class="stat">
+<div class="statCard">
 <div class="label">Highest</div>
-<div id="highestPrice">--</div>
+<div id="highestPrice">₹0.00</div>
 </div>
 
-<div class="stat">
+<div class="statCard">
 <div class="label">Lowest</div>
-<div id="lowestPrice">--</div>
+<div id="lowestPrice">₹0.00</div>
 </div>
 
-<div class="stat">
+<div class="statCard">
 <div class="label">Average</div>
-<div id="averagePrice">--</div>
+<div id="averagePrice">₹0.00</div>
 </div>
 
 </div>
 
-<table>
+<!-- History -->
+
+<h2 class="sectionTitle">Price History</h2>
+
+<table class="historyTable">
 
 <thead>
 
