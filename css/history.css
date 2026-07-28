@@ -1,47 +1,111 @@
 body{
     margin:0;
+    padding:0;
     font-family:Arial,sans-serif;
-    background:#f4f6fb;
+    background:#f3f5f9;
 }
 
 .container{
-    max-width:700px;
+    max-width:900px;
     margin:auto;
-    padding:20px;
+    padding:16px;
 }
 
 h1{
     text-align:center;
     color:#222;
+    margin-bottom:15px;
 }
 
-.card{
+#backBtn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+    margin-bottom:18px;
+}
+
+.chartCard{
     background:#fff;
-    margin:15px 0;
+    border-radius:14px;
     padding:15px;
-    border-radius:15px;
-    box-shadow:0 4px 12px rgba(0,0,0,.1);
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+    margin-bottom:18px;
 }
 
-.date{
+#historyChart{
+    width:100%;
+    height:300px;
+}
+
+.statsGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:#fff;
+    border-radius:12px;
+    padding:15px;
+    text-align:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.label{
     font-size:14px;
     color:#666;
-    margin-bottom:8px;
+    margin-bottom:6px;
 }
 
-.price{
-    font-size:28px;
+.stat div:last-child{
+    font-size:22px;
     font-weight:bold;
     color:#1976d2;
 }
 
-button{
+table{
     width:100%;
-    padding:15px;
-    border:none;
+    border-collapse:collapse;
+    background:#fff;
     border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+th{
     background:#1976d2;
     color:#fff;
-    font-size:18px;
-    cursor:pointer;
+    padding:12px;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+@media(max-width:600px){
+
+.statsGrid{
+    grid-template-columns:1fr;
+}
+
+#historyChart{
+    height:220px;
+}
+
+h1{
+    font-size:22px;
+}
+
 }
