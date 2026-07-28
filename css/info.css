@@ -1,4 +1,157 @@
-/* Weather Card */
+/* ===========================
+   GOA BAZAR INFO PAGE
+=========================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+background:#f4f7fb;
+color:#222;
+padding:15px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+/* Header */
+
+.topHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#fff;
+padding:18px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+margin-bottom:15px;
+}
+
+.logoArea{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.logoIcon{
+font-size:40px;
+color:#27ae60;
+}
+
+.logoArea h1{
+font-size:24px;
+font-weight:700;
+}
+
+.logoArea p{
+font-size:13px;
+color:#666;
+margin-top:3px;
+}
+
+#refreshBtn{
+width:48px;
+height:48px;
+border:none;
+border-radius:50%;
+background:#2196f3;
+color:#fff;
+font-size:20px;
+cursor:pointer;
+transition:.3s;
+}
+
+#refreshBtn:hover{
+transform:rotate(180deg);
+background:#1976d2;
+}
+
+.lastUpdated{
+text-align:center;
+font-size:14px;
+font-weight:bold;
+margin-bottom:18px;
+color:#666;
+}
+
+/* Cards */
+
+.card{
+background:#fff;
+padding:18px;
+margin-bottom:18px;
+border-radius:20px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.card h2{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:21px;
+margin-bottom:18px;
+}
+
+.card h2 i{
+color:#2196f3;
+font-size:24px;
+}
+
+.clickable{
+cursor:pointer;
+}
+
+.row{
+display:flex;
+gap:15px;
+}
+
+.row div{
+flex:1;
+background:#f7f9fc;
+padding:15px;
+border-radius:15px;
+text-align:center;
+}
+
+.row h3{
+font-size:16px;
+margin-bottom:8px;
+}
+
+.row p{
+font-size:28px;
+font-weight:bold;
+}
+
+/* Weather */
+
+.weatherCards{
+display:flex;
+gap:12px;
+overflow-x:auto;
+padding-bottom:5px;
+scrollbar-width:none;
+}
+
+.weatherCards::-webkit-scrollbar{
+display:none;
+}
 
 .weatherCard{
 min-width:130px;
@@ -7,7 +160,8 @@ border-radius:18px;
 padding:16px;
 text-align:center;
 box-shadow:0 5px 12px rgba(0,0,0,.08);
-transition:.25s;
+transition:.3s;
+flex-shrink:0;
 }
 
 .weatherCard:hover{
@@ -15,21 +169,357 @@ transform:translateY(-4px);
 }
 
 .weatherCard h2{
+font-size:28px;
 margin:8px 0;
-font-size:26px;
 }
 
 .weatherCard h3{
-font-size:17px;
-margin-top:6px;
+font-size:16px;
+margin-bottom:6px;
 }
 
 .weatherCard p{
 font-size:15px;
+margin:6px 0;
 font-weight:600;
-margin:5px 0;
 }
 
 .weatherCard small{
 color:#666;
 }
+
+/* Gold */
+
+.goldGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.goldGrid div{
+background:#fff8e1;
+border-radius:15px;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+font-size:17px;
+}
+
+.goldGrid span{
+color:#d68910;
+}
+
+/* Single Price */
+
+.card>p{
+font-size:30px;
+font-weight:bold;
+color:#222;
+margin-top:10px;
+}
+
+/* Price Status */
+
+.up{
+color:#16a34a;
+font-weight:bold;
+}
+
+.down{
+color:#e53935;
+font-weight:bold;
+}
+
+.same{
+color:#2196f3;
+font-weight:bold;
+}
+
+/* Ripple Effect */
+
+.clickable:active{
+transform:scale(.98);
+}
+
+/* Mobile */
+
+@media(max-width:600px){
+
+body{
+padding:12px;
+}
+
+.topHeader{
+padding:15px;
+}
+
+.logoIcon{
+font-size:34px;
+}
+
+.logoArea h1{
+font-size:22px;
+}
+
+.card{
+padding:16px;
+}
+
+.card h2{
+font-size:19px;
+}
+
+.row{
+flex-direction:column;
+}
+
+.goldGrid{
+grid-template-columns:1fr;
+}
+
+.weatherCard{
+min-width:120px;
+}
+
+}
+
+/* Animation */
+
+.card{
+animation:fadeUp .5s ease;
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+// ==============================
+// GOA BAZAR INFO
+// ==============================
+
+// CHANGE THIS TO YOUR REPOSITORY
+
+const BASE =
+"https://raw.githubusercontent.com/vikscan732-del/Goa-farmer-help/main/data/";
+
+const weatherURL = BASE + "weather.json";
+const fuelURL = BASE + "fuel.json";
+const lpgURL = BASE + "lpg.json";
+const goldURL = BASE + "gold_silver.json";
+
+const weatherBox = document.getElementById("weatherCards");
+const lastUpdated = document.getElementById("lastUpdated");
+
+document.getElementById("refreshBtn").addEventListener("click", loadAll);
+
+loadAll();
+
+async function loadAll(){
+
+    try{
+
+        await Promise.all([
+            loadWeather(),
+            loadFuel(),
+            loadLPG(),
+            loadGold()
+        ]);
+
+    }catch(err){
+
+        console.error(err);
+
+        lastUpdated.innerHTML="Unable to load data";
+
+    }
+
+}
+
+// ===============================
+// WEATHER ICON
+// ===============================
+
+function getIcon(code){
+
+    if(code===0) return "☀️";
+
+    if(code===1 || code===2) return "🌤️";
+
+    if(code===3) return "☁️";
+
+    if(code===45 || code===48) return "🌫️";
+
+    if(code>=51 && code<=67) return "🌦️";
+
+    if(code>=71 && code<=77) return "❄️";
+
+    if(code>=80 && code<=82) return "🌧️";
+
+    if(code>=95) return "⛈️";
+
+    return "🌤️";
+
+}
+
+function dayName(date){
+
+    return new Date(date).toLocaleDateString(
+        "en-IN",
+        {weekday:"long"}
+    );
+
+}
+
+// ===============================
+// WEATHER
+// ===============================
+
+async function loadWeather(){
+
+    const res = await fetch(weatherURL);
+
+    const data = await res.json();
+
+    lastUpdated.innerHTML =
+    "Updated : " + data.updated;
+
+    weatherBox.innerHTML = "";
+
+    data.forecast.forEach(day=>{
+
+        weatherBox.innerHTML += `
+
+<div class="weatherCard">
+
+<div style="font-size:42px">
+${getIcon(day.weather_code)}
+</div>
+
+<h3>${dayName(day.date)}</h3>
+
+<h2>${day.max}°</h2>
+
+<p>Min ${day.min}°</p>
+
+<small>${day.weather}</small>
+
+</div>
+
+`;
+
+    });
+
+      }
+
+      // ===============================
+// FUEL
+// ===============================
+
+async function loadFuel(){
+
+    const res = await fetch(fuelURL);
+    const data = await res.json();
+
+    document.getElementById("petrolPanjim").textContent =
+        "₹" + data.petrol.Panjim;
+
+    document.getElementById("petrolMargao").textContent =
+        "₹" + data.petrol.Margao;
+
+    document.getElementById("dieselPanjim").textContent =
+        "₹" + data.diesel.Panjim;
+
+    document.getElementById("dieselMargao").textContent =
+        "₹" + data.diesel.Margao;
+
+    document.getElementById("cngPrice").textContent =
+        "₹" + data.cng.Panjim;
+
+    document.getElementById("autogasPrice").textContent =
+        "₹" + data.autogas.Panjim;
+
+}
+
+// ===============================
+// LPG
+// ===============================
+
+async function loadLPG(){
+
+    const res = await fetch(lpgURL);
+    const data = await res.json();
+
+    if(data.price){
+
+        document.getElementById("lpgPrice").textContent =
+            "₹" + data.price;
+
+    }else if(data.panjim){
+
+        document.getElementById("lpgPrice").textContent =
+            "₹" + data.panjim;
+
+    }
+
+}
+
+// ===============================
+// GOLD & SILVER
+// ===============================
+
+async function loadGold(){
+
+    const res = await fetch(goldURL);
+    const data = await res.json();
+
+    document.getElementById("gold24").textContent =
+        "₹" + data.gold_24k;
+
+    document.getElementById("gold22").textContent =
+        "₹" + data.gold_22k;
+
+    document.getElementById("gold21").textContent =
+        "₹" + data.gold_21k;
+
+    document.getElementById("gold20").textContent =
+        "₹" + data.gold_20k;
+
+    document.getElementById("gold18").textContent =
+        "₹" + data.gold_18k;
+
+    document.getElementById("silverPrice").textContent =
+        "₹" + data.silver;
+
+}
+
+// ===============================
+// HISTORY PAGE LINKS
+// ===============================
+
+document.getElementById("petrolCard").onclick = () => {
+    location.href = "history.html?type=petrol";
+};
+
+document.getElementById("dieselCard").onclick = () => {
+    location.href = "history.html?type=diesel";
+};
+
+// ===============================
+// AUTO REFRESH EVERY 5 MINUTES
+// ===============================
+
+setInterval(loadAll,300000);
+
+      
