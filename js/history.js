@@ -87,7 +87,7 @@ async function loadHistory() {
 
         });
 
-        drawChart(labels, values);
+        // drawChart(labels, values);
         fillStats(values, labels);
         fillTable(labels, values);
 
