@@ -4,7 +4,7 @@
 
 // CHANGE THIS TO YOUR BACKEND REPOSITORY
 
-const BASE = "https://raw.githubusercontent.com/vikscan732-del/Goa-farmer-help/main/data/";
+const BASE = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
 
 const weatherURL = BASE + "weather.json";
 const fuelURL = BASE + "fuel.json";
