@@ -1,0 +1,35 @@
+/* Weather Card */
+
+.weatherCard{
+min-width:130px;
+background:#eef6ff;
+border-radius:18px;
+padding:16px;
+text-align:center;
+box-shadow:0 5px 12px rgba(0,0,0,.08);
+transition:.25s;
+}
+
+.weatherCard:hover{
+transform:translateY(-4px);
+}
+
+.weatherCard h2{
+margin:8px 0;
+font-size:26px;
+}
+
+.weatherCard h3{
+font-size:17px;
+margin-top:6px;
+}
+
+.weatherCard p{
+font-size:15px;
+font-weight:600;
+margin:5px 0;
+}
+
+.weatherCard small{
+color:#666;
+}
