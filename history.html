@@ -25,7 +25,20 @@
 
 <div class="chartCard">
 
-<canvas id="historyChart"></canvas>
+<div class="summary-card">
+  <div class="summary-price">
+    <span class="label">Today's Price</span>
+    <h2 id="todayPrice">₹0.00</h2>
+    <small id="updatedDate">Updated: --</small>
+  </div>
+
+  <div class="summary-trend">
+    <div id="trendIcon" class="trend-icon">🟢 ⬆️</div>
+    <h3 id="trendTitle">Price Increased</h3>
+    <p id="trendValue">+₹0.00 (0.00%)</p>
+  </div>
+</div>
+  <canvas id="historyChart"></canvas>
 
 </div>
 
@@ -33,7 +46,7 @@
 
 <div class="stat">
 <div class="label">Today</div>
-<div id="todayPrice">--</div>
+<div id="todayPriceStat">--</div>
 </div>
 
 <div class="stat">
