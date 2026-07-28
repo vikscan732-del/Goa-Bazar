@@ -164,6 +164,7 @@ trendValue.textContent =
 `${diff >= 0 ? "+" : ""}₹${diff.toFixed(2)} (${percent.toFixed(2)}%)`;
 
     document.getElementById("todayPrice").textContent = "₹"+today.toFixed(2);
+document.getElementById("todayPriceStat").textContent = "₹"+today.toFixed(2);
     document.getElementById("yesterdayPrice").textContent = "₹"+yesterday.toFixed(2);
     document.getElementById("highestPrice").textContent = "₹"+highest.toFixed(2);
     document.getElementById("lowestPrice").textContent = "₹"+lowest.toFixed(2);
