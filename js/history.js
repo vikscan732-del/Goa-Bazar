@@ -3,7 +3,7 @@
 // ==============================
 
 const BASE =
-"https://raw.githubusercontent.com/vikscan732-del/Goa-farmer-help/main/data/";
+"https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
 
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type") || "petrol";
