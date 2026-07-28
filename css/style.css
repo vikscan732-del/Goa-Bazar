@@ -4078,30 +4078,30 @@ body{
    STYLE.CSS COMPLETED
 ===================================================== */
 
-.price-change{
+.up,
+.down,
+.same{
     display:inline-flex;
     align-items:center;
     gap:4px;
-    margin-top:8px;
-    padding:4px 10px;
-    background:#e8f7ea;
-    color:#198754;
-    border-radius:999px;
-    font-size:15px;
-    font-weight:700;
+    margin-top:6px;
+    padding:2px 8px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:600;
 }
 
-.price-change.up{
-    color:#198754;
+.up{
+    color:#16a34a;
     background:#e8f7ea;
 }
 
-.price-change.down{
-    color:#dc3545;
+.down{
+    color:#dc2626;
     background:#fdeaea;
 }
 
-.price-change.same{
+.same{
     color:#666;
     background:#f2f2f2;
 }
