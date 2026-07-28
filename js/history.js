@@ -86,7 +86,7 @@ async function loadHistory(){
     });
 
     drawChart(labels, values);
-    fillStats(values);
+    fillStats(values, labels);
     fillTable(labels, values);
 }
 
@@ -122,7 +122,7 @@ function drawChart(labels, values){
 // STATISTICS
 // ==============================
 
-function fillStats(values){
+function fillStats(values, labels){
 
     if(values.length===0) return;
 
@@ -131,6 +131,37 @@ function fillStats(values){
     const highest = Math.max(...values);
     const lowest = Math.min(...values);
     const average = values.reduce((a,b)=>a+b,0)/values.length;
+    const diff = today - yesterday;
+const percent = yesterday ? (diff / yesterday) * 100 : 0;
+
+document.getElementById("updatedDate").textContent =
+"Updated: " + labels[labels.length - 1];
+
+const trendIcon = document.getElementById("trendIcon");
+const trendTitle = document.getElementById("trendTitle");
+const trendValue = document.getElementById("trendValue");
+
+if(diff > 0){
+    trendIcon.textContent = "🟢 ⬆️";
+    trendTitle.textContent = "Price Increased";
+    trendTitle.className = "trend-up";
+    trendValue.className = "trend-up";
+}
+else if(diff < 0){
+    trendIcon.textContent = "🔴 ⬇️";
+    trendTitle.textContent = "Price Decreased";
+    trendTitle.className = "trend-down";
+    trendValue.className = "trend-down";
+}
+else{
+    trendIcon.textContent = "🔵 ➡️";
+    trendTitle.textContent = "No Price Change";
+    trendTitle.className = "trend-same";
+    trendValue.className = "trend-same";
+}
+
+trendValue.textContent =
+`${diff >= 0 ? "+" : ""}₹${diff.toFixed(2)} (${percent.toFixed(2)}%)`;
 
     document.getElementById("todayPrice").textContent = "₹"+today.toFixed(2);
     document.getElementById("yesterdayPrice").textContent = "₹"+yesterday.toFixed(2);
