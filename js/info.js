@@ -69,6 +69,22 @@ function dayName(date){
 
 }
 
+
+function getWeatherText(code){
+
+    if(code===0) return "Clear Sky";
+    if(code===1 || code===2) return "Partly Cloudy";
+    if(code===3) return "Cloudy";
+    if(code===45 || code===48) return "Fog";
+    if(code>=51 && code<=67) return "Rain";
+    if(code>=71 && code<=77) return "Snow";
+    if(code>=80 && code<=82) return "Showers";
+    if(code>=95) return "Thunderstorm";
+
+    return "Unknown";
+
+}
+
 async function loadWeather(){
 
     const res = await fetch(weatherURL);
@@ -96,7 +112,7 @@ ${getIcon(day.weather_code)}
 
 <p>Min ${day.min}°C</p>
 
-<small>${day.weather}</small>
+<small>${getWeatherText(day.weather_code)}</small>
 
 </div>
 
