@@ -521,5 +521,28 @@ document.getElementById("dieselCard").onclick = () => {
 // ===============================
 
 setInterval(loadAll,300000);
+       .up{
+    display:inline-block;
+    margin-top:6px;
+    color:#16a34a;
+    font-weight:700;
+    font-size:15px;
+}
+
+.down{
+    display:inline-block;
+    margin-top:6px;
+    color:#dc2626;
+    font-weight:700;
+    font-size:15px;
+}
+
+.same{
+    display:inline-block;
+    margin-top:6px;
+    color:#666;
+    font-weight:700;
+    font-size:15px;
+}
 
       
