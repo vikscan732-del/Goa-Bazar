@@ -2,17 +2,14 @@
 // HISTORY PAGE
 // ==============================
 
-const BASE =
-"https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
+const BASE = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
 
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type") || "petrol";
 
-// Select correct history file
 let historyURL;
 
-switch(type){
-
+switch (type) {
     case "gold":
     case "silver":
         historyURL = BASE + "gold_silver-history.json";
@@ -26,162 +23,191 @@ switch(type){
         historyURL = BASE + "fuel-history.json";
 }
 
-const title = document.getElementById("pageTitle");
-title.innerHTML =
-type.charAt(0).toUpperCase() + type.slice(1) + " History";
+let chart = null;
 
-document.getElementById("backBtn").onclick = () => history.back();
+window.addEventListener("DOMContentLoaded", () => {
 
-let chart;
+    document.getElementById("pageTitle").textContent =
+        type.charAt(0).toUpperCase() + type.slice(1) + " History";
 
-loadHistory();
+    document.getElementById("backBtn").onclick = () => history.back();
 
-async function loadHistory(){
+    loadHistory();
 
-    const res = await fetch(historyURL);
-    const data = await res.json();
+});
 
-    const labels = [];
-    const values = [];
+async function loadHistory() {
 
-    data.forEach(item=>{
+    try {
 
-        labels.push(item.updated);
+        const res = await fetch(historyURL, { cache: "no-store" });
+        const data = await res.json();
 
-        let value = 0;
+        const labels = [];
+        const values = [];
 
-        switch(type){
+        data.forEach(item => {
 
-            case "petrol":
-                value = item.petrol?.Panjim ?? 0;
-                break;
+            labels.push(item.updated);
 
-            case "diesel":
-                value = item.diesel?.Panjim ?? 0;
-                break;
+            let value = 0;
 
-            case "cng":
-                value = item.cng?.Panjim ?? 0;
-                break;
+            switch (type) {
 
-            case "autogas":
-                value = item.autogas?.Panjim ?? 0;
-                break;
+                case "petrol":
+                    value = item.petrol?.Panjim ?? 0;
+                    break;
 
-            case "lpg":
-                value = item.panjim ?? item.average ?? 0;
-                break;
+                case "diesel":
+                    value = item.diesel?.Panjim ?? 0;
+                    break;
 
-            case "gold":
-                value = item.gold_24k ?? 0;
-                break;
+                case "cng":
+                    value = item.cng?.Panjim ?? 0;
+                    break;
 
-            case "silver":
-                value = item.silver ?? 0;
-                break;
-        }
+                case "autogas":
+                    value = item.autogas?.Panjim ?? 0;
+                    break;
 
-        values.push(Number(value));
+                case "lpg":
+                    value = item.panjim ?? item.average ?? 0;
+                    break;
 
-    });
+                case "gold":
+                    value = item.gold_24k ?? 0;
+                    break;
 
-    drawChart(labels, values);
-    fillStats(values, labels);
-    fillTable(labels, values);
+                case "silver":
+                    value = item.silver ?? 0;
+                    break;
+            }
+
+            values.push(Number(value));
+
+        });
+
+        drawChart(labels, values);
+        fillStats(values, labels);
+        fillTable(labels, values);
+
+    } catch (e) {
+        console.error(e);
+    }
+
 }
 
-function drawChart(labels, values){
+function drawChart(labels, values) {
 
-    if(chart) chart.destroy();
+    if (chart) {
+        chart.destroy();
+        chart = null;
+    }
 
-    chart = new Chart(document.getElementById("historyChart"),{
+    const canvas = document.getElementById("historyChart");
 
-        type:"line",
+    if (!canvas) return;
 
-        data:{
-            labels:labels,
-            datasets:[{
-                label:type,
-                data:values,
-                borderWidth:3,
-                tension:.35,
-                fill:false
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    chart = new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+            labels,
+            datasets: [{
+                label: type.toUpperCase(),
+                data: values,
+                borderWidth: 3,
+                tension: 0.35,
+                fill: false
             }]
         },
 
-        options:{
-            responsive:true,
-            maintainAspectRatio:false
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+            animation: false,
+
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+
         }
 
     });
 
 }
 
-// ==============================
-// STATISTICS
-// ==============================
+function fillStats(values, labels) {
 
-function fillStats(values, labels){
+    if (!values.length) return;
 
-    if(values.length===0) return;
+    const today = values.at(-1);
+    const yesterday = values.length > 1 ? values.at(-2) : today;
 
-    const today = values[values.length-1];
-    const yesterday = values.length>1 ? values[values.length-2] : today;
     const highest = Math.max(...values);
     const lowest = Math.min(...values);
-    const average = values.reduce((a,b)=>a+b,0)/values.length;
+    const average = values.reduce((a, b) => a + b, 0) / values.length;
+
     const diff = today - yesterday;
-const percent = yesterday ? (diff / yesterday) * 100 : 0;
+    const percent = yesterday ? (diff / yesterday) * 100 : 0;
 
-document.getElementById("updatedDate").textContent =
-"Updated: " + labels[labels.length - 1];
+    document.getElementById("updatedDate").textContent =
+        "Updated: " + labels.at(-1);
 
-const trendIcon = document.getElementById("trendIcon");
-const trendTitle = document.getElementById("trendTitle");
-const trendValue = document.getElementById("trendValue");
+    const trendIcon = document.getElementById("trendIcon");
+    const trendTitle = document.getElementById("trendTitle");
+    const trendValue = document.getElementById("trendValue");
 
-if(diff > 0){
-    trendIcon.textContent = "🟢 ⬆️";
-    trendTitle.textContent = "Price Increased";
-    trendTitle.className = "trend-up";
-    trendValue.className = "trend-up";
-}
-else if(diff < 0){
-    trendIcon.textContent = "🔴 ⬇️";
-    trendTitle.textContent = "Price Decreased";
-    trendTitle.className = "trend-down";
-    trendValue.className = "trend-down";
-}
-else{
-    trendIcon.textContent = "🔵 ➡️";
-    trendTitle.textContent = "No Price Change";
-    trendTitle.className = "trend-same";
-    trendValue.className = "trend-same";
-}
+    if (diff > 0) {
+        trendIcon.textContent = "🟢 ⬆️";
+        trendTitle.textContent = "Price Increased";
+        trendTitle.className = "trend-up";
+        trendValue.className = "trend-up";
+    } else if (diff < 0) {
+        trendIcon.textContent = "🔴 ⬇️";
+        trendTitle.textContent = "Price Decreased";
+        trendTitle.className = "trend-down";
+        trendValue.className = "trend-down";
+    } else {
+        trendIcon.textContent = "🔵 ➡️";
+        trendTitle.textContent = "No Price Change";
+        trendTitle.className = "trend-same";
+        trendValue.className = "trend-same";
+    }
 
-trendValue.textContent =
-`${diff >= 0 ? "+" : ""}₹${diff.toFixed(2)} (${percent.toFixed(2)}%)`;
+    trendValue.textContent =
+        `${diff >= 0 ? "+" : ""}₹${diff.toFixed(2)} (${percent.toFixed(2)}%)`;
 
-    document.getElementById("todayPrice").textContent = "₹"+today.toFixed(2);
-document.getElementById("todayPriceStat").textContent = "₹"+today.toFixed(2);
-    document.getElementById("yesterdayPrice").textContent = "₹"+yesterday.toFixed(2);
-    document.getElementById("highestPrice").textContent = "₹"+highest.toFixed(2);
-    document.getElementById("lowestPrice").textContent = "₹"+lowest.toFixed(2);
-    document.getElementById("averagePrice").textContent = "₹"+average.toFixed(2);
+    document.getElementById("todayPrice").textContent = "₹" + today.toFixed(2);
+    document.getElementById("todayPriceStat").textContent = "₹" + today.toFixed(2);
+    document.getElementById("yesterdayPrice").textContent = "₹" + yesterday.toFixed(2);
+    document.getElementById("highestPrice").textContent = "₹" + highest.toFixed(2);
+    document.getElementById("lowestPrice").textContent = "₹" + lowest.toFixed(2);
+    document.getElementById("averagePrice").textContent = "₹" + average.toFixed(2);
 
 }
 
-// ==============================
-// HISTORY TABLE
-// ==============================
-
-function fillTable(labels, values){
+function fillTable(labels, values) {
 
     const tbody = document.getElementById("historyTable");
+
     tbody.innerHTML = "";
 
-    for(let i=values.length-1;i>=0;i--){
+    for (let i = values.length - 1; i >= 0; i--) {
 
         tbody.innerHTML += `
 <tr>
