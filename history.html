@@ -1,29 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Price History</title>
 
 <link rel="stylesheet" href="css/history.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1 id="title">Loading...</h1>
+<h1 id="pageTitle">Loading...</h1>
 
-<div id="historyList">
-Loading history...
-</div>
-
-<br>
-
-<button onclick="history.back()">
+<button id="backBtn">
 ⬅ Back
 </button>
+
+<div class="chartCard">
+
+<canvas id="historyChart"></canvas>
+
+</div>
+
+<div class="statsGrid">
+
+<div class="stat">
+<div class="label">Today</div>
+<div id="todayPrice">--</div>
+</div>
+
+<div class="stat">
+<div class="label">Yesterday</div>
+<div id="yesterdayPrice">--</div>
+</div>
+
+<div class="stat">
+<div class="label">Highest</div>
+<div id="highestPrice">--</div>
+</div>
+
+<div class="stat">
+<div class="label">Lowest</div>
+<div id="lowestPrice">--</div>
+</div>
+
+<div class="stat">
+<div class="label">Average</div>
+<div id="averagePrice">--</div>
+</div>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+
+<th>Price</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
 
 </div>
 
