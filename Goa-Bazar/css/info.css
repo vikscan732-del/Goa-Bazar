@@ -1,0 +1,231 @@
+/* =========================
+   GOA BAZAR INFO PAGE
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f7fb;
+color:#222;
+padding:15px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+/* Header */
+
+.topHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#fff;
+padding:16px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+margin-bottom:15px;
+}
+
+.logoArea{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logoIcon{
+font-size:38px;
+color:#27ae60;
+}
+
+.logoArea h1{
+font-size:24px;
+font-weight:700;
+}
+
+.logoArea p{
+font-size:13px;
+color:#777;
+margin-top:3px;
+}
+
+#refreshBtn{
+width:46px;
+height:46px;
+border:none;
+border-radius:50%;
+background:#2196f3;
+color:#fff;
+font-size:18px;
+cursor:pointer;
+transition:.3s;
+}
+
+#refreshBtn:hover{
+transform:rotate(180deg);
+}
+
+/* Last Updated */
+
+.lastUpdated{
+margin-bottom:15px;
+text-align:center;
+font-size:14px;
+color:#666;
+font-weight:600;
+}
+
+/* Cards */
+
+.card{
+background:#fff;
+border-radius:20px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-3px);
+}
+
+.card h2{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:21px;
+margin-bottom:18px;
+color:#222;
+}
+
+.card h2 i{
+color:#2196f3;
+font-size:24px;
+}
+
+/* Weather */
+
+.weatherCards{
+display:flex;
+overflow-x:auto;
+gap:12px;
+padding-bottom:6px;
+}
+
+.weatherCards::-webkit-scrollbar{
+display:none;
+}
+
+/* Two Column */
+
+.row{
+display:flex;
+justify-content:space-between;
+gap:12px;
+}
+
+.row div{
+flex:1;
+background:#f8f9fb;
+padding:14px;
+border-radius:15px;
+text-align:center;
+}
+
+.row h3{
+font-size:16px;
+margin-bottom:10px;
+}
+
+.row p{
+font-size:28px;
+font-weight:bold;
+}
+
+/* Gold Grid */
+
+.goldGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.goldGrid div{
+background:#fff8e1;
+padding:15px;
+border-radius:15px;
+font-weight:bold;
+font-size:17px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* Single Price */
+
+.card p{
+font-size:30px;
+font-weight:bold;
+}
+
+/* Click Effect */
+
+.clickable{
+cursor:pointer;
+position:relative;
+overflow:hidden;
+}
+
+.clickable:active{
+transform:scale(.98);
+}
+
+/* Price Colors */
+
+.up{
+color:#16a34a;
+font-weight:bold;
+}
+
+.down{
+color:#e53935;
+font-weight:bold;
+}
+
+.same{
+color:#2196f3;
+font-weight:bold;
+}
+
+/* Mobile */
+
+@media(max-width:600px){
+
+body{
+padding:12px;
+}
+
+.logoArea h1{
+font-size:22px;
+}
+
+.card h2{
+font-size:19px;
+}
+
+.row{
+flex-direction:column;
+}
+
+.goldGrid{
+grid-template-columns:1fr;
+}
+
+}
