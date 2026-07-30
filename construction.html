@@ -1,61 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Construction Prices - Goa Bazar</title>
 
-<!-- Google Icons -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Construction Prices | Goa Bazar</title>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
 <style>
 
-/* =====================================================
-   PART 1B - CSS WILL START HERE
-===================================================== */
+/* ===== CSS WILL BE ADDED IN PART 2 ===== */
 
 </style>
 
 </head>
-<body>
 
-<!-- ================= HEADER ================= -->
+<body>
 
 <header class="top-header">
 
-    <div class="header-left">
+    <div>
+
         <h1>🏗️ Construction Prices</h1>
+
         <p>Goa Construction Material Rates</p>
+
     </div>
 
-    <div class="header-right">
+    <div class="header-buttons">
 
         <button id="refreshBtn" class="icon-btn">
+
             <span class="material-icons-round">refresh</span>
+
         </button>
 
         <button id="shareBtn" class="icon-btn">
+
             <span class="material-icons-round">share</span>
+
         </button>
 
     </div>
 
 </header>
 
-<!-- ================= LAST UPDATED ================= -->
-
 <section class="update-card">
 
-    <div class="update-item">
-        <span class="material-icons-round">calendar_month</span>
+    <div class="update-left">
+
+        <span class="material-icons-round">schedule</span>
 
         <div>
+
             <small>Last Updated</small>
+
             <h3 id="lastUpdated">Loading...</h3>
+
         </div>
+
     </div>
 
-    <div class="live-status">
+    <div class="live-badge">
 
         <span class="live-dot"></span>
 
@@ -65,129 +73,323 @@
 
 </section>
 
-<!-- ================= SEARCH ================= -->
+<section class="search-box">
 
-<section class="search-area">
-
-    <span class="material-icons-round search-icon">search</span>
+    <span class="material-icons-round">search</span>
 
     <input
         type="text"
         id="searchInput"
-        placeholder="Search material..."
+        placeholder="Search construction material..."
     >
 
 </section>
 
-<!-- ================= CATEGORY BUTTONS ================= -->
+<div id="categoryContainer">
 
-<section id="categoryBar">
+    <div class="loading">
 
-<!-- Auto Generated -->
+        Loading Construction Prices...
 
-</section>
-
-<!-- ================= CONTENT ================= -->
-
-<main id="content">
-
-<div class="loading">
-
-Loading Construction Prices...
+    </div>
 
 </div>
 
-</main>
-
-<!-- ================= FLOAT BUTTON ================= -->
-
 <button id="scrollTopBtn">
 
-<span class="material-icons-round">
+    <span class="material-icons-round">
 
-keyboard_arrow_up
+        keyboard_arrow_up
 
-</span>
+    </span>
 
 </button>
 
-<!-- ================= BOTTOM NAV ================= -->
-
 <nav class="bottom-nav">
 
-<a href="index.html">
+    <a href="index.html">
 
-<span class="material-icons-round">
+        <span class="material-icons-round">home</span>
 
-home
+        <p>Home</p>
 
-</span>
+    </a>
 
-<p>Home</p>
+    <a href="vegetables.html">
 
-</a>
+        <span class="material-icons-round">eco</span>
 
-<a href="vegetables.html">
+        <p>Vegetables</p>
 
-<span class="material-icons-round">
+    </a>
 
-eco
+    <a href="construction.html" class="active">
 
-</span>
+        <span class="material-icons-round">construction</span>
 
-<p>Vegetables</p>
+        <p>Construction</p>
 
-</a>
+    </a>
 
-<a class="active" href="construction.html">
+    <a href="fuel.html">
 
-<span class="material-icons-round">
+        <span class="material-icons-round">local_gas_station</span>
 
-construction
+        <p>Fuel</p>
 
-</span>
+    </a>
 
-<p>Construction</p>
+    <a href="more.html">
 
-</a>
+        <span class="material-icons-round">menu</span>
 
-<a href="fuel.html">
+        <p>More</p>
 
-<span class="material-icons-round">
-
-local_gas_station
-
-</span>
-
-<p>Fuel</p>
-
-</a>
-
-<a href="more.html">
-
-<span class="material-icons-round">
-
-menu
-
-</span>
-
-<p>More</p>
-
-</a>
+    </a>
 
 </nav>
 
 <script>
 
-/* =====================================================
-   PART 1C - JAVASCRIPT WILL START HERE
-===================================================== */
+<script>
+const DATA_URL =
+"https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/construction.json";
+
+let allCategories = [];
+
+async function loadConstruction(){
+
+const container=document.getElementById("categoryContainer");
+const updated=document.getElementById("lastUpdated");
+
+container.innerHTML="<div class='loading'>Loading Construction Prices...</div>";
+
+try{
+
+const res=await fetch(DATA_URL+"?t="+Date.now());
+
+const data=await res.json();
+
+allCategories=data.categories||[];
+
+updated.textContent=data.updated||"Unknown";
+
+renderCategories(allCategories);
+
+}catch(e){
+
+container.innerHTML=`
+<div class="errorBox">
+<h3>Unable to load construction prices</h3>
+<p>Please try again later.</p>
+</div>`;
+
+}
+
+}
+
+function renderCategories(categories){
+
+const container=document.getElementById("document.getElementById("totalCategories").textContent=categories.length;
+
+let total=0;
+
+categories.forEach(c=>total+=c.items.length);
+
+document.getElementById("totalItems").textContent=total;");
+
+container.innerHTML="";
+
+if(categories.length===0){
+
+container.innerHTML="<div class='errorBox'>No materials found.</div>";
+
+return;
+
+}
+
+categories.forEach((cat,index)=>{
+
+let html=`
+
+<div class="categoryCard">
+
+<div class="categoryHeader" onclick="toggleCategory(${index})">
+
+<div>
+
+<h2>${cat.category}</h2>
+
+<small>${cat.items.length} Materials</small>
+
+</div>
+
+<span id="arrow${index}">▼</span>
+
+</div>
+
+<div class="categoryBody" id="body${index}">
+`;
+
+cat.items.forEach(item=>{
+
+html+=`
+
+<div class="itemRow">
+
+<div class="itemLeft">
+
+<div class="itemName">${item.name}</div>
+
+<div class="itemUnit">${item.unit}</div>
+
+</div>
+
+<div class="itemPrice">${item.price}</div>
+
+</div>
+
+`;
+
+});
+
+html+=`
+
+</div>
+
+</div>
+
+`;
+
+container.innerHTML+=html;
+
+});
+
+}
+
+function toggleCategory(index){
+
+const body=document.getElementById("body"+index);
+
+const arrow=document.getElementById("arrow"+index);
+
+if(body.style.display==="block"){
+
+body.style.display="none";
+
+arrow.innerHTML="▼";
+
+}else{
+
+body.style.display="block";
+
+arrow.innerHTML="▲";
+
+}
+
+}
+
+document.getElementById("searchInput").addEventListener("input",function(){
+
+const value=this.value.toLowerCase();
+
+if(value===""){
+
+renderCategories(allCategories);
+
+return;
+
+}
+
+const filtered=[];
+
+allCategories.forEach(cat=>{
+
+const items=cat.items.filter(item=>
+
+item.name.toLowerCase().includes(value) ||
+
+item.price.toLowerCase().includes(value) ||
+
+item.unit.toLowerCase().includes(value) ||
+
+cat.category.toLowerCase().includes(value)
+
+);
+
+if(items.length){
+
+filtered.push({
+
+category:cat.category,
+
+items:items
+
+});
+
+}
+
+});
+
+renderCategories(filtered);
+
+});
+
+document.getElementById("refreshBtn").onclick=function(){
+
+loadConstruction();
+
+};
+
+document.getElementById("shareBtn").onclick=function(){
+
+if(navigator.share){
+
+navigator.share({
+
+title:"Goa Construction Prices",
+
+text:"Latest Goa Construction Material Prices",
+
+url:location.href
+
+});
+
+}else{
+
+alert("Share is not supported on this device.");
+
+}
+
+};
+
+window.onscroll=function(){
+
+const btn=document.getElementById("scrollTopBtn");
+
+btn.style.display=window.scrollY>300?"block":"none";
+
+};
+
+document.getElementById("scrollTopBtn").onclick=function(){
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+};
+
+loadConstruction();
+</script>
 
 </script>
 
 </body>
 </html>
-
 
 /* ===========================
    GOA BAZAR PREMIUM THEME
@@ -201,7 +403,7 @@ font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-background:#f3f6fb;
+background:#f4f7fb;
 color:#222;
 padding-bottom:90px;
 }
@@ -216,9 +418,8 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:18px;
-background:rgba(255,255,255,.92);
-backdrop-filter:blur(18px);
-box-shadow:0 4px 20px rgba(0,0,0,.08);
+background:#fff;
+box-shadow:0 2px 12px rgba(0,0,0,.08);
 }
 
 .top-header h1{
@@ -227,12 +428,12 @@ font-weight:700;
 }
 
 .top-header p{
-margin-top:5px;
+margin-top:4px;
 font-size:13px;
 color:#666;
 }
 
-.header-right{
+.header-buttons{
 display:flex;
 gap:12px;
 }
@@ -241,108 +442,96 @@ gap:12px;
 width:48px;
 height:48px;
 border:none;
-border-radius:16px;
-background:white;
+border-radius:14px;
+background:#1976d2;
+color:white;
 cursor:pointer;
-box-shadow:0 6px 18px rgba(0,0,0,.12);
-transition:.25s;
-}
-
-.icon-btn:hover{
-transform:translateY(-3px);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 6px 15px rgba(25,118,210,.25);
 }
 
 .icon-btn .material-icons-round{
 font-size:24px;
-color:#1565c0;
 }
 
-/* ================= UPDATE CARD ================= */
+/* ================= UPDATE ================= */
 
 .update-card{
 margin:18px;
 background:white;
 padding:18px;
-border-radius:22px;
+border-radius:18px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 8px 20px rgba(0,0,0,.08);
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-.update-item{
+.update-left{
 display:flex;
 align-items:center;
-gap:14px;
+gap:12px;
 }
 
-.update-item .material-icons-round{
+.update-left .material-icons-round{
 font-size:34px;
-color:#1e88e5;
+color:#1976d2;
 }
 
-.update-item small{
+.update-left small{
 display:block;
-color:#888;
-margin-bottom:4px;
+color:#777;
+margin-bottom:3px;
 }
 
-.update-item h3{
-font-size:17px;
+.update-left h3{
+font-size:16px;
 }
 
-.live-status{
+.live-badge{
+background:#e8f5e9;
+color:#0f9d58;
+padding:8px 14px;
+border-radius:25px;
+font-weight:bold;
 display:flex;
 align-items:center;
 gap:8px;
-background:#e8f8ed;
-padding:8px 15px;
-border-radius:30px;
-font-weight:bold;
-font-size:13px;
-color:#0a8d3d;
 }
 
 .live-dot{
 width:10px;
 height:10px;
-background:#00d84a;
 border-radius:50%;
+background:#00c853;
 animation:pulse 1.2s infinite;
 }
 
 @keyframes pulse{
-
-0%{
-transform:scale(1);
-opacity:1;
-}
-
-100%{
-transform:scale(1.8);
-opacity:.2;
-}
-
+0%{transform:scale(1);opacity:1;}
+100%{transform:scale(1.8);opacity:.2;}
 }
 
 /* ================= SEARCH ================= */
 
-.search-area{
+.search-box{
 margin:18px;
-display:flex;
-align-items:center;
 background:white;
 border-radius:18px;
-padding:15px;
-box-shadow:0 6px 16px rgba(0,0,0,.08);
+display:flex;
+align-items:center;
+padding:14px 18px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-.search-icon{
+.search-box .material-icons-round{
 color:#888;
 margin-right:10px;
 }
 
-.search-area input{
+.search-box input{
 width:100%;
 border:none;
 outline:none;
@@ -350,130 +539,131 @@ font-size:16px;
 background:transparent;
 }
 
-/* ================= CATEGORY BAR ================= */
 
-#categoryBar{
-display:flex;
-overflow-x:auto;
-gap:10px;
-padding:0 18px 18px;
-scrollbar-width:none;
+<div class="statsBar">
+
+<div class="statCard">
+<h2 id="totalCategories">0</h2>
+<p>Categories</p>
+</div>
+
+<div class="statCard">
+<h2 id="totalItems">0</h2>
+<p>Materials</p>
+</div>
+
+<div class="statCard">
+<h2>LIVE</h2>
+<p>Status</p>
+</div>
+
+</div>
+
+
+/* ================= CATEGORY ================= */
+
+#categoryContainer{
+padding:0 18px 20px;
 }
 
-#categoryBar::-webkit-scrollbar{
-display:none;
-}
-
-.category-chip{
-white-space:nowrap;
-padding:12px 18px;
-border-radius:30px;
+.categoryCard{
 background:white;
-font-size:14px;
-cursor:pointer;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-transition:.25s;
-}
-
-.category-chip:hover{
-background:#1976d2;
-color:white;
-}
-
-/* ================= CONTENT ================= */
-
-#content{
-padding:18px;
-}
-
-.loading{
-padding:70px;
-text-align:center;
-color:#888;
-font-size:18px;
-}
-
-/* ================= CATEGORY CARD ================= */
-
-.category-card{
-background:white;
-border-radius:22px;
+border-radius:18px;
 margin-bottom:18px;
 overflow:hidden;
-box-shadow:0 8px 20px rgba(0,0,0,.08);
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-.category-header{
+.categoryHeader{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:18px;
 cursor:pointer;
-}
-
-.category-title{
-font-size:19px;
 font-weight:bold;
-display:flex;
-align-items:center;
-gap:10px;
 }
 
-.category-items{
+.categoryHeader h2{
+font-size:18px;
+}
+
+.categoryHeader small{
+display:block;
+margin-top:4px;
+color:#777;
+font-weight:normal;
+}
+
+.categoryBody{
 display:none;
 padding:0 18px 18px;
 }
 
-/* ================= MATERIAL CARD ================= */
-
-.material-card{
-background:#f8fbff;
-border-radius:18px;
-padding:16px;
-margin-top:12px;
-border-left:5px solid #1976d2;
+.itemRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 0;
+border-top:1px solid #eee;
 }
 
-.material-name{
-font-size:17px;
+.itemLeft{
+flex:1;
+padding-right:12px;
+}
+
+.itemName{
+font-size:16px;
 font-weight:bold;
-margin-bottom:10px;
+margin-bottom:6px;
 }
 
-.material-price{
-display:inline-block;
-background:#e8f8ed;
-color:#11863d;
-padding:8px 14px;
-border-radius:20px;
-font-weight:bold;
-margin-right:10px;
-}
-
-.material-unit{
-display:inline-block;
-background:#eef4ff;
-padding:8px 14px;
-border-radius:20px;
-color:#1565c0;
+.itemUnit{
 font-size:13px;
+color:#777;
 }
 
-/* ================= SCROLL BUTTON ================= */
+.itemPrice{
+background:#0f9d58;
+color:white;
+padding:8px 14px;
+border-radius:20px;
+font-weight:bold;
+white-space:nowrap;
+}
+
+/* ================= LOADING ================= */
+
+.loading{
+padding:60px;
+text-align:center;
+color:#666;
+font-size:18px;
+}
+
+.errorBox{
+padding:30px;
+text-align:center;
+background:white;
+border-radius:18px;
+color:#d32f2f;
+}
+
+/* ================= SCROLL ================= */
 
 #scrollTopBtn{
 position:fixed;
 right:20px;
 bottom:95px;
-width:55px;
-height:55px;
+width:54px;
+height:54px;
 border:none;
 border-radius:50%;
 background:#1976d2;
 color:white;
 display:none;
-box-shadow:0 10px 22px rgba(0,0,0,.25);
 cursor:pointer;
+box-shadow:0 6px 16px rgba(0,0,0,.25);
 }
 
 /* ================= BOTTOM NAV ================= */
@@ -488,12 +678,12 @@ background:white;
 display:flex;
 justify-content:space-around;
 align-items:center;
-box-shadow:0 -4px 20px rgba(0,0,0,.12);
+box-shadow:0 -4px 12px rgba(0,0,0,.08);
 }
 
 .bottom-nav a{
 text-decoration:none;
-color:#777;
+color:#666;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -501,7 +691,7 @@ font-size:12px;
 }
 
 .bottom-nav a .material-icons-round{
-font-size:25px;
+font-size:24px;
 margin-bottom:2px;
 }
 
@@ -530,13 +720,58 @@ height:44px;
 .update-card{
 flex-direction:column;
 align-items:flex-start;
-gap:15px;
+gap:14px;
 }
 
-.live-status{
+.live-badge{
 align-self:flex-end;
 }
 
+.itemRow{
+flex-direction:column;
+align-items:flex-start;
+gap:10px;
+}
+
+.itemPrice{
+align-self:flex-end;
+}
 }
 
 
+
+/* ================= STATS ================= */
+
+.statsBar{
+display:flex;
+gap:12px;
+padding:0 18px 18px;
+}
+
+.statCard{
+flex:1;
+background:#fff;
+padding:18px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.statCard h2{
+color:#1976d2;
+font-size:24px;
+margin-bottom:6px;
+}
+
+.statCard p{
+font-size:13px;
+color:#666;
+}
+
+@media(max-width:480px){
+
+.statsBar{
+flex-direction:column;
+}
+
+}
