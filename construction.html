@@ -1,777 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>Construction Prices | Goa Bazar</title>
-
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-
 <style>
-
-/* ===== CSS WILL BE ADDED IN PART 2 ===== */
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f4f7fb;color:#222;padding-bottom:90px}
+.top-header{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#fff;position:sticky;top:0;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.header-buttons{display:flex;gap:10px}
+.icon-btn{width:46px;height:46px;border:none;border-radius:12px;background:#1976d2;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.update-card,.search-box,.statCard,.categoryCard{background:#fff;border-radius:16px;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.update-card{margin:18px;padding:18px;display:flex;justify-content:space-between;align-items:center}
+.search-box{margin:18px;padding:14px;display:flex;gap:10px;align-items:center}
+.search-box input{border:none;outline:none;width:100%;font-size:16px}
+.statsBar{display:flex;gap:12px;padding:0 18px 18px}
+.statCard{flex:1;padding:16px;text-align:center}
+#categoryContainer{padding:0 18px 18px}
+.categoryHeader{display:flex;justify-content:space-between;padding:16px;cursor:pointer;font-weight:bold}
+.categoryBody{display:none;padding:0 16px 16px}
+.itemRow{display:flex;justify-content:space-between;border-top:1px solid #eee;padding:12px 0}
+.itemPrice{background:#0f9d58;color:#fff;padding:6px 12px;border-radius:16px}
+.loading,.errorBox{text-align:center;padding:40px}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:70px;background:#fff;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 8px rgba(0,0,0,.1)}
+.bottom-nav a{text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center}
+.bottom-nav a.active{color:#1976d2}
+#scrollTopBtn{position:fixed;right:20px;bottom:90px;display:none;border:none;border-radius:50%;width:52px;height:52px;background:#1976d2;color:#fff}
+@media(max-width:480px){.statsBar{flex-direction:column}.update-card{flex-direction:column;align-items:flex-start}.itemRow{flex-direction:column;gap:8px}}
 </style>
-
 </head>
-
 <body>
-
 <header class="top-header">
-
-    <div>
-
-        <h1>🏗️ Construction Prices</h1>
-
-        <p>Goa Construction Material Rates</p>
-
-    </div>
-
-    <div class="header-buttons">
-
-        <button id="refreshBtn" class="icon-btn">
-
-            <span class="material-icons-round">refresh</span>
-
-        </button>
-
-        <button id="shareBtn" class="icon-btn">
-
-            <span class="material-icons-round">share</span>
-
-        </button>
-
-    </div>
-
+<div><h2>🏗️ Construction Prices</h2><small>Goa Construction Material Rates</small></div>
+<div class="header-buttons">
+<button id="refreshBtn" class="icon-btn">↻</button>
+<button id="shareBtn" class="icon-btn">⇪</button>
+</div>
 </header>
 
 <section class="update-card">
-
-    <div class="update-left">
-
-        <span class="material-icons-round">schedule</span>
-
-        <div>
-
-            <small>Last Updated</small>
-
-            <h3 id="lastUpdated">Loading...</h3>
-
-        </div>
-
-    </div>
-
-    <div class="live-badge">
-
-        <span class="live-dot"></span>
-
-        LIVE
-
-    </div>
-
+<div><small>Last Updated</small><h3 id="lastUpdated">Loading...</h3></div>
+<div><b>LIVE</b></div>
 </section>
 
 <section class="search-box">
-
-    <span class="material-icons-round">search</span>
-
-    <input
-        type="text"
-        id="searchInput"
-        placeholder="Search construction material..."
-    >
-
+<span>🔍</span>
+<input id="searchInput" placeholder="Search construction material...">
 </section>
 
-<div id="categoryContainer">
-
-    <div class="loading">
-
-        Loading Construction Prices...
-
-    </div>
-
+<div class="statsBar">
+<div class="statCard"><h2 id="totalCategories">0</h2><p>Categories</p></div>
+<div class="statCard"><h2 id="totalItems">0</h2><p>Materials</p></div>
+<div class="statCard"><h2>LIVE</h2><p>Status</p></div>
 </div>
 
-<button id="scrollTopBtn">
+<div id="categoryContainer"><div class="loading">Loading...</div></div>
 
-    <span class="material-icons-round">
-
-        keyboard_arrow_up
-
-    </span>
-
-</button>
+<button id="scrollTopBtn">↑</button>
 
 <nav class="bottom-nav">
-
-    <a href="index.html">
-
-        <span class="material-icons-round">home</span>
-
-        <p>Home</p>
-
-    </a>
-
-    <a href="vegetables.html">
-
-        <span class="material-icons-round">eco</span>
-
-        <p>Vegetables</p>
-
-    </a>
-
-    <a href="construction.html" class="active">
-
-        <span class="material-icons-round">construction</span>
-
-        <p>Construction</p>
-
-    </a>
-
-    <a href="fuel.html">
-
-        <span class="material-icons-round">local_gas_station</span>
-
-        <p>Fuel</p>
-
-    </a>
-
-    <a href="more.html">
-
-        <span class="material-icons-round">menu</span>
-
-        <p>More</p>
-
-    </a>
-
+<a href="index.html">Home</a>
+<a href="vegetables.html">Vegetables</a>
+<a class="active" href="construction.html">Construction</a>
+<a href="fuel.html">Fuel</a>
+<a href="more.html">More</a>
 </nav>
 
 <script>
-
-<script>
-const DATA_URL =
-"https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/construction.json";
-
-let allCategories = [];
+const DATA_URL="https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/construction.json";
+let allCategories=[];
 
 async function loadConstruction(){
-
-const container=document.getElementById("categoryContainer");
-const updated=document.getElementById("lastUpdated");
-
-container.innerHTML="<div class='loading'>Loading Construction Prices...</div>";
-
+const c=document.getElementById("categoryContainer");
+c.innerHTML="<div class='loading'>Loading...</div>";
 try{
-
-const res=await fetch(DATA_URL+"?t="+Date.now());
-
-const data=await res.json();
-
-allCategories=data.categories||[];
-
-updated.textContent=data.updated||"Unknown";
-
-renderCategories(allCategories);
-
+const r=await fetch(DATA_URL+"?t="+Date.now());
+const d=await r.json();
+allCategories=d.categories||[];
+document.getElementById("lastUpdated").textContent=d.updated||"Unknown";
+render(allCategories);
 }catch(e){
-
-container.innerHTML=`
-<div class="errorBox">
-<h3>Unable to load construction prices</h3>
-<p>Please try again later.</p>
-</div>`;
-
+c.innerHTML="<div class='errorBox'>Unable to load data.</div>";
+}
 }
 
-}
-
-function renderCategories(categories){
-
-const container=document.getElementById("document.getElementById("totalCategories").textContent=categories.length;
-
-let total=0;
-
-categories.forEach(c=>total+=c.items.length);
-
-document.getElementById("totalItems").textContent=total;");
-
-container.innerHTML="";
-
-if(categories.length===0){
-
-container.innerHTML="<div class='errorBox'>No materials found.</div>";
-
-return;
-
-}
-
-categories.forEach((cat,index)=>{
-
-let html=`
-
-<div class="categoryCard">
-
-<div class="categoryHeader" onclick="toggleCategory(${index})">
-
-<div>
-
-<h2>${cat.category}</h2>
-
-<small>${cat.items.length} Materials</small>
-
-</div>
-
-<span id="arrow${index}">▼</span>
-
-</div>
-
-<div class="categoryBody" id="body${index}">
-`;
-
-cat.items.forEach(item=>{
-
-html+=`
-
-<div class="itemRow">
-
-<div class="itemLeft">
-
-<div class="itemName">${item.name}</div>
-
-<div class="itemUnit">${item.unit}</div>
-
-</div>
-
-<div class="itemPrice">${item.price}</div>
-
-</div>
-
-`;
-
+function render(list){
+document.getElementById("totalCategories").textContent=list.length;
+let t=0;list.forEach(x=>t+=x.items.length);
+document.getElementById("totalItems").textContent=t;
+const c=document.getElementById("categoryContainer");
+c.innerHTML="";
+if(!list.length){c.innerHTML="<div class='errorBox'>No results.</div>";return;}
+list.forEach((cat,i)=>{
+const card=document.createElement("div");
+card.className="categoryCard";
+card.innerHTML=`<div class="categoryHeader"><span>${cat.category}</span><span>▼</span></div><div class="categoryBody">${cat.items.map(it=>`<div class="itemRow"><div><b>${it.name}</b><br><small>${it.unit}</small></div><div class="itemPrice">${it.price}</div></div>`).join("")}</div>`;
+card.querySelector(".categoryHeader").onclick=()=>{
+const b=card.querySelector(".categoryBody");
+b.style.display=b.style.display==="block"?"none":"block";
+};
+c.appendChild(card);
 });
-
-html+=`
-
-</div>
-
-</div>
-
-`;
-
-container.innerHTML+=html;
-
-});
-
 }
 
-function toggleCategory(index){
-
-const body=document.getElementById("body"+index);
-
-const arrow=document.getElementById("arrow"+index);
-
-if(body.style.display==="block"){
-
-body.style.display="none";
-
-arrow.innerHTML="▼";
-
-}else{
-
-body.style.display="block";
-
-arrow.innerHTML="▲";
-
-}
-
-}
-
-document.getElementById("searchInput").addEventListener("input",function(){
-
-const value=this.value.toLowerCase();
-
-if(value===""){
-
-renderCategories(allCategories);
-
-return;
-
-}
-
-const filtered=[];
-
-allCategories.forEach(cat=>{
-
-const items=cat.items.filter(item=>
-
-item.name.toLowerCase().includes(value) ||
-
-item.price.toLowerCase().includes(value) ||
-
-item.unit.toLowerCase().includes(value) ||
-
-cat.category.toLowerCase().includes(value)
-
-);
-
-if(items.length){
-
-filtered.push({
-
-category:cat.category,
-
-items:items
-
-});
-
-}
-
-});
-
-renderCategories(filtered);
-
-});
-
-document.getElementById("refreshBtn").onclick=function(){
-
-loadConstruction();
-
+searchInput.oninput=e=>{
+const q=e.target.value.toLowerCase();
+if(!q){render(allCategories);return;}
+render(allCategories.map(c=>({category:c.category,items:c.items.filter(i=>(c.category+i.name+i.unit+i.price).toLowerCase().includes(q))})).filter(c=>c.items.length));
 };
 
-document.getElementById("shareBtn").onclick=function(){
-
-if(navigator.share){
-
-navigator.share({
-
-title:"Goa Construction Prices",
-
-text:"Latest Goa Construction Material Prices",
-
-url:location.href
-
-});
-
-}else{
-
-alert("Share is not supported on this device.");
-
-}
-
-};
-
-window.onscroll=function(){
-
-const btn=document.getElementById("scrollTopBtn");
-
-btn.style.display=window.scrollY>300?"block":"none";
-
-};
-
-document.getElementById("scrollTopBtn").onclick=function(){
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
-
-});
-
-};
-
+refreshBtn.onclick=loadConstruction;
+shareBtn.onclick=()=>navigator.share&&navigator.share({title:"Construction Prices",url:location.href});
+window.onscroll=()=>scrollTopBtn.style.display=scrollY>300?"block":"none";
+scrollTopBtn.onclick=()=>scrollTo({top:0,behavior:"smooth"});
 loadConstruction();
 </script>
-
-</script>
-
 </body>
 </html>
-
-/* ===========================
-   GOA BAZAR PREMIUM THEME
-=========================== */
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-background:#f4f7fb;
-color:#222;
-padding-bottom:90px;
-}
-
-/* ================= HEADER ================= */
-
-.top-header{
-position:sticky;
-top:0;
-z-index:999;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px;
-background:#fff;
-box-shadow:0 2px 12px rgba(0,0,0,.08);
-}
-
-.top-header h1{
-font-size:24px;
-font-weight:700;
-}
-
-.top-header p{
-margin-top:4px;
-font-size:13px;
-color:#666;
-}
-
-.header-buttons{
-display:flex;
-gap:12px;
-}
-
-.icon-btn{
-width:48px;
-height:48px;
-border:none;
-border-radius:14px;
-background:#1976d2;
-color:white;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 6px 15px rgba(25,118,210,.25);
-}
-
-.icon-btn .material-icons-round{
-font-size:24px;
-}
-
-/* ================= UPDATE ================= */
-
-.update-card{
-margin:18px;
-background:white;
-padding:18px;
-border-radius:18px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.update-left{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.update-left .material-icons-round{
-font-size:34px;
-color:#1976d2;
-}
-
-.update-left small{
-display:block;
-color:#777;
-margin-bottom:3px;
-}
-
-.update-left h3{
-font-size:16px;
-}
-
-.live-badge{
-background:#e8f5e9;
-color:#0f9d58;
-padding:8px 14px;
-border-radius:25px;
-font-weight:bold;
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.live-dot{
-width:10px;
-height:10px;
-border-radius:50%;
-background:#00c853;
-animation:pulse 1.2s infinite;
-}
-
-@keyframes pulse{
-0%{transform:scale(1);opacity:1;}
-100%{transform:scale(1.8);opacity:.2;}
-}
-
-/* ================= SEARCH ================= */
-
-.search-box{
-margin:18px;
-background:white;
-border-radius:18px;
-display:flex;
-align-items:center;
-padding:14px 18px;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.search-box .material-icons-round{
-color:#888;
-margin-right:10px;
-}
-
-.search-box input{
-width:100%;
-border:none;
-outline:none;
-font-size:16px;
-background:transparent;
-}
-
-
-<div class="statsBar">
-
-<div class="statCard">
-<h2 id="totalCategories">0</h2>
-<p>Categories</p>
-</div>
-
-<div class="statCard">
-<h2 id="totalItems">0</h2>
-<p>Materials</p>
-</div>
-
-<div class="statCard">
-<h2>LIVE</h2>
-<p>Status</p>
-</div>
-
-</div>
-
-
-/* ================= CATEGORY ================= */
-
-#categoryContainer{
-padding:0 18px 20px;
-}
-
-.categoryCard{
-background:white;
-border-radius:18px;
-margin-bottom:18px;
-overflow:hidden;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.categoryHeader{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.categoryHeader h2{
-font-size:18px;
-}
-
-.categoryHeader small{
-display:block;
-margin-top:4px;
-color:#777;
-font-weight:normal;
-}
-
-.categoryBody{
-display:none;
-padding:0 18px 18px;
-}
-
-.itemRow{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:14px 0;
-border-top:1px solid #eee;
-}
-
-.itemLeft{
-flex:1;
-padding-right:12px;
-}
-
-.itemName{
-font-size:16px;
-font-weight:bold;
-margin-bottom:6px;
-}
-
-.itemUnit{
-font-size:13px;
-color:#777;
-}
-
-.itemPrice{
-background:#0f9d58;
-color:white;
-padding:8px 14px;
-border-radius:20px;
-font-weight:bold;
-white-space:nowrap;
-}
-
-/* ================= LOADING ================= */
-
-.loading{
-padding:60px;
-text-align:center;
-color:#666;
-font-size:18px;
-}
-
-.errorBox{
-padding:30px;
-text-align:center;
-background:white;
-border-radius:18px;
-color:#d32f2f;
-}
-
-/* ================= SCROLL ================= */
-
-#scrollTopBtn{
-position:fixed;
-right:20px;
-bottom:95px;
-width:54px;
-height:54px;
-border:none;
-border-radius:50%;
-background:#1976d2;
-color:white;
-display:none;
-cursor:pointer;
-box-shadow:0 6px 16px rgba(0,0,0,.25);
-}
-
-/* ================= BOTTOM NAV ================= */
-
-.bottom-nav{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-height:72px;
-background:white;
-display:flex;
-justify-content:space-around;
-align-items:center;
-box-shadow:0 -4px 12px rgba(0,0,0,.08);
-}
-
-.bottom-nav a{
-text-decoration:none;
-color:#666;
-display:flex;
-flex-direction:column;
-align-items:center;
-font-size:12px;
-}
-
-.bottom-nav a .material-icons-round{
-font-size:24px;
-margin-bottom:2px;
-}
-
-.bottom-nav a.active{
-color:#1976d2;
-font-weight:bold;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:480px){
-
-.top-header h1{
-font-size:20px;
-}
-
-.top-header p{
-font-size:12px;
-}
-
-.icon-btn{
-width:44px;
-height:44px;
-}
-
-.update-card{
-flex-direction:column;
-align-items:flex-start;
-gap:14px;
-}
-
-.live-badge{
-align-self:flex-end;
-}
-
-.itemRow{
-flex-direction:column;
-align-items:flex-start;
-gap:10px;
-}
-
-.itemPrice{
-align-self:flex-end;
-}
-}
-
-
-
-/* ================= STATS ================= */
-
-.statsBar{
-display:flex;
-gap:12px;
-padding:0 18px 18px;
-}
-
-.statCard{
-flex:1;
-background:#fff;
-padding:18px;
-border-radius:18px;
-text-align:center;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-.statCard h2{
-color:#1976d2;
-font-size:24px;
-margin-bottom:6px;
-}
-
-.statCard p{
-font-size:13px;
-color:#666;
-}
-
-@media(max-width:480px){
-
-.statsBar{
-flex-direction:column;
-}
-
-}
