@@ -1,168 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>Vegetable Prices · Goa</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <style>
+        /* ── RESET & BASE ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
 
-<meta charset="UTF-8">
+        body {
+            background: #f4f9fe;
+            color: #1e293b;
+            padding-bottom: 90px;
+        }
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+        /* ── TOP HEADER ── */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px 10px;
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.12);
+            box-shadow: 0 2px 12px rgba(0, 20, 30, 0.04);
+        }
 
-<title>Vegetable Prices</title>
+        .top-header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #1b5e20, #388e3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
 
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/vegetables.css">
-  
+        .top-header small {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 2px 14px;
+            border-radius: 30px;
+            -webkit-text-fill-color: #1b5e20;
+            margin-top: 2px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 14px;
+            background: #2e7d32;
+            color: #fff;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+            transition: 0.15s;
+        }
+        .icon-btn:active {
+            transform: scale(0.90);
+        }
+
+        /* ── SUBTITLE (small + colourful) ── */
+        .subtitle-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 18px 0;
+            margin-top: 6px;
+        }
+
+        .subtitle-main {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .subtitle-sub {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #558b2f;
+            background: #e8f5e9;
+            padding: 2px 18px;
+            border-radius: 40px;
+            margin-top: 2px;
+            letter-spacing: 0.4px;
+            border: 1px solid #c8e6c9;
+            -webkit-text-fill-color: #2e7d32;
+        }
+
+        /* ── DATE / TIME BADGES (small) ── */
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 8px 18px 4px;
+            flex-wrap: wrap;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            padding: 4px 14px 4px 10px;
+            border-radius: 60px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e8f0e8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1e3a2a;
+        }
+
+        .badge-item .label {
+            color: #5d7b6b;
+            font-weight: 500;
+        }
+
+        .badge-item .value {
+            color: #1b5e20;
+            font-weight: 700;
+        }
+
+        .badge-item .material-icons-round {
+            font-size: 1rem;
+            color: #2e7d32;
+        }
+
+        /* ── VEGETABLE CARDS (colourful, clickable for history) ── */
+        .veg-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 14px 18px 20px;
+        }
+
+        @media (max-width: 420px) {
+            .veg-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        .veg-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 18px 14px 14px;
+            box-shadow: 0 6px 20px rgba(0, 20, 30, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            transition: 0.1s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .veg-card:active {
+            transform: scale(0.97);
+        }
+
+        /* each card gets a unique colourful left border & subtle bg */
+        .veg-card:nth-child(6n+1) {
+            border-left: 6px solid #2e7d32;
+            background: linear-gradient(145deg, #fafffa, #f0f9f0);
+        }
+        .veg-card:nth-child(6n+2) {
+            border-left: 6px solid #d84315;
+            background: linear-gradient(145deg, #fff8f5, #fdeee8);
+        }
+        .veg-card:nth-child(6n+3) {
+            border-left: 6px solid #1565c0;
+            background: linear-gradient(145deg, #f5f9ff, #e8f0fe);
+        }
+        .veg-card:nth-child(6n+4) {
+            border-left: 6px solid #6a1b9a;
+            background: linear-gradient(145deg, #faf5ff, #f0e8f8);
+        }
+        .veg-card:nth-child(6n+5) {
+            border-left: 6px solid #e67e22;
+            background: linear-gradient(145deg, #fffbf0, #fdf3e0);
+        }
+        .veg-card:nth-child(6n+6) {
+            border-left: 6px solid #00838f;
+            background: linear-gradient(145deg, #f0fbfc, #e0f2f4);
+        }
+
+        .veg-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f2b1f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .veg-change {
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .veg-change.down {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #ffcdd2;
+        }
+
+        .veg-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 10px;
+        }
+
+        .veg-price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1b3a2a;
+            letter-spacing: -0.5px;
+        }
+
+        .veg-price small {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #5d7b6b;
+            margin-left: 2px;
+        }
+
+        .veg-unit {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #5d7b6b;
+            background: #edf3ed;
+            padding: 2px 14px;
+            border-radius: 30px;
+        }
+
+        /* ── LOADING / ERROR ── */
+        .loading,
+        .errorBox {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 30px;
+            margin: 10px 18px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .errorBox {
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5d7b6b;
+            font-weight: 500;
+        }
+
+        /* ── BOTTOM NAV (colourful) ── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 72px;
+            background: #ffffffec;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -6px 20px rgba(0, 20, 30, 0.04);
+            border-top: 1px solid rgba(0, 0, 0, 0.02);
+            z-index: 30;
+        }
+
+        .bottom-nav a {
+            text-decoration: none;
+            color: #5f748e;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            transition: 0.1s;
+        }
+
+        .bottom-nav a.active {
+            color: #2e7d32;
+            background: #e8f5e9;
+            font-weight: 700;
+        }
+
+        .bottom-nav a:nth-child(1).active {
+            background: #e8f0fe;
+            color: #1a5f9e;
+        }
+        .bottom-nav a:nth-child(2).active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .bottom-nav a:nth-child(3).active {
+            background: #fdeee8;
+            color: #bf5b2a;
+        }
+        .bottom-nav a:nth-child(4).active {
+            background: #f0e8f8;
+            color: #6a4b8a;
+        }
+
+        /* ── SCROLL TOP ── */
+        #scrollTopBtn {
+            position: fixed;
+            right: 20px;
+            bottom: 96px;
+            display: none;
+            border: none;
+            border-radius: 60px;
+            width: 48px;
+            height: 48px;
+            background: #2e7d32;
+            color: #fff;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+            cursor: pointer;
+            transition: 0.15s;
+            z-index: 25;
+        }
+        #scrollTopBtn:active {
+            transform: scale(0.85);
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="app">
-
-<header class="hero">
-
-<div class="hero-title">
-
-<div class="hero-logo">
-🥬
-</div>
-
-<div>
-
-<h1>Vegetable Prices</h1>
-
-<p>Goa Horticulture Corporation Ltd.</p>
-
-</div>
-
-</div>
-
-<div class="update-card">
-
-<div class="update-left">
-
-<div class="clock">
-🕒
-</div>
-
-<div>
-
-<span>Last Updated</span>
-
-<h2 id="updateTime">
-
-Loading...
-
-</h2>
-
-</div>
-
-</div>
-
-<div class="update-right">
-
-<div class="calendar">
-
-📅
-
-</div>
-
-<div>
-
-<span>Price Date</span>
-
-<h2 id="vegDate">
-
---
-
-</h2>
-
-</div>
-
-</div>
-
-</div>
-
-</header>
-
-<section class="source-card">
-
-<div class="source-icon">
-🥬
-</div>
-
-<div>
-
-<h2>Goa Horticulture Corporation Ltd.</h2>
-
-<p>Official Daily Vegetable Prices</p>
-
-</div>
-
-</section>
-
-<section class="list-section">
-
-<h2 class="section-title">
-
-Today's Vegetables
-
-</h2>
-
-<div
-id="vegetableList"
-class="vegetable-list">
-
-<div class="loading">
-
-<div class="loader"></div>
-
-<p>
-
-Loading today's prices...
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<nav class="bottom-nav">
-
-<a href="index.html">
-
-🏠
-
-<span>Home</span>
-
-</a>
-
-<a
-class="active"
-href="favourite.html">
-
-🥬
-
-<span>Vegetables</span>
-
-</a>
-
-<a href="info.html">
-
-ℹ️
-
-<span>Info</span>
-
-</a>
-
-</nav>
-
-</div>
-
-<script src="js/vegetables.js"></script>
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div>
+            <h1>🥬 Vegetable Prices</h1>
+            <small>Goa Horticulture Corporation Ltd.</small>
+        </div>
+        <div class="header-buttons">
+            <button id="refreshBtn" class="icon-btn">↻</button>
+            <button id="shareBtn" class="icon-btn">⇪</button>
+        </div>
+    </header>
+
+    <!-- SUBTITLE -->
+    <div class="subtitle-wrap">
+        <span class="subtitle-main">🌱 Goa Horticulture Corporation Ltd.</span>
+        <span class="subtitle-sub">Official Daily Vegetable Prices</span>
+    </div>
+
+    <!-- DATE / TIME BADGES -->
+    <div class="badge-row">
+        <div class="badge-item">
+            <span class="material-icons-round">schedule</span>
+            <span class="label">Last Updated</span>
+            <span class="value" id="lastUpdated">--:--</span>
+        </div>
+        <div class="badge-item">
+            <span class="material-icons-round">calendar_today</span>
+            <span class="label">Price Date</span>
+            <span class="value" id="priceDate">----</span>
+        </div>
+    </div>
+
+    <!-- VEGETABLE GRID -->
+    <div id="vegContainer" class="veg-grid">
+        <div class="loading" style="grid-column:1/-1;">Loading vegetables…</div>
+    </div>
+
+    <!-- SCROLL TOP -->
+    <button id="scrollTopBtn">↑</button>
+
+    <!-- BOTTOM NAV (favourite.html active) -->
+    <nav class="bottom-nav">
+        <a href="index.html">🏠 Home</a>
+        <a class="active" href="favourite.html">🥬 Vegetables</a>
+        <a href="construction.html">🏗️ Construction</a>
+        <a href="info.html">ℹ️ Info</a>
+    </nav>
+
+    <script>
+        // ── DATA URL ──
+        const DATA_URL =
+            "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/vegetables.json";
+
+        // ── FALLBACK SAMPLE DATA (used if fetch fails) ──
+        const FALLBACK_DATA = {
+            updated: "06:24 AM",
+            priceDate: "04 Aug 2026",
+            items: [
+                { name: "Bhendi", price: "₹36", unit: "kg", change: "No Change" },
+                { name: "Tomato", price: "₹28", unit: "kg", change: "+ ₹2" },
+                { name: "Onion", price: "₹22", unit: "kg", change: "- ₹1" },
+                { name: "Potato", price: "₹30", unit: "kg", change: "No Change" },
+                { name: "Cabbage", price: "₹18", unit: "kg", change: "+ ₹3" },
+                { name: "Cauliflower", price: "₹25", unit: "kg", change: "- ₹2" },
+                { name: "Brinjal", price: "₹32", unit: "kg", change: "No Change" },
+                { name: "Carrot", price: "₹40", unit: "kg", change: "+ ₹5" },
+            ]
+        };
+
+        let allVeggies = [];
+
+        // ── LOAD ──
+        async function loadVegetables() {
+            const container = document.getElementById("vegContainer");
+            container.innerHTML =
+                '<div class="loading" style="grid-column:1/-1;">Loading vegetables…</div>';
+
+            let data = null;
+
+            try {
+                const res = await fetch(DATA_URL + "?t=" + Date.now());
+                if (!res.ok) throw new Error("HTTP error " + res.status);
+                data = await res.json();
+            } catch (err) {
+                console.warn("Fetch failed, using fallback data", err);
+                data = FALLBACK_DATA;
+            }
+
+            // Ensure we have a valid items array
+            let items = [];
+            let updated = data?.updated || FALLBACK_DATA.updated;
+            let priceDate = data?.priceDate || FALLBACK_DATA.priceDate;
+
+            if (data && Array.isArray(data.items)) {
+                items = data.items;
+            } else if (data && Array.isArray(data.vegetables)) {
+                items = data.vegetables;
+            } else if (data && Array.isArray(data.records)) {
+                items = data.records;
+            } else {
+                items = FALLBACK_DATA.items;
+                updated = FALLBACK_DATA.updated;
+                priceDate = FALLBACK_DATA.priceDate;
+            }
+
+            if (!items || items.length === 0) {
+                items = FALLBACK_DATA.items;
+                updated = FALLBACK_DATA.updated;
+                priceDate = FALLBACK_DATA.priceDate;
+            }
+
+            document.getElementById("lastUpdated").textContent = updated || "06:24 AM";
+            document.getElementById("priceDate").textContent = priceDate || "04 Aug 2026";
+
+            allVeggies = items;
+            renderCards(allVeggies);
+        }
+
+        // ── RENDER CARDS (with click → history) ──
+        function renderCards(list) {
+            const container = document.getElementById("vegContainer");
+            container.innerHTML = "";
+
+            if (!list || !list.length) {
+                container.innerHTML =
+                    '<div class="empty-state" style="grid-column:1/-1;">No vegetables available.</div>';
+                return;
+            }
+
+            list.forEach((veg) => {
+                const card = document.createElement("div");
+                card.className = "veg-card";
+
+                const changeText = veg.change || '—';
+                const isDown = changeText.toLowerCase().includes('down') || changeText.includes('-');
+                const changeClass = isDown ? 'down' : '';
+
+                card.innerHTML = `
+                    <div class="veg-name">
+                        <span>${veg.name}</span>
+                        <span class="veg-change ${changeClass}">${changeText}</span>
+                    </div>
+                    <div class="veg-price-row">
+                        <span class="veg-price">${veg.price} <small>/ ${veg.unit || 'kg'}</small></span>
+                        <span class="veg-unit">${veg.unit || 'kg'}</span>
+                    </div>
+                `;
+
+                // ── PRICE HISTORY CLICK LOGIC ──
+                card.addEventListener('click', () => {
+                    const vegName = encodeURIComponent(veg.name || 'vegetable');
+                    window.location.href = `vegetable_history.html?name=${vegName}`;
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // ── REFRESH & SHARE ──
+        document.getElementById("refreshBtn").addEventListener("click", loadVegetables);
+        document.getElementById("shareBtn").addEventListener("click", () => {
+            if (navigator.share) {
+                navigator.share({ title: "Vegetable Prices · Goa", url: location.href });
+            } else {
+                alert("Share this page with your friends!");
+            }
+        });
+
+        // ── SCROLL TOP ──
+        const scrollBtn = document.getElementById("scrollTopBtn");
+        window.addEventListener("scroll", () => {
+            scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+        });
+        scrollBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // ── INIT ──
+        loadVegetables();
+    </script>
 
 </body>
-
 </html>
