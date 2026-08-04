@@ -21,7 +21,6 @@ function formatDate(dateStr) {
 async function loadHistory() {
     const vegName = getVegetableFromURL();
 
-    // If no vegetable in URL, show error
     if (!vegName) {
         document.getElementById('pageTitle').textContent = 'No Vegetable Selected';
         document.getElementById('todayPrice').textContent = '—';
@@ -41,12 +40,14 @@ async function loadHistory() {
         if (!res.ok) throw new Error('HTTP error ' + res.status);
         const data = await res.json();
 
+        console.log('Fetched data:', data);
+        console.log('Looking for vegetable:', vegName);
+
         const history = data[vegName] || [];
         if (!history || history.length === 0) {
             throw new Error('No data for ' + vegName);
         }
 
-        // Sort by date (oldest to newest)
         history.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         const dates = history.map(item => item.date);
@@ -58,7 +59,6 @@ async function loadHistory() {
         const lowestPrice = Math.min(...prices);
         const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
 
-        // Determine trend
         let trendIcon = '➡️', trendTitle = 'No Change', trendValue = '₹0.00';
         const diff = latestPrice - yesterdayPrice;
         if (diff > 0) {
@@ -69,30 +69,22 @@ async function loadHistory() {
             trendIcon = '🔴';
             trendTitle = 'Down';
             trendValue = '₹' + Math.abs(diff).toFixed(2);
-        } else {
-            trendIcon = '➡️';
-            trendTitle = 'No Change';
-            trendValue = '₹0.00';
         }
 
-        // ── Update Summary ──
         document.getElementById('todayPrice').textContent = '₹' + latestPrice.toFixed(2);
         document.getElementById('updatedDate').textContent = 'Updated: ' + formatDate(latestDate);
         document.getElementById('trendIcon').textContent = trendIcon;
         document.getElementById('trendTitle').textContent = trendTitle;
         document.getElementById('trendValue').textContent = trendValue;
 
-        // ── Update Statistics ──
         document.getElementById('todayPriceStat').textContent = '₹' + latestPrice.toFixed(2);
         document.getElementById('yesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
         document.getElementById('highestPrice').textContent = '₹' + highestPrice.toFixed(2);
         document.getElementById('lowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
         document.getElementById('averagePrice').textContent = '₹' + averagePrice.toFixed(2);
 
-        // ── Update History Table ──
         const tbody = document.getElementById('historyTable');
         tbody.innerHTML = '';
-        // Show newest first
         const reversed = [...history].reverse();
         reversed.forEach(item => {
             const tr = document.createElement('tr');
@@ -100,13 +92,12 @@ async function loadHistory() {
             tbody.appendChild(tr);
         });
 
-        // ── Draw SVG Chart ──
         drawChart(dates, prices);
 
     } catch (err) {
-        console.error(err);
+        console.error('Error loading history:', err);
         document.getElementById('todayPrice').textContent = 'Error';
-        document.getElementById('updatedDate').textContent = 'Could not load data.';
+        document.getElementById('updatedDate').textContent = 'Could not load data for ' + vegName;
         document.querySelector('.summary-right').style.display = 'none';
         document.querySelector('.chartCard').style.display = 'none';
         document.querySelector('.statsGrid').style.display = 'none';
@@ -115,7 +106,6 @@ async function loadHistory() {
     }
 }
 
-// ── Chart drawing (SVG) ──
 function drawChart(dates, prices) {
     const svg = document.getElementById('trendChart');
     if (!svg) return;
@@ -132,12 +122,10 @@ function drawChart(dates, prices) {
     const getX = (i) => padding.left + (i / (prices.length - 1)) * chartWidth;
     const getY = (price) => padding.top + chartHeight - ((price - minPrice) / range) * chartHeight;
 
-    // Grid lines
     const gridGroup = document.getElementById('gridLines');
     gridGroup.innerHTML = '';
     for (let i = 0; i <= 4; i++) {
         const y = padding.top + (i / 4) * chartHeight;
-        const priceVal = maxPrice - (i / 4) * range;
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', padding.left);
         line.setAttribute('y1', y);
@@ -149,7 +137,6 @@ function drawChart(dates, prices) {
         gridGroup.appendChild(line);
     }
 
-    // Y Labels
     const yLabelsGroup = document.getElementById('yLabels');
     yLabelsGroup.innerHTML = '';
     for (let i = 0; i <= 4; i++) {
@@ -165,7 +152,6 @@ function drawChart(dates, prices) {
         yLabelsGroup.appendChild(text);
     }
 
-    // X Labels (show some dates)
     const xLabelsGroup = document.getElementById('xLabels');
     xLabelsGroup.innerHTML = '';
     const step = Math.max(1, Math.floor(dates.length / 6));
@@ -180,7 +166,6 @@ function drawChart(dates, prices) {
         text.textContent = formatDate(dates[i]);
         xLabelsGroup.appendChild(text);
     }
-    // last date
     const lastX = getX(dates.length - 1);
     const lastText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     lastText.setAttribute('x', lastX);
@@ -191,7 +176,6 @@ function drawChart(dates, prices) {
     lastText.textContent = formatDate(dates[dates.length - 1]);
     xLabelsGroup.appendChild(lastText);
 
-    // Line path
     let pathD = '';
     let areaD = '';
     for (let i = 0; i < prices.length; i++) {
@@ -205,7 +189,6 @@ function drawChart(dates, prices) {
             areaD += ` L ${x} ${y}`;
         }
     }
-    // Close area path
     const lastXArea = getX(prices.length - 1);
     const firstXArea = getX(0);
     areaD += ` L ${lastXArea} ${padding.top + chartHeight}`;
@@ -214,7 +197,6 @@ function drawChart(dates, prices) {
     document.getElementById('linePath').setAttribute('d', pathD);
     document.getElementById('areaPath').setAttribute('d', areaD);
 
-    // Points
     const pointGroup = document.getElementById('pointGroup');
     pointGroup.innerHTML = '';
     for (let i = 0; i < prices.length; i++) {
@@ -231,10 +213,8 @@ function drawChart(dates, prices) {
     }
 }
 
-// ── Back button ──
 document.getElementById('backBtn').addEventListener('click', () => {
     window.history.back();
 });
 
-// ── Load on page load ──
 document.addEventListener('DOMContentLoaded', loadHistory);
