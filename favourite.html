@@ -413,7 +413,7 @@
     <!-- SCROLL TOP -->
     <button id="scrollTopBtn">↑</button>
 
-    <!-- BOTTOM NAV (favourite.html active) -->
+    <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
         <a href="index.html">🏠 Home</a>
         <a class="active" href="favourite.html">🥬 Vegetables</a>
@@ -422,35 +422,32 @@
     </nav>
 
     <script>
-        // ── DATA URL ──
+        // ── DATA URL (history.json from Goan-farmer-help) ──
         const DATA_URL =
-            "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/vegetables.json";
+            "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/history.json";
 
         // ── FALLBACK SAMPLE DATA (used if fetch fails) ──
         const FALLBACK_DATA = {
-            updated: "06:24 AM",
-            priceDate: "04 Aug 2026",
-            items: [
-                { name: "Bhendi", price: "₹36", unit: "kg", change: "No Change" },
-                { name: "Tomato", price: "₹28", unit: "kg", change: "+ ₹2" },
-                { name: "Onion", price: "₹22", unit: "kg", change: "- ₹1" },
-                { name: "Potato", price: "₹30", unit: "kg", change: "No Change" },
-                { name: "Cabbage", price: "₹18", unit: "kg", change: "+ ₹3" },
-                { name: "Cauliflower", price: "₹25", unit: "kg", change: "- ₹2" },
-                { name: "Brinjal", price: "₹32", unit: "kg", change: "No Change" },
-                { name: "Carrot", price: "₹40", unit: "kg", change: "+ ₹5" },
-            ]
+            "Bhendi": [{ "date": "2026-08-04", "price": 36 }],
+            "Tomato": [{ "date": "2026-08-04", "price": 29 }],
+            "Cabbage": [{ "date": "2026-08-04", "price": 28 }],
+            "Carrot": [{ "date": "2026-08-04", "price": 44 }],
+            "Cauliflower": [{ "date": "2026-08-04", "price": 33 }],
+            "Chilli": [{ "date": "2026-08-04", "price": 50 }],
+            "Cluster Beans": [{ "date": "2026-08-04", "price": 47 }],
+            "Onion": [{ "date": "2026-08-04", "price": 22 }],
+            "Potato": [{ "date": "2026-08-04", "price": 30 }],
+            "Brinjal": [{ "date": "2026-08-04", "price": 32 }]
         };
 
-        let allVeggies = [];
-
-        // ── LOAD ──
+        // ── LOAD VEGETABLES FROM history.json ──
         async function loadVegetables() {
             const container = document.getElementById("vegContainer");
             container.innerHTML =
                 '<div class="loading" style="grid-column:1/-1;">Loading vegetables…</div>';
 
             let data = null;
+            let usedFallback = false;
 
             try {
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
@@ -459,39 +456,64 @@
             } catch (err) {
                 console.warn("Fetch failed, using fallback data", err);
                 data = FALLBACK_DATA;
+                usedFallback = true;
             }
 
-            // Ensure we have a valid items array
-            let items = [];
-            let updated = data?.updated || FALLBACK_DATA.updated;
-            let priceDate = data?.priceDate || FALLBACK_DATA.priceDate;
-
-            if (data && Array.isArray(data.items)) {
-                items = data.items;
-            } else if (data && Array.isArray(data.vegetables)) {
-                items = data.vegetables;
-            } else if (data && Array.isArray(data.records)) {
-                items = data.records;
-            } else {
-                items = FALLBACK_DATA.items;
-                updated = FALLBACK_DATA.updated;
-                priceDate = FALLBACK_DATA.priceDate;
+            // Extract vegetable names and their price history
+            let vegNames = Object.keys(data);
+            
+            // If data is empty or has no keys, use fallback
+            if (!vegNames || vegNames.length === 0) {
+                data = FALLBACK_DATA;
+                vegNames = Object.keys(data);
+                usedFallback = true;
             }
 
-            if (!items || items.length === 0) {
-                items = FALLBACK_DATA.items;
-                updated = FALLBACK_DATA.updated;
-                priceDate = FALLBACK_DATA.priceDate;
-            }
+            // Get today's date for the badge
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            const timeStr = today.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
 
-            document.getElementById("lastUpdated").textContent = updated || "06:24 AM";
-            document.getElementById("priceDate").textContent = priceDate || "04 Aug 2026";
+            document.getElementById("lastUpdated").textContent = timeStr || "06:24 AM";
+            document.getElementById("priceDate").textContent = dateStr || "04 Aug 2026";
 
-            allVeggies = items;
-            renderCards(allVeggies);
+            // Build vegetable list with latest price
+            const vegetableList = vegNames.map(name => {
+                const history = data[name] || [];
+                const latest = history.length > 0 ? history[history.length - 1] : { price: 0 };
+                const previous = history.length > 1 ? history[history.length - 2] : { price: latest.price };
+                
+                // Calculate change
+                let changeText = "No Change";
+                let isDown = false;
+                if (latest.price > previous.price) {
+                    changeText = `+ ₹${(latest.price - previous.price).toFixed(0)}`;
+                } else if (latest.price < previous.price) {
+                    changeText = `- ₹${(previous.price - latest.price).toFixed(0)}`;
+                    isDown = true;
+                }
+                
+                return {
+                    name: name,
+                    price: `₹${latest.price}`,
+                    unit: "kg",
+                    change: changeText,
+                    isDown: isDown
+                };
+            });
+
+            renderCards(vegetableList);
         }
 
-        // ── RENDER CARDS (with click → history) ──
+        // ── RENDER CARDS (with click → history.html) ──
         function renderCards(list) {
             const container = document.getElementById("vegContainer");
             container.innerHTML = "";
@@ -506,25 +528,23 @@
                 const card = document.createElement("div");
                 card.className = "veg-card";
 
-                const changeText = veg.change || '—';
-                const isDown = changeText.toLowerCase().includes('down') || changeText.includes('-');
-                const changeClass = isDown ? 'down' : '';
+                const changeClass = veg.isDown ? 'down' : '';
 
                 card.innerHTML = `
                     <div class="veg-name">
                         <span>${veg.name}</span>
-                        <span class="veg-change ${changeClass}">${changeText}</span>
+                        <span class="veg-change ${changeClass}">${veg.change}</span>
                     </div>
                     <div class="veg-price-row">
-                        <span class="veg-price">${veg.price} <small>/ ${veg.unit || 'kg'}</small></span>
-                        <span class="veg-unit">${veg.unit || 'kg'}</span>
+                        <span class="veg-price">${veg.price} <small>/ ${veg.unit}</small></span>
+                        <span class="veg-unit">${veg.unit}</span>
                     </div>
                 `;
 
-                // ── PRICE HISTORY CLICK LOGIC ──
+                // ── PRICE HISTORY CLICK ── navigates to history.html
                 card.addEventListener('click', () => {
-                    const vegName = encodeURIComponent(veg.name || 'vegetable');
-                    window.location.href = `vegetable_history.html?name=${vegName}`;
+                    const vegName = encodeURIComponent(veg.name);
+                    window.location.href = `history.html?vegetable=${vegName}`;
                 });
 
                 container.appendChild(card);
