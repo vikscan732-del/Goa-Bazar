@@ -1,355 +1,240 @@
-// ==============================
-// HISTORY PAGE
-// ==============================
+// ── Configuration ──
+const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/history.json";
 
-const BASE =
-"https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
-
-const params = new URLSearchParams(window.location.search);
-const type = params.get("type") || "petrol";
-
-let historyURL;
-
-switch(type){
-
-    case "gold":
-    case "silver":
-        historyURL = BASE + "gold_silver-history.json";
-        break;
-
-    case "lpg":
-        historyURL = BASE + "lpg-history.json";
-        break;
-
-    default:
-        historyURL = BASE + "fuel-history.json";
-
+// ── Get vegetable name from URL ──
+function getVegetableFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('vegetable') || params.get('name') || null;
 }
 
-document.getElementById("pageTitle").textContent =
-type.charAt(0).toUpperCase() +
-type.slice(1) +
-" History";
-
-document.getElementById("backBtn").onclick =
-()=>history.back();
-
-window.addEventListener("DOMContentLoaded",loadHistory);
-
-async function loadHistory(){
-
-    try{
-
-        const response = await fetch(historyURL,{
-            cache:"no-store"
-        });
-
-        const data = await response.json();
-
-        const labels = [];
-        const values = [];
-
-        data.forEach(item=>{
-
-            labels.push(item.updated);
-
-            let value = 0;
-
-            switch(type){
-
-                case "petrol":
-                    value = item.petrol?.Panjim ?? 0;
-                    break;
-
-                case "diesel":
-                    value = item.diesel?.Panjim ?? 0;
-                    break;
-
-                case "autogas":
-                    value = item.autogas?.Panjim ?? 0;
-                    break;
-
-                case "cng":
-                    value = item.cng?.Panjim ?? 0;
-                    break;
-
-                case "lpg":
-                    value = item.panjim ??
-                            item.average ?? 0;
-                    break;
-
-                case "gold":
-                    value = item.gold_24k ?? 0;
-                    break;
-
-                case "silver":
-                    value = item.silver ?? 0;
-                    break;
-
-            }
-
-            values.push(Number(value));
-
-        });
-
-        drawChart(labels,values);
-        fillStats(values,labels);
-        fillTable(labels,values);
-
-    }catch(err){
-
-        console.error(err);
-
+// ── Format date (YYYY-MM-DD -> DD/MM/YYYY) ──
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
-
+    return dateStr;
 }
 
-// ==============================
-// SVG GRAPH
-// ==============================
+// ── Main load function ──
+async function loadHistory() {
+    const vegName = getVegetableFromURL();
 
-function drawChart(labels,values){
-        const grid = document.getElementById("gridLines");
-    const area = document.getElementById("areaPath");
-    const line = document.getElementById("linePath");
-    const points = document.getElementById("pointGroup");
-    const xLabels = document.getElementById("xLabels");
-    const yLabels = document.getElementById("yLabels");
-
-    grid.innerHTML = "";
-    points.innerHTML = "";
-    xLabels.innerHTML = "";
-    yLabels.innerHTML = "";
-
-    const WIDTH = 360;
-    const HEIGHT = 220;
-
-    const LEFT = 45;
-    const RIGHT = 20;
-    const TOP = 20;
-    const BOTTOM = 35;
-
-    const graphWidth = WIDTH - LEFT - RIGHT;
-    const graphHeight = HEIGHT - TOP - BOTTOM;
-
-    const max = Math.max(...values);
-    const min = Math.min(...values);
-    const range = (max - min) || 1;
-
-    for(let i=0;i<=4;i++){
-
-        const y = TOP + graphHeight*i/4;
-
-        grid.innerHTML += `
-        <line
-            x1="${LEFT}"
-            y1="${y}"
-            x2="${WIDTH-RIGHT}"
-            y2="${y}">
-        </line>`;
-
-        const price =
-        (max - range*i/4).toFixed(2);
-
-        yLabels.innerHTML += `
-        <text
-            x="5"
-            y="${y+4}">
-            ₹${price}
-        </text>`;
+    // If no vegetable in URL, show error
+    if (!vegName) {
+        document.getElementById('pageTitle').textContent = 'No Vegetable Selected';
+        document.getElementById('todayPrice').textContent = '—';
+        document.getElementById('updatedDate').textContent = 'Please go back and select a vegetable.';
+        document.querySelector('.summary-right').style.display = 'none';
+        document.querySelector('.chartCard').style.display = 'none';
+        document.querySelector('.statsGrid').style.display = 'none';
+        document.querySelector('.historyTable').style.display = 'none';
+        document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
+        return;
     }
 
-    let linePath = "";
-    let areaPath = "";
+    document.getElementById('pageTitle').textContent = vegName + ' History';
 
-    values.forEach((value,index)=>{
+    try {
+        const res = await fetch(DATA_URL + '?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP error ' + res.status);
+        const data = await res.json();
 
-        const x =
-        LEFT +
-        graphWidth *
-        (labels.length==1 ? 0 : index/(labels.length-1));
-
-        const y =
-        TOP +
-        graphHeight -
-        ((value-min)/range)*graphHeight;
-
-        if(index===0){
-
-            linePath += `M ${x} ${y}`;
-
-            areaPath += `M ${x} ${HEIGHT-BOTTOM}`;
-            areaPath += ` L ${x} ${y}`;
-
-        }else{
-
-            linePath += ` L ${x} ${y}`;
-            areaPath += ` L ${x} ${y}`;
-
+        const history = data[vegName] || [];
+        if (!history || history.length === 0) {
+            throw new Error('No data for ' + vegName);
         }
 
-        points.innerHTML += `
-        <circle
-            cx="${x}"
-            cy="${y}"
-            r="4">
-        </circle>`;
+        // Sort by date (oldest to newest)
+        history.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        xLabels.innerHTML += `
-        <text
-            x="${x}"
-            y="${HEIGHT-8}"
-            text-anchor="middle">
-            ${labels[index].substring(5)}
-        </text>`;
+        const dates = history.map(item => item.date);
+        const prices = history.map(item => item.price);
+        const latestPrice = prices[prices.length - 1];
+        const latestDate = dates[dates.length - 1];
+        const yesterdayPrice = prices.length > 1 ? prices[prices.length - 2] : latestPrice;
+        const highestPrice = Math.max(...prices);
+        const lowestPrice = Math.min(...prices);
+        const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
 
-    });
+        // Determine trend
+        let trendIcon = '➡️', trendTitle = 'No Change', trendValue = '₹0.00';
+        const diff = latestPrice - yesterdayPrice;
+        if (diff > 0) {
+            trendIcon = '🟢';
+            trendTitle = 'Up';
+            trendValue = '₹' + diff.toFixed(2);
+        } else if (diff < 0) {
+            trendIcon = '🔴';
+            trendTitle = 'Down';
+            trendValue = '₹' + Math.abs(diff).toFixed(2);
+        } else {
+            trendIcon = '➡️';
+            trendTitle = 'No Change';
+            trendValue = '₹0.00';
+        }
 
-    areaPath += ` L ${LEFT+graphWidth} ${HEIGHT-BOTTOM}`;
-    areaPath += " Z";
+        // ── Update Summary ──
+        document.getElementById('todayPrice').textContent = '₹' + latestPrice.toFixed(2);
+        document.getElementById('updatedDate').textContent = 'Updated: ' + formatDate(latestDate);
+        document.getElementById('trendIcon').textContent = trendIcon;
+        document.getElementById('trendTitle').textContent = trendTitle;
+        document.getElementById('trendValue').textContent = trendValue;
 
-    line.setAttribute("d",linePath);
-    area.setAttribute("d",areaPath);
+        // ── Update Statistics ──
+        document.getElementById('todayPriceStat').textContent = '₹' + latestPrice.toFixed(2);
+        document.getElementById('yesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
+        document.getElementById('highestPrice').textContent = '₹' + highestPrice.toFixed(2);
+        document.getElementById('lowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
+        document.getElementById('averagePrice').textContent = '₹' + averagePrice.toFixed(2);
 
+        // ── Update History Table ──
+        const tbody = document.getElementById('historyTable');
+        tbody.innerHTML = '';
+        // Show newest first
+        const reversed = [...history].reverse();
+        reversed.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${formatDate(item.date)}</td><td>₹${item.price.toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+        });
+
+        // ── Draw SVG Chart ──
+        drawChart(dates, prices);
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('todayPrice').textContent = 'Error';
+        document.getElementById('updatedDate').textContent = 'Could not load data.';
+        document.querySelector('.summary-right').style.display = 'none';
+        document.querySelector('.chartCard').style.display = 'none';
+        document.querySelector('.statsGrid').style.display = 'none';
+        document.querySelector('.historyTable').style.display = 'none';
+        document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
+    }
 }
 
-// ==============================
-// STATISTICS
-// ==============================
+// ── Chart drawing (SVG) ──
+function drawChart(dates, prices) {
+    const svg = document.getElementById('trendChart');
+    if (!svg) return;
 
-function fillStats(values, labels){
+    const viewBoxWidth = 360, viewBoxHeight = 220;
+    const padding = { top: 20, bottom: 30, left: 40, right: 15 };
+    const chartWidth = viewBoxWidth - padding.left - padding.right;
+    const chartHeight = viewBoxHeight - padding.top - padding.bottom;
 
-    if(values.length===0) return;
+    const minPrice = Math.min(...prices) * 0.95;
+    const maxPrice = Math.max(...prices) * 1.05;
+    const range = maxPrice - minPrice || 1;
 
-    const today = values[values.length-1];
-    const yesterday =
-        values.length>1
-        ? values[values.length-2]
-        : today;
+    const getX = (i) => padding.left + (i / (prices.length - 1)) * chartWidth;
+    const getY = (price) => padding.top + chartHeight - ((price - minPrice) / range) * chartHeight;
 
-    const highest = Math.max(...values);
-    const lowest = Math.min(...values);
-
-    const average =
-        values.reduce((a,b)=>a+b,0)/values.length;
-
-    const diff = today - yesterday;
-
-    const percent =
-        yesterday
-        ? (diff/yesterday)*100
-        : 0;
-
-    document.getElementById("todayPrice").textContent =
-        "₹"+today.toFixed(2);
-
-    document.getElementById("todayPriceStat").textContent =
-        "₹"+today.toFixed(2);
-
-    document.getElementById("yesterdayPrice").textContent =
-        "₹"+yesterday.toFixed(2);
-
-    document.getElementById("highestPrice").textContent =
-        "₹"+highest.toFixed(2);
-
-    document.getElementById("lowestPrice").textContent =
-        "₹"+lowest.toFixed(2);
-
-    document.getElementById("averagePrice").textContent =
-        "₹"+average.toFixed(2);
-
-    document.getElementById("updatedDate").textContent =
-        "Updated: " + labels[labels.length-1];
-
-    const trendIcon =
-        document.getElementById("trendIcon");
-
-    const trendTitle =
-        document.getElementById("trendTitle");
-
-    const trendValue =
-        document.getElementById("trendValue");
-
-    if(diff>0){
-
-        trendIcon.textContent = "🟢";
-
-        trendTitle.textContent =
-            "Price Increased";
-
-        trendTitle.className =
-            "trend-up";
-
-        trendValue.className =
-            "trend-up";
-
-    }
-    else if(diff<0){
-
-        trendIcon.textContent = "🔴";
-
-        trendTitle.textContent =
-            "Price Decreased";
-
-        trendTitle.className =
-            "trend-down";
-
-        trendValue.className =
-            "trend-down";
-
-    }
-    else{
-
-        trendIcon.textContent = "🔵";
-
-        trendTitle.textContent =
-            "No Change";
-
-        trendTitle.className =
-            "trend-same";
-
-        trendValue.className =
-            "trend-same";
-
+    // Grid lines
+    const gridGroup = document.getElementById('gridLines');
+    gridGroup.innerHTML = '';
+    for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (i / 4) * chartHeight;
+        const priceVal = maxPrice - (i / 4) * range;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', padding.left);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', viewBoxWidth - padding.right);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', '#e9edf2');
+        line.setAttribute('stroke-width', '0.5');
+        line.setAttribute('stroke-dasharray', '3,3');
+        gridGroup.appendChild(line);
     }
 
-    trendValue.textContent =
-        `${diff>=0?"+":""}₹${diff.toFixed(2)} (${percent.toFixed(2)}%)`;
+    // Y Labels
+    const yLabelsGroup = document.getElementById('yLabels');
+    yLabelsGroup.innerHTML = '';
+    for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (i / 4) * chartHeight;
+        const priceVal = maxPrice - (i / 4) * range;
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', padding.left - 6);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('text-anchor', 'end');
+        text.setAttribute('font-size', '10');
+        text.setAttribute('fill', '#6b7a8a');
+        text.textContent = '₹' + priceVal.toFixed(0);
+        yLabelsGroup.appendChild(text);
+    }
 
+    // X Labels (show some dates)
+    const xLabelsGroup = document.getElementById('xLabels');
+    xLabelsGroup.innerHTML = '';
+    const step = Math.max(1, Math.floor(dates.length / 6));
+    for (let i = 0; i < dates.length; i += step) {
+        const x = getX(i);
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', viewBoxHeight - 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '9');
+        text.setAttribute('fill', '#6b7a8a');
+        text.textContent = formatDate(dates[i]);
+        xLabelsGroup.appendChild(text);
+    }
+    // last date
+    const lastX = getX(dates.length - 1);
+    const lastText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lastText.setAttribute('x', lastX);
+    lastText.setAttribute('y', viewBoxHeight - 4);
+    lastText.setAttribute('text-anchor', 'middle');
+    lastText.setAttribute('font-size', '9');
+    lastText.setAttribute('fill', '#6b7a8a');
+    lastText.textContent = formatDate(dates[dates.length - 1]);
+    xLabelsGroup.appendChild(lastText);
+
+    // Line path
+    let pathD = '';
+    let areaD = '';
+    for (let i = 0; i < prices.length; i++) {
+        const x = getX(i);
+        const y = getY(prices[i]);
+        if (i === 0) {
+            pathD += `M ${x} ${y}`;
+            areaD += `M ${x} ${y}`;
+        } else {
+            pathD += ` L ${x} ${y}`;
+            areaD += ` L ${x} ${y}`;
+        }
+    }
+    // Close area path
+    const lastXArea = getX(prices.length - 1);
+    const firstXArea = getX(0);
+    areaD += ` L ${lastXArea} ${padding.top + chartHeight}`;
+    areaD += ` L ${firstXArea} ${padding.top + chartHeight} Z`;
+
+    document.getElementById('linePath').setAttribute('d', pathD);
+    document.getElementById('areaPath').setAttribute('d', areaD);
+
+    // Points
+    const pointGroup = document.getElementById('pointGroup');
+    pointGroup.innerHTML = '';
+    for (let i = 0; i < prices.length; i++) {
+        const x = getX(i);
+        const y = getY(prices[i]);
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '3.5');
+        circle.setAttribute('fill', '#198d24');
+        circle.setAttribute('stroke', '#fff');
+        circle.setAttribute('stroke-width', '1.5');
+        pointGroup.appendChild(circle);
+    }
 }
 
-// ==============================
-// HISTORY TABLE
-// ==============================
+// ── Back button ──
+document.getElementById('backBtn').addEventListener('click', () => {
+    window.history.back();
+});
 
-function fillTable(labels, values){
-
-    const tbody =
-    document.getElementById("historyTable");
-
-    tbody.innerHTML = "";
-
-    for(let i=values.length-1;i>=0;i--){
-
-        const row =
-        document.createElement("tr");
-
-        const date =
-        document.createElement("td");
-
-        const price =
-        document.createElement("td");
-
-        date.textContent = labels[i];
-
-        price.textContent =
-        "₹"+values[i].toFixed(2);
-
-        row.appendChild(date);
-        row.appendChild(price);
-
-        tbody.appendChild(row);
-
-    }
-
-}
+// ── Load on page load ──
+document.addEventListener('DOMContentLoaded', loadHistory);
