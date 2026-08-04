@@ -1,120 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Construction Prices | Goa Bazar</title>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#f4f7fb;color:#222;padding-bottom:90px}
-.top-header{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#fff;position:sticky;top:0;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-.header-buttons{display:flex;gap:10px}
-.icon-btn{width:46px;height:46px;border:none;border-radius:12px;background:#1976d2;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.update-card,.search-box,.statCard,.categoryCard{background:#fff;border-radius:16px;box-shadow:0 3px 10px rgba(0,0,0,.08)}
-.update-card{margin:18px;padding:18px;display:flex;justify-content:space-between;align-items:center}
-.search-box{margin:18px;padding:14px;display:flex;gap:10px;align-items:center}
-.search-box input{border:none;outline:none;width:100%;font-size:16px}
-.statsBar{display:flex;gap:12px;padding:0 18px 18px}
-.statCard{flex:1;padding:16px;text-align:center}
-#categoryContainer{padding:0 18px 18px}
-.categoryHeader{display:flex;justify-content:space-between;padding:16px;cursor:pointer;font-weight:bold}
-.categoryBody{display:none;padding:0 16px 16px}
-.itemRow{display:flex;justify-content:space-between;border-top:1px solid #eee;padding:12px 0}
-.itemPrice{background:#0f9d58;color:#fff;padding:6px 12px;border-radius:16px}
-.loading,.errorBox{text-align:center;padding:40px}
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:70px;background:#fff;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 8px rgba(0,0,0,.1)}
-.bottom-nav a{text-decoration:none;color:#666;font-size:12px;display:flex;flex-direction:column;align-items:center}
-.bottom-nav a.active{color:#1976d2}
-#scrollTopBtn{position:fixed;right:20px;bottom:90px;display:none;border:none;border-radius:50%;width:52px;height:52px;background:#1976d2;color:#fff}
-@media(max-width:480px){.statsBar{flex-direction:column}.update-card{flex-direction:column;align-items:flex-start}.itemRow{flex-direction:column;gap:8px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Construction Prices · Goa Bazar</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f2f6fe;
+      color: #1e293b;
+      padding-bottom: 90px;
+    }
+
+    /* ----- TOP HEADER ----- */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #ffffffdd;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 4px 16px rgba(0, 20, 40, 0.06);
+      border-bottom: 1px solid rgba(25, 118, 210, 0.15);
+    }
+
+    .top-header h2 {
+      font-size: 1.3rem;
+      background: linear-gradient(145deg, #0b3b5c, #1976d2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+    }
+
+    .top-header small {
+      display: block;
+      font-size: 0.7rem;
+      color: #475569;
+      background: #e9eff8;
+      padding: 0 10px;
+      border-radius: 30px;
+      margin-top: 2px;
+      -webkit-text-fill-color: #1e293b;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 18px;
+      background: #1976d2;
+      color: #fff;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(25, 118, 210, 0.25);
+      transition: all 0.2s;
+    }
+
+    .icon-btn:active { transform: scale(0.92); }
+
+    /* ----- LIVE UPDATE CARD ----- */
+    .update-card {
+      margin: 18px 18px 12px;
+      padding: 16px 22px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+      border-radius: 28px;
+      box-shadow: 0 8px 20px rgba(0, 30, 60, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(25, 118, 210, 0.08);
+    }
+
+    .update-card small {
+      color: #64748b;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .update-card h3 {
+      font-weight: 700;
+      color: #0f2b45;
+      margin-top: 2px;
+    }
+
+    .live-badge {
+      background: #d4edda;
+      color: #0a6847;
+      padding: 8px 18px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      border: 1px solid #b7e0c7;
+      box-shadow: 0 2px 6px rgba(10, 104, 71, 0.1);
+    }
+
+    /* ----- SEARCH ----- */
+    .search-box {
+      margin: 6px 18px 18px;
+      padding: 8px 20px;
+      background: #ffffff;
+      border-radius: 60px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid #dce7f5;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      padding: 12px 0;
+      background: transparent;
+      color: #0b2b44;
+    }
+
+    .search-box input::placeholder {
+      color: #8b9bb5;
+      font-weight: 400;
+    }
+
+    /* ----- STATS (colourful tabs) ----- */
+    .statsBar {
+      display: flex;
+      gap: 14px;
+      padding: 4px 18px 20px;
+      flex-wrap: wrap;
+    }
+
+    .statCard {
+      flex: 1 1 0;
+      min-width: 80px;
+      padding: 14px 4px;
+      border-radius: 28px;
+      text-align: center;
+      background: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 20, 40, 0.04);
+      border: 1px solid rgba(0,0,0,0.02);
+      transition: 0.15s;
+    }
+
+    /* different colours for each stat */
+    .statCard:nth-child(1) {
+      background: linear-gradient(145deg, #e3f0ff, #cfe2ff);
+      border-left: 4px solid #1976d2;
+    }
+
+    .statCard:nth-child(2) {
+      background: linear-gradient(145deg, #ffe7e0, #ffd9cc);
+      border-left: 4px solid #d84315;
+    }
+
+    .statCard:nth-child(3) {
+      background: linear-gradient(145deg, #e2f3e4, #c8e6d9);
+      border-left: 4px solid #0f9d58;
+    }
+
+    .statCard h2 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #0a2942;
+    }
+
+    .statCard p {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2c3e5c;
+      opacity: 0.8;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* ----- CATEGORY CARDS (colourful tabs) ----- */
+    #categoryContainer {
+      padding: 0 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .categoryCard {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 8px 24px rgba(0, 20, 40, 0.04);
+      border: 1px solid #eaf1fa;
+      overflow: hidden;
+      transition: 0.1s;
+    }
+
+    .categoryHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      background: #fafcff;
+      border-bottom: 1px solid #edf3fa;
+      transition: 0.1s;
+    }
+
+    /* unique tab colours: each category gets a subtle gradient */
+    .categoryCard:nth-child(6n+1) .categoryHeader { background: linear-gradient(90deg, #eef6ff, #ffffff); border-left: 6px solid #1976d2; }
+    .categoryCard:nth-child(6n+2) .categoryHeader { background: linear-gradient(90deg, #ffefe7, #ffffff); border-left: 6px solid #d84315; }
+    .categoryCard:nth-child(6n+3) .categoryHeader { background: linear-gradient(90deg, #e3f5e9, #ffffff); border-left: 6px solid #0f9d58; }
+    .categoryCard:nth-child(6n+4) .categoryHeader { background: linear-gradient(90deg, #f0e6ff, #ffffff); border-left: 6px solid #6a1b9a; }
+    .categoryCard:nth-child(6n+5) .categoryHeader { background: linear-gradient(90deg, #fff3d6, #ffffff); border-left: 6px solid #e67e22; }
+    .categoryCard:nth-child(6n+6) .categoryHeader { background: linear-gradient(90deg, #dff0fa, #ffffff); border-left: 6px solid #00838f; }
+
+    .categoryHeader span:last-child {
+      color: #64748b;
+      font-size: 1.4rem;
+      font-weight: 300;
+    }
+
+    .categoryBody {
+      display: none;
+      padding: 6px 16px 16px;
+      background: #ffffff;
+    }
+
+    .itemRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #eef3f9;
+      padding: 14px 6px 12px;
+      flex-wrap: wrap;
+    }
+
+    .itemRow:first-of-type {
+      border-top: none;
+    }
+
+    .itemRow b {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f2b45;
+    }
+
+    .itemRow small {
+      color: #5c7392;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: #eef4fc;
+      padding: 2px 12px;
+      border-radius: 30px;
+      margin-left: 6px;
+    }
+
+    .itemPrice {
+      background: #0f9d58;
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 10px rgba(15, 157, 88, 0.2);
+      white-space: nowrap;
+      background: linear-gradient(145deg, #0f9d58, #0b7a45);
+    }
+
+    /* loading / error */
+    .loading, .errorBox {
+      text-align: center;
+      padding: 40px 20px;
+      background: white;
+      border-radius: 30px;
+      margin: 10px 0;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .errorBox {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+
+    /* ----- BOTTOM NAV (colourful) ----- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 74px;
+      background: #ffffffec;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -6px 24px rgba(0, 20, 40, 0.06);
+      border-top: 1px solid rgba(0,0,0,0.02);
+      z-index: 30;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      color: #5f748e;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: 0.1s;
+      padding: 6px 12px;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+    }
+
+    .bottom-nav a.active {
+      color: #1976d2;
+      background: #e4effb;
+      padding: 6px 18px;
+      font-weight: 700;
+    }
+
+    .bottom-nav a:nth-child(1).active { background: #e3eefa; color: #1a5f9e; }
+    .bottom-nav a:nth-child(2).active { background: #f0e6d5; color: #9e6b3b; }
+    .bottom-nav a:nth-child(3).active { background: #d9e9ff; color: #1976d2; }
+    .bottom-nav a:nth-child(4).active { background: #ffded5; color: #b34a2c; }
+    .bottom-nav a:nth-child(5).active { background: #e8e0f0; color: #6a4b8a; }
+
+    /* scroll top */
+    #scrollTopBtn {
+      position: fixed;
+      right: 24px;
+      bottom: 100px;
+      display: none;
+      border: none;
+      border-radius: 60px;
+      width: 54px;
+      height: 54px;
+      background: #1976d2;
+      color: #fff;
+      font-size: 2rem;
+      box-shadow: 0 8px 20px rgba(25, 118, 210, 0.3);
+      cursor: pointer;
+      transition: 0.15s;
+      z-index: 25;
+    }
+
+    #scrollTopBtn:active { transform: scale(0.85); }
+
+    @media (max-width: 480px) {
+      .statsBar { flex-direction: row; flex-wrap: wrap; }
+      .statCard { flex: 1 1 30%; }
+      .update-card { flex-direction: row; }
+      .itemRow { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+    }
+  </style>
 </head>
 <body>
+
+<!-- TOP HEADER -->
 <header class="top-header">
-<div><h2>🏗️ Construction Prices</h2><small>Goa Construction Material Rates</small></div>
-<div class="header-buttons">
-<button id="refreshBtn" class="icon-btn">↻</button>
-<button id="shareBtn" class="icon-btn">⇪</button>
-</div>
+  <div>
+    <h2>🏗️ Construction Prices</h2>
+    <small>Goa Construction Material Rates</small>
+  </div>
+  <div class="header-buttons">
+    <button id="refreshBtn" class="icon-btn">↻</button>
+    <button id="shareBtn" class="icon-btn">⇪</button>
+  </div>
 </header>
 
+<!-- UPDATE CARD (LIVE removed as requested) -->
 <section class="update-card">
-<div><small>Last Updated</small><h3 id="lastUpdated">Loading...</h3></div>
-<div><b>LIVE</b></div>
+  <div>
+    <small>Last Updated</small>
+    <h3 id="lastUpdated">Loading...</h3>
+  </div>
+  <div class="live-badge">● LIVE</div>
 </section>
 
+<!-- SEARCH -->
 <section class="search-box">
-<span>🔍</span>
-<input id="searchInput" placeholder="Search construction material...">
+  <span style="font-size:1.3rem;">🔍</span>
+  <input id="searchInput" placeholder="Search construction material...">
 </section>
 
+<!-- STATS (colourful tabs) -->
 <div class="statsBar">
-<div class="statCard"><h2 id="totalCategories">0</h2><p>Categories</p></div>
-<div class="statCard"><h2 id="totalItems">0</h2><p>Materials</p></div>
-<div class="statCard"><h2>LIVE</h2><p>Status</p></div>
+  <div class="statCard"><h2 id="totalCategories">0</h2><p>Categories</p></div>
+  <div class="statCard"><h2 id="totalItems">0</h2><p>Materials</p></div>
+  <div class="statCard"><h2>●</h2><p>LIVE</p></div>
 </div>
 
-<div id="categoryContainer"><div class="loading">Loading...</div></div>
+<!-- CATEGORY CONTAINER -->
+<div id="categoryContainer"><div class="loading">Loading materials...</div></div>
 
+<!-- SCROLL TO TOP -->
 <button id="scrollTopBtn">↑</button>
 
+<!-- BOTTOM NAV (colourful) -->
 <nav class="bottom-nav">
-<a href="index.html">Home</a>
-<a href="vegetables.html">Vegetables</a>
-<a class="active" href="construction.html">Construction</a>
-<a href="fuel.html">Fuel</a>
-<a href="more.html">More</a>
+  <a href="#">🏠 Home</a>
+  <a href="#">🥕 Vegetables</a>
+  <a class="active" href="#">🏗️ Construction</a>
+  <a href="#">⛽ Fuel</a>
+  <a href="#">➕ More</a>
 </nav>
 
 <script>
-const DATA_URL="https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/construction.json";
-let allCategories=[];
+  const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/construction.json";
+  let allCategories = [];
 
-async function loadConstruction(){
-const c=document.getElementById("categoryContainer");
-c.innerHTML="<div class='loading'>Loading...</div>";
-try{
-const r=await fetch(DATA_URL+"?t="+Date.now());
-const d=await r.json();
-allCategories=d.categories||[];
-document.getElementById("lastUpdated").textContent=d.updated||"Unknown";
-render(allCategories);
-}catch(e){
-c.innerHTML="<div class='errorBox'>Unable to load data.</div>";
-}
-}
+  async function loadConstruction() {
+    const container = document.getElementById("categoryContainer");
+    container.innerHTML = "<div class='loading'>Loading...</div>";
+    try {
+      const res = await fetch(DATA_URL + "?t=" + Date.now());
+      const data = await res.json();
+      allCategories = data.categories || [];
+      document.getElementById("lastUpdated").textContent = data.updated || "2026-08-04 06:24";
+      renderCategories(allCategories);
+    } catch (err) {
+      container.innerHTML = "<div class='errorBox'>⚠️ Unable to load data. Please refresh.</div>";
+    }
+  }
 
-function render(list){
-document.getElementById("totalCategories").textContent=list.length;
-let t=0;list.forEach(x=>t+=x.items.length);
-document.getElementById("totalItems").textContent=t;
-const c=document.getElementById("categoryContainer");
-c.innerHTML="";
-if(!list.length){c.innerHTML="<div class='errorBox'>No results.</div>";return;}
-list.forEach((cat,i)=>{
-const card=document.createElement("div");
-card.className="categoryCard";
-card.innerHTML=`<div class="categoryHeader"><span>${cat.category}</span><span>▼</span></div><div class="categoryBody">${cat.items.map(it=>`<div class="itemRow"><div><b>${it.name}</b><br><small>${it.unit}</small></div><div class="itemPrice">${it.price}</div></div>`).join("")}</div>`;
-card.querySelector(".categoryHeader").onclick=()=>{
-const b=card.querySelector(".categoryBody");
-b.style.display=b.style.display==="block"?"none":"block";
-};
-c.appendChild(card);
-});
-}
+  function renderCategories(list) {
+    document.getElementById("totalCategories").textContent = list.length;
+    let totalItems = 0;
+    list.forEach(c => totalItems += c.items.length);
+    document.getElementById("totalItems").textContent = totalItems;
 
-searchInput.oninput=e=>{
-const q=e.target.value.toLowerCase();
-if(!q){render(allCategories);return;}
-render(allCategories.map(c=>({category:c.category,items:c.items.filter(i=>(c.category+i.name+i.unit+i.price).toLowerCase().includes(q))})).filter(c=>c.items.length));
-};
+    const container = document.getElementById("categoryContainer");
+    container.innerHTML = "";
 
-refreshBtn.onclick=loadConstruction;
-shareBtn.onclick=()=>navigator.share&&navigator.share({title:"Construction Prices",url:location.href});
-window.onscroll=()=>scrollTopBtn.style.display=scrollY>300?"block":"none";
-scrollTopBtn.onclick=()=>scrollTo({top:0,behavior:"smooth"});
-loadConstruction();
+    if (!list.length) {
+      container.innerHTML = "<div class='errorBox'>No matching materials found.</div>";
+      return;
+    }
+
+    list.forEach((category, idx) => {
+      const card = document.createElement("div");
+      card.className = "categoryCard";
+
+      // build items html
+      let itemsHtml = "";
+      if (category.items && category.items.length) {
+        itemsHtml = category.items.map(item => `
+          <div class="itemRow">
+            <div><b>${item.name}</b> <small>${item.unit || ''}</small></div>
+            <div class="itemPrice">${item.price}</div>
+          </div>
+        `).join("");
+      } else {
+        itemsHtml = "<div style='padding:16px;color:#7c8aa3;'>No items</div>";
+      }
+
+      card.innerHTML = `
+        <div class="categoryHeader">
+          <span>${category.category}</span>
+          <span>▼</span>
+        </div>
+        <div class="categoryBody">${itemsHtml}</div>
+      `;
+
+      // toggle body
+      const header = card.querySelector(".categoryHeader");
+      const body = card.querySelector(".categoryBody");
+      header.addEventListener("click", () => {
+        const isOpen = body.style.display === "block";
+        body.style.display = isOpen ? "none" : "block";
+        header.querySelector("span:last-child").textContent = isOpen ? "▼" : "▲";
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  // ----- SEARCH (filter) -----
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) {
+      renderCategories(allCategories);
+      return;
+    }
+    const filtered = allCategories.map(cat => {
+      const matchedItems = cat.items.filter(item =>
+        (cat.category + item.name + item.unit + item.price).toLowerCase().includes(q)
+      );
+      return { ...cat, items: matchedItems };
+    }).filter(cat => cat.items.length > 0);
+
+    renderCategories(filtered);
+  });
+
+  // ----- REFRESH & SHARE -----
+  document.getElementById("refreshBtn").addEventListener("click", loadConstruction);
+  document.getElementById("shareBtn").addEventListener("click", () => {
+    if (navigator.share) {
+      navigator.share({ title: "Construction Prices Goa", url: location.href });
+    } else {
+      alert("Share this page with your team!");
+    }
+  });
+
+  // ----- SCROLL TOP -----
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.addEventListener("scroll", () => {
+    scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+  });
+  scrollBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // INIT
+  loadConstruction();
 </script>
+
 </body>
 </html>
+```
