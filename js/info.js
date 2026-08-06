@@ -1,285 +1,184 @@
 // ==============================
-// GOA BAZAR INFO
+// GOA BAZAR INFO (UPDATED)
 // ==============================
 
-// CHANGE THIS TO YOUR BACKEND REPOSITORY
+// ── USE COMBINED history.json ──
+const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
 
-const BASE = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/";
+// ── FALLBACK DATA (used if fetch fails) ──
+const FALLBACK = {
+    "Petrol": [{ date: "2026-08-05", price: 103.24 }],
+    "Petrol Margao": [{ date: "2026-08-05", price: 103.35 }],
+    "Diesel": [{ date: "2026-08-05", price: 90.45 }],
+    "Diesel Margao": [{ date: "2026-08-05", price: 90.55 }],
+    "CNG": [{ date: "2026-08-05", price: 74.50 }],
+    "Auto Gas": [{ date: "2026-08-05", price: 52.00 }],
+    "LPG": [{ date: "2026-08-05", price: 903.00 }],
+    "Gold 24K": [{ date: "2026-08-05", price: 73150 }],
+    "Gold 22K": [{ date: "2026-08-05", price: 67100 }],
+    "Gold 21K": [{ date: "2026-08-05", price: 64050 }],
+    "Gold 20K": [{ date: "2026-08-05", price: 61000 }],
+    "Gold 18K": [{ date: "2026-08-05", price: 54200 }],
+    "Silver": [{ date: "2026-08-05", price: 87500 }]
+};
 
-const weatherURL = BASE + "weather.json";
-const fuelURL = BASE + "fuel.json";
-const fuelHistoryURL = BASE + "fuel-history.json";
-const lpgURL = BASE + "lpg.json";
-const goldURL = BASE + "gold_silver.json";
+// ── WEATHER (static fallback) ──
+const WEATHER = [
+    { day: "Today", date: "10 May", icon: "⛅", temp: "32°C", desc: "Partly Cloudy" },
+    { day: "Sun", date: "11 May", icon: "🌦️", temp: "31°C", desc: "Light Rain" },
+    { day: "Mon", date: "12 May", icon: "🌧️", temp: "30°C", desc: "Rain" },
+    { day: "Tue", date: "13 May", icon: "⛅", temp: "31°C", desc: "Partly Cloudy" },
+    { day: "Wed", date: "14 May", icon: "☀️", temp: "32°C", desc: "Sunny" }
+];
 
 const weatherBox = document.getElementById("weatherCards");
 const lastUpdated = document.getElementById("lastUpdated");
 
 document.getElementById("refreshBtn").onclick = loadAll;
-
 loadAll();
 
-async function loadAll(){
+// ── MAIN LOAD ──
+async function loadAll() {
+    try {
+        const res = await fetch(DATA_URL + '?t=' + Date.now());
+        if (!res.ok) throw new Error('HTTP error');
+        const data = await res.json();
 
-    try{
+        // ── Timestamp ──
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+        const timeStr = now.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        lastUpdated.innerHTML = 'Updated: ' + dateStr + ', ' + timeStr;
 
-        await Promise.all([
-            loadWeather(),
-            loadFuel(),
-            loadLPG(),
-            loadGold()
-        ]);
+        // ── Weather ──
+        weatherBox.innerHTML = '';
+        WEATHER.forEach(w => {
+            weatherBox.innerHTML += `
+                <div class="weatherCard">
+                    <div style="font-size:42px">${w.icon}</div>
+                    <h3>${w.day}</h3>
+                    <h2>${w.temp}</h2>
+                    <small>${w.desc}</small>
+                </div>
+            `;
+        });
 
-    }catch(err){
-
-        console.error(err);
-
-        lastUpdated.innerHTML = "Unable to load data";
-
-    }
-
-}
-
-// ===============================
-// WEATHER
-// ===============================
-
-function getIcon(code){
-
-    if(code===0) return "☀️";
-    if(code===1 || code===2) return "🌤️";
-    if(code===3) return "☁️";
-    if(code===45 || code===48) return "🌫️";
-    if(code>=51 && code<=67) return "🌦️";
-    if(code>=71 && code<=77) return "❄️";
-    if(code>=80 && code<=82) return "🌧️";
-    if(code>=95) return "⛈️";
-
-    return "🌤️";
-
-}
-
-function dayName(date){
-
-    return new Date(date).toLocaleDateString(
-        "en-IN",
-        {
-            weekday:"long"
+        // ── Helper to get latest price ──
+        function getPrice(key) {
+            const items = data[key] || FALLBACK[key] || [];
+            if (items.length === 0) return null;
+            return items[items.length - 1].price;
         }
-    );
 
-}
+        function getYesterdayPrice(key) {
+            const items = data[key] || FALLBACK[key] || [];
+            if (items.length < 2) return items.length === 1 ? items[0].price : null;
+            return items[items.length - 2].price;
+        }
 
+        function formatPrice(price, yesterday) {
+            if (price === null || price === undefined) return '₹--';
+            let diff = 0;
+            let diffText = '';
+            if (yesterday !== null && yesterday !== undefined) {
+                diff = price - yesterday;
+                const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '➜';
+                const sign = diff > 0 ? '+' : '';
+                diffText = `<br><span class="${diff > 0 ? 'up' : diff < 0 ? 'down' : 'same'}">
+                    ${arrow} ${sign}₹${Math.abs(diff).toFixed(2)}
+                </span>`;
+            }
+            return `₹${price.toFixed(2)}${diffText}`;
+        }
 
-function getWeatherText(code){
+        // ── Petrol ──
+        const pPanjim = getPrice('Petrol');
+        const pPanjimY = getYesterdayPrice('Petrol');
+        document.getElementById('petrolPanjim').innerHTML = formatPrice(pPanjim, pPanjimY);
 
-    if(code===0) return "Clear Sky";
-    if(code===1 || code===2) return "Partly Cloudy";
-    if(code===3) return "Cloudy";
-    if(code===45 || code===48) return "Fog";
-    if(code>=51 && code<=67) return "Rain";
-    if(code>=71 && code<=77) return "Snow";
-    if(code>=80 && code<=82) return "Showers";
-    if(code>=95) return "Thunderstorm";
+        const pMargao = getPrice('Petrol Margao') || getPrice('Petrol');
+        const pMargaoY = getYesterdayPrice('Petrol Margao') || getYesterdayPrice('Petrol');
+        document.getElementById('petrolMargao').innerHTML = formatPrice(pMargao, pMargaoY);
 
-    return "Unknown";
+        // ── Diesel ──
+        const dPanjim = getPrice('Diesel');
+        const dPanjimY = getYesterdayPrice('Diesel');
+        document.getElementById('dieselPanjim').innerHTML = formatPrice(dPanjim, dPanjimY);
 
-}
+        const dMargao = getPrice('Diesel Margao') || getPrice('Diesel');
+        const dMargaoY = getYesterdayPrice('Diesel Margao') || getYesterdayPrice('Diesel');
+        document.getElementById('dieselMargao').innerHTML = formatPrice(dMargao, dMargaoY);
 
-async function loadWeather(){
+        // ── CNG ──
+        const cng = getPrice('CNG');
+        const cngY = getYesterdayPrice('CNG');
+        document.getElementById('cngPrice').innerHTML = formatPrice(cng, cngY);
 
-    const res = await fetch(weatherURL);
+        // ── Auto Gas ──
+        const auto = getPrice('Auto Gas');
+        const autoY = getYesterdayPrice('Auto Gas');
+        document.getElementById('autogasPrice').innerHTML = formatPrice(auto, autoY);
 
-    const data = await res.json();
+        // ── LPG ──
+        const lpg = getPrice('LPG');
+        document.getElementById('lpgPrice').textContent = lpg ? '₹' + lpg.toFixed(2) : '₹--';
 
-    lastUpdated.innerHTML =
-    "Updated : " + data.updated;
+        // ── Gold ──
+        const goldKeys = ['Gold 24K', 'Gold 22K', 'Gold 21K', 'Gold 20K', 'Gold 18K'];
+        const goldIds = ['gold24', 'gold22', 'gold21', 'gold20', 'gold18'];
+        goldKeys.forEach((key, i) => {
+            const val = getPrice(key);
+            document.getElementById(goldIds[i]).textContent = val ? '₹' + Number(val).toLocaleString('en-IN') : '₹--';
+        });
 
-    weatherBox.innerHTML = "";
+        // ── Silver ──
+        const silver = getPrice('Silver');
+        document.getElementById('silverPrice').textContent = silver ? '₹' + Number(silver).toLocaleString('en-IN') : '₹--';
 
-    data.forecast.forEach(day=>{
-
-        weatherBox.innerHTML += `
-
-<div class="weatherCard">
-
-<div style="font-size:42px">
-${getIcon(day.weather_code)}
-</div>
-
-<h3>${dayName(day.date)}</h3>
-
-<h2>${day.max}°C</h2>
-
-<p>Min ${day.min}°C</p>
-
-<small>${getWeatherText(day.weather_code)}</small>
-
-</div>
-
-`;
-
-    });
-
-}
-
-// ===============================
-// FUEL
-// ===============================
-
-async function loadFuel(){
-
-    const [fuelRes, historyRes] = await Promise.all([
-        fetch(fuelURL),
-        fetch(fuelHistoryURL)
-    ]);
-
-    const data = await fuelRes.json();
-    const history = await historyRes.json();
-
-    const today = history[history.length-1];
-    const yesterday =
-        history.length>1
-        ? history[history.length-2]
-        : today;
-
-    function format(price,diff){
-
-        const arrow =
-            diff>0 ? "▲" :
-            diff<0 ? "▼" : "➜";
-
-        const sign =
-            diff>0 ? "+" : "";
-
-        return `
-        ₹${price}
-        <br>
-        <span class="${
-            diff>0?"up":
-            diff<0?"down":"same"
-        }">
-        ${arrow} ${sign}₹${Math.abs(diff).toFixed(2)}
-        </span>
-        `;
-
+    } catch (err) {
+        console.error(err);
+        lastUpdated.innerHTML = "Unable to load data";
     }
-
-    document.getElementById("petrolPanjim").innerHTML =
-        format(
-            data.petrol.Panjim,
-            today.petrol.Panjim-yesterday.petrol.Panjim
-        );
-
-    document.getElementById("petrolMargao").innerHTML =
-        format(
-            data.petrol.Margao,
-            today.petrol.Margao-yesterday.petrol.Margao
-        );
-
-    document.getElementById("dieselPanjim").innerHTML =
-        format(
-            data.diesel.Panjim,
-            today.diesel.Panjim-yesterday.diesel.Panjim
-        );
-
-    document.getElementById("dieselMargao").innerHTML =
-        format(
-            data.diesel.Margao,
-            today.diesel.Margao-yesterday.diesel.Margao
-        );
-
-    document.getElementById("cngPrice").innerHTML =
-        format(
-            data.cng.Panjim,
-            today.cng.Panjim-yesterday.cng.Panjim
-        );
-
-    document.getElementById("autogasPrice").innerHTML =
-        format(
-            data.autogas.Panjim,
-            today.autogas.Panjim-yesterday.autogas.Panjim
-        );
-
 }
 
-// ===============================
-// LPG
-// ===============================
-
-async function loadLPG(){
-
-    const res = await fetch(lpgURL);
-    const data = await res.json();
-
-    document.getElementById("lpgPrice").textContent =
-        "₹" + (data.price || data.panjim);
-
-}
-
-// ===============================
-// GOLD & SILVER
-// ===============================
-
-async function loadGold(){
-
-    const res = await fetch(goldURL);
-    const data = await res.json();
-
-    document.getElementById("gold24").textContent =
-        "₹" + data.gold_24k;
-
-    document.getElementById("gold22").textContent =
-        "₹" + data.gold_22k;
-
-    document.getElementById("gold21").textContent =
-        "₹" + data.gold_21k;
-
-    document.getElementById("gold20").textContent =
-        "₹" + data.gold_20k;
-
-    document.getElementById("gold18").textContent =
-        "₹" + data.gold_18k;
-
-    document.getElementById("silverPrice").textContent =
-        "₹" + data.silver;
-
-}
-
-// ===============================
-// CARD CLICK EVENTS
-// ===============================
+// ── CARD CLICK EVENTS ──
+// These pass the correct key to history.html
 
 document.getElementById("petrolCard").onclick = () => {
-    location.href = "history.html?type=petrol";
+    location.href = "history.html?vegetable=Petrol";
 };
 
 document.getElementById("dieselCard").onclick = () => {
-    location.href = "history.html?type=diesel";
+    location.href = "history.html?vegetable=Diesel";
 };
 
 document.getElementById("cngCard").onclick = () => {
-    location.href = "history.html?type=cng";
+    location.href = "history.html?vegetable=CNG";
 };
 
 document.getElementById("autogasCard").onclick = () => {
-    location.href = "history.html?type=autogas";
+    location.href = "history.html?vegetable=Auto Gas";
 };
 
 document.getElementById("lpgCard").onclick = () => {
-    location.href = "history.html?type=lpg";
+    location.href = "history.html?vegetable=LPG";
 };
 
 document.getElementById("goldCard").onclick = () => {
-    location.href = "history.html?type=gold";
+    location.href = "history.html?vegetable=Gold 24K";
 };
 
 document.getElementById("silverCard").onclick = () => {
-    location.href = "history.html?type=silver";
+    location.href = "history.html?vegetable=Silver";
 };
 
-// ===============================
-// AUTO REFRESH
-// ===============================
-
+// ── AUTO REFRESH (5 minutes) ──
 setInterval(loadAll, 300000);
