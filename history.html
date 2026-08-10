@@ -154,7 +154,7 @@
 
         #priceChart {
             width: 100%;
-            height: 220px;
+            height: 240px;
             display: block;
         }
 
@@ -299,7 +299,7 @@
                 font-size: 1.6rem;
             }
             #priceChart {
-                height: 180px;
+                height: 200px;
             }
             .filter-btn {
                 font-size: 0.6rem;
@@ -344,7 +344,7 @@
         <!-- CHART -->
         <h2 class="sectionTitle">Price Trend</h2>
         <div class="chartCard">
-            <canvas id="priceChart" height="220"></canvas>
+            <canvas id="priceChart" height="240"></canvas>
         </div>
 
         <!-- STATISTICS -->
@@ -454,6 +454,15 @@
             return history.filter(item => parseDate(item.date) >= cutoff);
         }
 
+        // ── Format currency for display ──
+        function formatCurrency(val) {
+            if (val === null || val === undefined) return '₹0';
+            if (val >= 1000) {
+                return '₹' + Math.round(val).toLocaleString('en-IN');
+            }
+            return '₹' + val.toFixed(2);
+        }
+
         // ── Draw Chart using Canvas ──
         function drawChart(canvasId, labels, prices, color = '#2e7d32') {
             const canvas = document.getElementById(canvasId);
@@ -462,7 +471,7 @@
 
             const rect = canvas.parentElement.getBoundingClientRect();
             const width = canvas.parentElement.clientWidth - 24;
-            const height = 220;
+            const height = 240;
             canvas.width = width * 2;
             canvas.height = height * 2;
             canvas.style.width = width + 'px';
@@ -470,7 +479,7 @@
 
             const w = canvas.width;
             const h = canvas.height;
-            const pad = { top: 30, bottom: 40, left: 40, right: 20 };
+            const pad = { top: 40, bottom: 45, left: 55, right: 25 };
             const chartW = w - pad.left - pad.right;
             const chartH = h - pad.top - pad.bottom;
 
@@ -485,14 +494,14 @@
                 return;
             }
 
-            const minPrice = Math.min(...prices) * 0.95;
-            const maxPrice = Math.max(...prices) * 1.05;
+            const minPrice = Math.min(...prices) * 0.92;
+            const maxPrice = Math.max(...prices) * 1.08;
             const range = maxPrice - minPrice || 1;
 
             const getX = (i) => pad.left + (i / (labels.length - 1)) * chartW;
             const getY = (price) => pad.top + chartH - ((price - minPrice) / range) * chartH;
 
-            // Grid lines
+            // ── Grid lines ──
             ctx.strokeStyle = '#e9edf2';
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 4]);
@@ -507,11 +516,11 @@
                 ctx.font = '18px sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('₹' + priceVal.toFixed(0), pad.left - 8, y);
+                ctx.fillText(formatCurrency(priceVal), pad.left - 8, y);
             }
             ctx.setLineDash([]);
 
-            // Area fill
+            // ── Area fill (gradient) ──
             ctx.beginPath();
             for (let i = 0; i < prices.length; i++) {
                 const x = getX(i);
@@ -530,7 +539,7 @@
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // Line
+            // ── Line ──
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = 4;
@@ -544,40 +553,48 @@
             }
             ctx.stroke();
 
-            // Points & labels
+            // ── Points & labels ──
             for (let i = 0; i < prices.length; i++) {
                 const x = getX(i);
                 const y = getY(prices[i]);
 
                 // Circle
                 ctx.beginPath();
-                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.arc(x, y, 7, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
                 ctx.fill();
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Price label above point
+                // Price label above point (show every few)
                 if (i % Math.ceil(labels.length / 8) === 0 || i === labels.length - 1) {
                     ctx.fillStyle = '#0f2b1f';
-                    ctx.font = 'bold 18px sans-serif';
+                    ctx.font = 'bold 19px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'bottom';
-                    ctx.fillText('₹' + prices[i].toFixed(0), x, y - 10);
+                    ctx.fillText(formatCurrency(prices[i]), x, y - 12);
                 }
 
-                // Date label
+                // Date label below
                 if (i % Math.ceil(labels.length / 6) === 0 || i === labels.length - 1) {
                     ctx.fillStyle = '#64748b';
-                    ctx.font = '16px sans-serif';
+                    ctx.font = '15px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'top';
                     const dateStr = labels[i];
                     const displayDate = dateStr.length > 10 ? dateStr.slice(0, 10) : dateStr;
-                    ctx.fillText(displayDate, x, pad.top + chartH + 6);
+                    ctx.fillText(displayDate, x, pad.top + chartH + 8);
                 }
             }
+
+            // ── Title on chart ──
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            const displayName = DISPLAY_NAMES[currentKey] || currentKey || 'Price';
+            ctx.fillText(displayName + ' Trend', w / 2, 6);
         }
 
         // ── Render with current filter ──
@@ -622,17 +639,17 @@
                 trendValue = '₹' + Math.abs(diff).toFixed(2);
             }
 
-            document.getElementById('todayPrice').textContent = '₹' + latestPrice.toFixed(2);
+            document.getElementById('todayPrice').textContent = formatCurrency(latestPrice);
             document.getElementById('updatedDate').textContent = 'Updated: ' + formatDate(latestDate);
             document.getElementById('trendIcon').textContent = trendIcon;
             document.getElementById('trendTitle').textContent = trendTitle;
             document.getElementById('trendValue').textContent = trendValue;
 
-            document.getElementById('todayPriceStat').textContent = '₹' + latestPrice.toFixed(2);
-            document.getElementById('yesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
-            document.getElementById('highestPrice').textContent = '₹' + highestPrice.toFixed(2);
-            document.getElementById('lowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
-            document.getElementById('averagePrice').textContent = '₹' + averagePrice.toFixed(2);
+            document.getElementById('todayPriceStat').textContent = formatCurrency(latestPrice);
+            document.getElementById('yesterdayPrice').textContent = formatCurrency(yesterdayPrice);
+            document.getElementById('highestPrice').textContent = formatCurrency(highestPrice);
+            document.getElementById('lowestPrice').textContent = formatCurrency(lowestPrice);
+            document.getElementById('averagePrice').textContent = formatCurrency(averagePrice);
 
             // Update table
             const tbody = document.getElementById('historyTable');
@@ -640,7 +657,7 @@
             const reversed = [...filtered].reverse();
             reversed.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${formatDate(item.date)}</td><td>₹${item.price.toFixed(2)}</td>`;
+                tr.innerHTML = `<td>${formatDate(item.date)}</td><td>${formatCurrency(item.price)}</td>`;
                 tbody.appendChild(tr);
             });
 
