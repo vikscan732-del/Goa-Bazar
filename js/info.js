@@ -1,11 +1,11 @@
 // ==============================
-// GOA BAZAR INFO (UPDATED)
+// GOA BAZAR INFO (WITH HISTORY FILTER)
 // ==============================
 
-// ── USE COMBINED history.json ──
+// ── DATA URL ──
 const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
 
-// ── FALLBACK DATA (used if fetch fails) ──
+// ── FALLBACK DATA ──
 const FALLBACK = {
     "Petrol": [{ date: "2026-08-05", price: 103.24 }],
     "Petrol Margao": [{ date: "2026-08-05", price: 103.35 }],
@@ -34,6 +34,11 @@ const WEATHER = [
 const weatherBox = document.getElementById("weatherCards");
 const lastUpdated = document.getElementById("lastUpdated");
 
+// ── History state ──
+let fullHistoryData = {};
+let currentHistoryKey = null;
+let currentRange = 7;
+
 document.getElementById("refreshBtn").onclick = loadAll;
 loadAll();
 
@@ -43,6 +48,7 @@ async function loadAll() {
         const res = await fetch(DATA_URL + '?t=' + Date.now());
         if (!res.ok) throw new Error('HTTP error');
         const data = await res.json();
+        fullHistoryData = data;
 
         // ── Timestamp ──
         const now = new Date();
@@ -56,7 +62,7 @@ async function loadAll() {
             minute: '2-digit',
             hour12: true
         });
-        lastUpdated.innerHTML = 'Updated: ' + dateStr + ', ' + timeStr;
+        lastUpdated.innerHTML = '🕐 Last Updated: ' + dateStr + ', ' + timeStr;
 
         // ── Weather ──
         weatherBox.innerHTML = '';
@@ -92,11 +98,17 @@ async function loadAll() {
                 diff = price - yesterday;
                 const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '➜';
                 const sign = diff > 0 ? '+' : '';
-                diffText = `<br><span class="${diff > 0 ? 'up' : diff < 0 ? 'down' : 'same'}">
+                const color = diff > 0 ? 'green' : diff < 0 ? 'red' : 'gray';
+                diffText = `<br><span style="color:${color};font-size:0.7rem;font-weight:600;">
                     ${arrow} ${sign}₹${Math.abs(diff).toFixed(2)}
                 </span>`;
             }
             return `₹${price.toFixed(2)}${diffText}`;
+        }
+
+        function formatGold(val) {
+            if (val === null || val === undefined) return '₹--';
+            return '₹' + Number(val).toLocaleString('en-IN');
         }
 
         // ── Petrol ──
@@ -129,54 +141,277 @@ async function loadAll() {
 
         // ── LPG ──
         const lpg = getPrice('LPG');
-        document.getElementById('lpgPrice').textContent = lpg ? '₹' + lpg.toFixed(2) : '₹--';
+        document.getElementById('lpgPrice').innerHTML = lpg ? '₹' + lpg.toFixed(2) : '₹--';
 
         // ── Gold ──
         const goldKeys = ['Gold 24K', 'Gold 22K', 'Gold 21K', 'Gold 20K', 'Gold 18K'];
         const goldIds = ['gold24', 'gold22', 'gold21', 'gold20', 'gold18'];
         goldKeys.forEach((key, i) => {
             const val = getPrice(key);
-            document.getElementById(goldIds[i]).textContent = val ? '₹' + Number(val).toLocaleString('en-IN') : '₹--';
+            document.getElementById(goldIds[i]).textContent = formatGold(val);
         });
 
         // ── Silver ──
         const silver = getPrice('Silver');
-        document.getElementById('silverPrice').textContent = silver ? '₹' + Number(silver).toLocaleString('en-IN') : '₹--';
+        document.getElementById('silverPrice').innerHTML = silver ? '₹' + Number(silver).toLocaleString('en-IN') : '₹--';
+
+        // ── Set default history view (Petrol) ──
+        currentHistoryKey = 'Petrol';
+        renderHistoryForInfo('Petrol');
 
     } catch (err) {
         console.error(err);
-        lastUpdated.innerHTML = "Unable to load data";
+        lastUpdated.innerHTML = "⚠️ Unable to load data";
     }
 }
 
-// ── CARD CLICK EVENTS ──
-// These pass the correct key to history.html
+// ── Filter data by days ──
+function filterData(history, days) {
+    if (days === 'all' || days === 0) return history;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return history.filter(item => {
+        const parts = item.date.split('-');
+        const itemDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        return itemDate >= cutoff;
+    });
+}
 
+// ── Format date ──
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
+}
+
+// ── Draw Chart for Info Page ──
+function drawInfoChart(canvasId, labels, prices, color = '#2e7d32') {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const width = canvas.parentElement.clientWidth - 24;
+    const height = 200;
+    canvas.width = width * 2;
+    canvas.height = height * 2;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const pad = { top: 30, bottom: 40, left: 40, right: 20 };
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (!labels || labels.length < 2) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('📊 Not enough data', w / 2, h / 2);
+        return;
+    }
+
+    const minPrice = Math.min(...prices) * 0.95;
+    const maxPrice = Math.max(...prices) * 1.05;
+    const range = maxPrice - minPrice || 1;
+
+    const getX = (i) => pad.left + (i / (labels.length - 1)) * chartW;
+    const getY = (price) => pad.top + chartH - ((price - minPrice) / range) * chartH;
+
+    // Grid lines
+    ctx.strokeStyle = '#e9edf2';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    for (let i = 0; i <= 4; i++) {
+        const y = pad.top + (i / 4) * chartH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(w - pad.right, y);
+        ctx.stroke();
+        const priceVal = maxPrice - (i / 4) * range;
+        ctx.fillStyle = '#64748b';
+        ctx.font = '18px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('₹' + priceVal.toFixed(0), pad.left - 8, y);
+    }
+    ctx.setLineDash([]);
+
+    // Area fill
+    ctx.beginPath();
+    for (let i = 0; i < prices.length; i++) {
+        const x = getX(i);
+        const y = getY(prices[i]);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    const lastX = getX(prices.length - 1);
+    const firstX = getX(0);
+    ctx.lineTo(lastX, pad.top + chartH);
+    ctx.lineTo(firstX, pad.top + chartH);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+    grad.addColorStop(0, color + '40');
+    grad.addColorStop(1, color + '05');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (let i = 0; i < prices.length; i++) {
+        const x = getX(i);
+        const y = getY(prices[i]);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Points & labels
+    for (let i = 0; i < prices.length; i++) {
+        const x = getX(i);
+        const y = getY(prices[i]);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (i % Math.ceil(labels.length / 8) === 0 || i === labels.length - 1) {
+            ctx.fillStyle = '#0f2b1f';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('₹' + prices[i].toFixed(0), x, y - 10);
+        }
+
+        if (i % Math.ceil(labels.length / 6) === 0 || i === labels.length - 1) {
+            ctx.fillStyle = '#64748b';
+            ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            const dateStr = labels[i];
+            const displayDate = dateStr.length > 10 ? dateStr.slice(0, 10) : dateStr;
+            ctx.fillText(displayDate, x, pad.top + chartH + 6);
+        }
+    }
+}
+
+// ── Render history for info page ──
+function renderHistoryForInfo(key) {
+    const history = fullHistoryData[key] || [];
+    if (!history || history.length === 0) {
+        document.getElementById('infoHistoryTable').innerHTML = 
+            '<tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">No data for ' + key + '</td></tr>';
+        return;
+    }
+
+    history.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const filtered = filterData(history, currentRange);
+    
+    if (filtered.length === 0) {
+        document.getElementById('infoHistoryTable').innerHTML = 
+            '<tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">No data in this range</td></tr>';
+        return;
+    }
+
+    const dates = filtered.map(item => item.date);
+    const prices = filtered.map(item => item.price);
+    const latestPrice = prices[prices.length - 1];
+    const latestDate = dates[dates.length - 1];
+    const yesterdayPrice = prices.length > 1 ? prices[prices.length - 2] : latestPrice;
+    const highestPrice = Math.max(...prices);
+    const lowestPrice = Math.min(...prices);
+    const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+
+    // Update stats
+    document.getElementById('infoTodayPrice').textContent = '₹' + latestPrice.toFixed(2);
+    document.getElementById('infoYesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
+    document.getElementById('infoHighestPrice').textContent = '₹' + highestPrice.toFixed(2);
+    document.getElementById('infoLowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
+    document.getElementById('infoAveragePrice').textContent = '₹' + averagePrice.toFixed(2);
+
+    // Update table
+    const tbody = document.getElementById('infoHistoryTable');
+    tbody.innerHTML = '';
+    const reversed = [...filtered].reverse();
+    reversed.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${formatDate(item.date)}</td><td>₹${item.price.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    });
+
+    // Draw chart
+    drawInfoChart('infoPriceChart', dates, prices);
+}
+
+// ── Filter button handlers ──
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const range = this.dataset.range;
+        currentRange = range === 'all' ? 0 : parseInt(range);
+        if (currentHistoryKey) {
+            renderHistoryForInfo(currentHistoryKey);
+        }
+    });
+});
+
+// ── CARD CLICK EVENTS (update history on click) ──
 document.getElementById("petrolCard").onclick = () => {
+    currentHistoryKey = 'Petrol';
+    renderHistoryForInfo('Petrol');
     location.href = "history.html?vegetable=Petrol";
 };
 
 document.getElementById("dieselCard").onclick = () => {
+    currentHistoryKey = 'Diesel';
+    renderHistoryForInfo('Diesel');
     location.href = "history.html?vegetable=Diesel";
 };
 
 document.getElementById("cngCard").onclick = () => {
+    currentHistoryKey = 'CNG';
+    renderHistoryForInfo('CNG');
     location.href = "history.html?vegetable=CNG";
 };
 
 document.getElementById("autogasCard").onclick = () => {
+    currentHistoryKey = 'Auto Gas';
+    renderHistoryForInfo('Auto Gas');
     location.href = "history.html?vegetable=Auto Gas";
 };
 
 document.getElementById("lpgCard").onclick = () => {
+    currentHistoryKey = 'LPG';
+    renderHistoryForInfo('LPG');
     location.href = "history.html?vegetable=LPG";
 };
 
 document.getElementById("goldCard").onclick = () => {
+    currentHistoryKey = 'Gold 24K';
+    renderHistoryForInfo('Gold 24K');
     location.href = "history.html?vegetable=Gold 24K";
 };
 
 document.getElementById("silverCard").onclick = () => {
+    currentHistoryKey = 'Silver';
+    renderHistoryForInfo('Silver');
     location.href = "history.html?vegetable=Silver";
 };
 
