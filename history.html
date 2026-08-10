@@ -25,7 +25,6 @@
             padding: 0 16px;
         }
 
-        /* ── HEADER ── */
         .topbar {
             display: flex;
             align-items: center;
@@ -53,7 +52,6 @@
             color: #0f2b1f;
         }
 
-        /* ── SUMMARY CARD ── */
         .summary-card {
             background: #ffffff;
             border-radius: 20px;
@@ -104,7 +102,6 @@
             color: #1b5e20;
         }
 
-        /* ── SECTION TITLE ── */
         .sectionTitle {
             font-size: 0.9rem;
             font-weight: 700;
@@ -112,7 +109,6 @@
             margin: 16px 0 10px;
         }
 
-        /* ── FILTER BUTTONS ── */
         .filter-bar {
             display: flex;
             gap: 8px;
@@ -143,7 +139,6 @@
             border-color: #2e7d32;
         }
 
-        /* ── CHART ── */
         .chartCard {
             background: #ffffff;
             border-radius: 20px;
@@ -158,7 +153,6 @@
             display: block;
         }
 
-        /* ── STATISTICS ── */
         .statsGrid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -190,7 +184,6 @@
             margin-top: 2px;
         }
 
-        /* ── HISTORY TABLE ── */
         .table-wrapper {
             max-height: 300px;
             overflow-y: auto;
@@ -231,27 +224,6 @@
             border-bottom: none;
         }
 
-        /* ── ERROR / EMPTY ── */
-        .error-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7a8f9f;
-            font-weight: 500;
-        }
-
-        .error-state .big-icon {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px 20px;
-            color: #7a8f9f;
-        }
-
-        /* ── BOTTOM NAV ── */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -299,7 +271,7 @@
                 font-size: 1.6rem;
             }
             #priceChart {
-                height: 200px;
+                height: 180px;
             }
             .filter-btn {
                 font-size: 0.6rem;
@@ -310,7 +282,6 @@
 </head>
 <body>
 
-    <!-- TOP BAR -->
     <header class="topbar">
         <button id="backBtn">←</button>
         <h1 id="pageTitle">Price History</h1>
@@ -318,7 +289,6 @@
 
     <div class="container">
 
-        <!-- SUMMARY -->
         <div class="summary-card">
             <div class="summary-left">
                 <div class="small">Today's Price</div>
@@ -332,7 +302,6 @@
             </div>
         </div>
 
-        <!-- FILTER BUTTONS -->
         <div class="filter-bar">
             <button class="filter-btn active" data-range="7">1 Week</button>
             <button class="filter-btn" data-range="30">1 Month</button>
@@ -341,13 +310,11 @@
             <button class="filter-btn" data-range="all">All</button>
         </div>
 
-        <!-- CHART -->
         <h2 class="sectionTitle">Price Trend</h2>
         <div class="chartCard">
             <canvas id="priceChart" height="240"></canvas>
         </div>
 
-        <!-- STATISTICS -->
         <h2 class="sectionTitle">Statistics</h2>
         <div class="statsGrid">
             <div class="statCard">
@@ -372,7 +339,6 @@
             </div>
         </div>
 
-        <!-- HISTORY TABLE -->
         <h2 class="sectionTitle">Price History</h2>
         <div class="table-wrapper">
             <table class="historyTable">
@@ -390,7 +356,6 @@
 
     </div>
 
-    <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
         <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
         <a href="favourite.html"><i class="fa-solid fa-carrot"></i><span>Prices</span></a>
@@ -399,8 +364,12 @@
     </nav>
 
     <script>
-        // ── DATA URL ──
-        const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
+        // ── DATA URLS ──
+        const FUEL_DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
+        const VEGETABLE_DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/vegetables-history.json";
+
+        // ── VEGETABLE LIST (used to detect which file to use) ──
+        const VEGETABLE_NAMES = ["Bhendi", "Tomato", "Onion", "Potato", "Cabbage", "Cauliflower", "Brinjal", "Carrot", "Cluster Beans", "Chilli"];
 
         // ── DISPLAY NAMES ──
         const DISPLAY_NAMES = {
@@ -463,6 +432,19 @@
             return '₹' + val.toFixed(2);
         }
 
+        // ── Check if item is a vegetable ──
+        function isVegetable(key) {
+            return VEGETABLE_NAMES.includes(key);
+        }
+
+        // ── Get the correct data URL ──
+        function getDataURL(key) {
+            if (isVegetable(key)) {
+                return VEGETABLE_DATA_URL;
+            }
+            return FUEL_DATA_URL;
+        }
+
         // ── Draw Chart using Canvas ──
         function drawChart(canvasId, labels, prices, color = '#2e7d32') {
             const canvas = document.getElementById(canvasId);
@@ -501,7 +483,7 @@
             const getX = (i) => pad.left + (i / (labels.length - 1)) * chartW;
             const getY = (price) => pad.top + chartH - ((price - minPrice) / range) * chartH;
 
-            // ── Grid lines ──
+            // Grid lines
             ctx.strokeStyle = '#e9edf2';
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 4]);
@@ -520,7 +502,7 @@
             }
             ctx.setLineDash([]);
 
-            // ── Area fill (gradient) ──
+            // Area fill
             ctx.beginPath();
             for (let i = 0; i < prices.length; i++) {
                 const x = getX(i);
@@ -539,7 +521,7 @@
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // ── Line ──
+            // Line
             ctx.beginPath();
             ctx.strokeStyle = color;
             ctx.lineWidth = 4;
@@ -553,12 +535,11 @@
             }
             ctx.stroke();
 
-            // ── Points & labels ──
+            // Points & labels
             for (let i = 0; i < prices.length; i++) {
                 const x = getX(i);
                 const y = getY(prices[i]);
 
-                // Circle
                 ctx.beginPath();
                 ctx.arc(x, y, 7, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
@@ -567,7 +548,6 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Price label above point (show every few)
                 if (i % Math.ceil(labels.length / 8) === 0 || i === labels.length - 1) {
                     ctx.fillStyle = '#0f2b1f';
                     ctx.font = 'bold 19px sans-serif';
@@ -576,7 +556,6 @@
                     ctx.fillText(formatCurrency(prices[i]), x, y - 12);
                 }
 
-                // Date label below
                 if (i % Math.ceil(labels.length / 6) === 0 || i === labels.length - 1) {
                     ctx.fillStyle = '#64748b';
                     ctx.font = '15px sans-serif';
@@ -588,7 +567,6 @@
                 }
             }
 
-            // ── Title on chart ──
             ctx.fillStyle = '#1e293b';
             ctx.font = 'bold 22px sans-serif';
             ctx.textAlign = 'center';
@@ -626,7 +604,6 @@
             const lowestPrice = Math.min(...prices);
             const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
 
-            // Update summary
             let trendIcon = '➡️', trendTitle = 'No Change', trendValue = '₹0.00';
             const diff = latestPrice - yesterdayPrice;
             if (diff > 0) {
@@ -651,7 +628,6 @@
             document.getElementById('lowestPrice').textContent = formatCurrency(lowestPrice);
             document.getElementById('averagePrice').textContent = formatCurrency(averagePrice);
 
-            // Update table
             const tbody = document.getElementById('historyTable');
             tbody.innerHTML = '';
             const reversed = [...filtered].reverse();
@@ -661,7 +637,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Draw chart
             drawChart('priceChart', dates, prices);
         }
 
@@ -687,7 +662,11 @@
             currentKey = key;
 
             try {
-                const res = await fetch(DATA_URL + '?t=' + Date.now());
+                // ── Choose the correct data URL ──
+                const dataURL = getDataURL(key);
+                console.log('Fetching from:', dataURL);
+                
+                const res = await fetch(dataURL + '?t=' + Date.now());
                 if (!res.ok) throw new Error('HTTP error ' + res.status);
                 const data = await res.json();
 
@@ -699,7 +678,6 @@
                 history.sort((a, b) => new Date(a.date) - new Date(b.date));
                 fullHistory = history;
 
-                // Show all elements
                 document.querySelector('.summary-right').style.display = 'block';
                 document.querySelector('.chartCard').style.display = 'block';
                 document.querySelector('.statsGrid').style.display = 'grid';
@@ -722,24 +700,20 @@
             }
         }
 
-        // ── Back button ──
         document.getElementById('backBtn').addEventListener('click', () => {
             window.history.back();
         });
 
-        // ── Filter buttons ──
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-
                 const range = this.dataset.range;
                 currentRange = range === 'all' ? 0 : parseInt(range);
                 renderWithFilter();
             });
         });
 
-        // ── Load ──
         document.addEventListener('DOMContentLoaded', loadHistory);
     </script>
 
