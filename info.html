@@ -10,6 +10,164 @@
 <link rel="stylesheet" href="css/info.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+    /* ── Additional styles for filter on info page ── */
+    .filter-bar {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 6px 16px;
+        border: 1px solid #dce4ec;
+        border-radius: 20px;
+        background: #ffffff;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #475569;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+    .filter-btn:hover {
+        background: #e8f5e9;
+        border-color: #2e7d32;
+    }
+
+    .filter-btn.active {
+        background: #2e7d32;
+        color: #ffffff;
+        border-color: #2e7d32;
+    }
+
+    /* ── History section on info page ── */
+    .history-section {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 16px 18px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        border: 1px solid #edf2f7;
+    }
+
+    .history-section h2 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f2b1f;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .history-section h2 i {
+        color: #2e7d32;
+    }
+
+    .history-chart-wrapper {
+        width: 100%;
+        margin: 10px 0 12px;
+    }
+
+    #infoPriceChart {
+        width: 100%;
+        height: 200px;
+        display: block;
+    }
+
+    .history-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin: 10px 0 12px;
+    }
+
+    .history-stats-grid .stat-card {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 10px 6px;
+        text-align: center;
+        border: 1px solid #edf2f7;
+    }
+
+    .history-stats-grid .stat-card .label {
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: #7a8f9f;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .history-stats-grid .stat-card .value {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #0f2b1f;
+        margin-top: 2px;
+    }
+
+    .history-table-wrapper {
+        max-height: 200px;
+        overflow-y: auto;
+        border-radius: 12px;
+        border: 1px solid #edf2f7;
+    }
+
+    .history-table-wrapper table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+    }
+
+    .history-table-wrapper th {
+        background: #f8fafc;
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid #edf2f7;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    .history-table-wrapper td {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .history-table-wrapper tr:last-child td {
+        border-bottom: none;
+    }
+
+    .no-data-msg {
+        text-align: center;
+        padding: 30px 20px;
+        color: #7a8f9f;
+        font-weight: 500;
+    }
+
+    @media (max-width: 480px) {
+        .history-stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        #infoPriceChart {
+            height: 160px;
+        }
+        .filter-btn {
+            font-size: 0.6rem;
+            padding: 4px 12px;
+        }
+    }
+</style>
 </head>
 
 <body>
@@ -176,6 +334,64 @@ Silver Price
 <p id="silverPrice">--</p>
 
 </section>
+
+<!-- ── NEW: HISTORY SECTION WITH FILTERS ── -->
+<div class="history-section" id="historySection">
+    <h2><i class="fa-solid fa-chart-line"></i> Price History</h2>
+    
+    <!-- Filter Buttons -->
+    <div class="filter-bar">
+        <button class="filter-btn active" data-range="7">1 Week</button>
+        <button class="filter-btn" data-range="30">1 Month</button>
+        <button class="filter-btn" data-range="180">6 Months</button>
+        <button class="filter-btn" data-range="365">1 Year</button>
+        <button class="filter-btn" data-range="all">All</button>
+    </div>
+
+    <!-- History Chart -->
+    <div class="history-chart-wrapper">
+        <canvas id="infoPriceChart" height="200"></canvas>
+    </div>
+
+    <!-- Statistics -->
+    <div class="history-stats-grid" id="infoStatsGrid">
+        <div class="stat-card">
+            <div class="label">Today</div>
+            <div class="value" id="infoTodayPrice">₹0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Yesterday</div>
+            <div class="value" id="infoYesterdayPrice">₹0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Highest</div>
+            <div class="value" id="infoHighestPrice">₹0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Lowest</div>
+            <div class="value" id="infoLowestPrice">₹0.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Average</div>
+            <div class="value" id="infoAveragePrice">₹0.00</div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="history-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="infoHistoryTable">
+                <tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">Select an item to view history</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </div>
 
