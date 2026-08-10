@@ -422,32 +422,30 @@
     </nav>
 
     <script>
-        // ── DATA URL (history.json from Goan-farmer-help) ──
-        const DATA_URL =const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/vegetables-history.json";
-            
+        // ── DATA URL (FIXED: vegetables-history.json) ──
+        const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/vegetables-history.json";
 
         // ── FALLBACK SAMPLE DATA (used if fetch fails) ──
         const FALLBACK_DATA = {
-            "Bhendi": [{ "date": "2026-08-04", "price": 36 }],
-            "Tomato": [{ "date": "2026-08-04", "price": 29 }],
-            "Cabbage": [{ "date": "2026-08-04", "price": 28 }],
-            "Carrot": [{ "date": "2026-08-04", "price": 44 }],
-            "Cauliflower": [{ "date": "2026-08-04", "price": 33 }],
-            "Chilli": [{ "date": "2026-08-04", "price": 50 }],
-            "Cluster Beans": [{ "date": "2026-08-04", "price": 47 }],
-            "Onion": [{ "date": "2026-08-04", "price": 22 }],
-            "Potato": [{ "date": "2026-08-04", "price": 30 }],
-            "Brinjal": [{ "date": "2026-08-04", "price": 32 }]
+            "Bhendi": [{ "date": "2026-08-10", "price": 36 }],
+            "Tomato": [{ "date": "2026-08-10", "price": 29 }],
+            "Cabbage": [{ "date": "2026-08-10", "price": 18 }],
+            "Carrot": [{ "date": "2026-08-10", "price": 40 }],
+            "Cauliflower": [{ "date": "2026-08-10", "price": 25 }],
+            "Chilli": [{ "date": "2026-08-10", "price": 50 }],
+            "Cluster Beans": [{ "date": "2026-08-10", "price": 47 }],
+            "Onion": [{ "date": "2026-08-10", "price": 22 }],
+            "Potato": [{ "date": "2026-08-10", "price": 30 }],
+            "Brinjal": [{ "date": "2026-08-10", "price": 32 }]
         };
 
-        // ── LOAD VEGETABLES FROM history.json ──
+        // ── LOAD VEGETABLES ──
         async function loadVegetables() {
             const container = document.getElementById("vegContainer");
             container.innerHTML =
                 '<div class="loading" style="grid-column:1/-1;">Loading vegetables…</div>';
 
             let data = null;
-            let usedFallback = false;
 
             try {
                 const res = await fetch(DATA_URL + "?t=" + Date.now());
@@ -456,20 +454,15 @@
             } catch (err) {
                 console.warn("Fetch failed, using fallback data", err);
                 data = FALLBACK_DATA;
-                usedFallback = true;
             }
 
-            // Extract vegetable names and their price history
             let vegNames = Object.keys(data);
             
-            // If data is empty or has no keys, use fallback
             if (!vegNames || vegNames.length === 0) {
                 data = FALLBACK_DATA;
                 vegNames = Object.keys(data);
-                usedFallback = true;
             }
 
-            // Get today's date for the badge
             const today = new Date();
             const dateStr = today.toLocaleDateString('en-IN', {
                 day: '2-digit',
@@ -485,13 +478,12 @@
             document.getElementById("lastUpdated").textContent = timeStr || "06:24 AM";
             document.getElementById("priceDate").textContent = dateStr || "04 Aug 2026";
 
-            // Build vegetable list with latest price
             const vegetableList = vegNames.map(name => {
                 const history = data[name] || [];
+                history.sort((a, b) => new Date(a.date) - new Date(b.date));
                 const latest = history.length > 0 ? history[history.length - 1] : { price: 0 };
                 const previous = history.length > 1 ? history[history.length - 2] : { price: latest.price };
                 
-                // Calculate change
                 let changeText = "No Change";
                 let isDown = false;
                 if (latest.price > previous.price) {
@@ -513,7 +505,7 @@
             renderCards(vegetableList);
         }
 
-        // ── RENDER CARDS (with click → history.html) ──
+        // ── RENDER CARDS ──
         function renderCards(list) {
             const container = document.getElementById("vegContainer");
             container.innerHTML = "";
@@ -541,7 +533,6 @@
                     </div>
                 `;
 
-                // ── PRICE HISTORY CLICK ── navigates to history.html
                 card.addEventListener('click', () => {
                     const vegName = encodeURIComponent(veg.name);
                     window.location.href = `history.html?vegetable=${vegName}`;
@@ -551,7 +542,6 @@
             });
         }
 
-        // ── REFRESH & SHARE ──
         document.getElementById("refreshBtn").addEventListener("click", loadVegetables);
         document.getElementById("shareBtn").addEventListener("click", () => {
             if (navigator.share) {
@@ -561,7 +551,6 @@
             }
         });
 
-        // ── SCROLL TOP ──
         const scrollBtn = document.getElementById("scrollTopBtn");
         window.addEventListener("scroll", () => {
             scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
@@ -570,7 +559,6 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
         });
 
-        // ── INIT ──
         loadVegetables();
     </script>
 
