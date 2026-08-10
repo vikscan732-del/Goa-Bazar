@@ -1,416 +1,730 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+        body {
+            background: #f4f7fc;
+            color: #1e293b;
+            padding-bottom: 80px;
+        }
 
-<title>Price History</title>
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
 
-<link rel="stylesheet" href="css/history.css">
+        /* ── HEADER ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 16px 10px;
+            background: #ffffff;
+            border-bottom: 1px solid #eaf0f5;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
+        #backBtn {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #2e7d32;
+            padding: 4px 8px;
+        }
+
+        #pageTitle {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f2b1f;
+        }
+
+        /* ── SUMMARY CARD ── */
+        .summary-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px 18px;
+            margin: 16px 0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #edf2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-left .small {
+            font-size: 0.7rem;
+            color: #7a8f9f;
+            font-weight: 500;
+        }
+
+        #todayPrice {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1b5e20;
+        }
+
+        #updatedDate {
+            font-size: 0.65rem;
+            color: #7a8f9f;
+            font-weight: 500;
+        }
+
+        .summary-right {
+            text-align: center;
+        }
+
+        #trendIcon {
+            font-size: 2rem;
+        }
+
+        #trendTitle {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        #trendValue {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        /* ── SECTION TITLE ── */
+        .sectionTitle {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f2b1f;
+            margin: 16px 0 10px;
+        }
+
+        /* ── FILTER BUTTONS ── */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0 14px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border: 1px solid #dce4ec;
+            border-radius: 20px;
+            background: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .filter-btn:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+        }
+
+        .filter-btn.active {
+            background: #2e7d32;
+            color: #ffffff;
+            border-color: #2e7d32;
+        }
+
+        /* ── CHART ── */
+        .chartCard {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px 12px 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #edf2f7;
+        }
+
+        #priceChart {
+            width: 100%;
+            height: 220px;
+            display: block;
+        }
+
+        /* ── STATISTICS ── */
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .statCard {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 12px 6px;
+            text-align: center;
+            border: 1px solid #edf2f7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .statCard .label {
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: #7a8f9f;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .statCard div:last-child {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f2b1f;
+            margin-top: 2px;
+        }
+
+        /* ── HISTORY TABLE ── */
+        .table-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 16px;
+            border: 1px solid #edf2f7;
+        }
+
+        .historyTable {
+            width: 100%;
+            background: #ffffff;
+            border-collapse: collapse;
+        }
+
+        .historyTable th {
+            background: #f8fafc;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #edf2f7;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .historyTable td {
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .historyTable tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ── ERROR / EMPTY ── */
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7a8f9f;
+            font-weight: 500;
+        }
+
+        .error-state .big-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7a8f9f;
+        }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 66px;
+            background: #ffffffec;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+            border-top: 1px solid rgba(0, 0, 0, 0.02);
+            z-index: 30;
+        }
+
+        .bottom-nav a {
+            text-decoration: none;
+            color: #5f748e;
+            font-size: 0.55rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        .bottom-nav a i {
+            font-size: 1.1rem;
+        }
+
+        .bottom-nav a.active {
+            color: #2e7d32;
+            background: #e8f5e9;
+            font-weight: 700;
+        }
+
+        @media (max-width: 480px) {
+            .statsGrid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            #todayPrice {
+                font-size: 1.6rem;
+            }
+            #priceChart {
+                height: 180px;
+            }
+            .filter-btn {
+                font-size: 0.6rem;
+                padding: 4px 12px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header class="topbar">
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <button id="backBtn">←</button>
+        <h1 id="pageTitle">Price History</h1>
+    </header>
 
-<button id="backBtn">←</button>
+    <div class="container">
 
-<h1 id="pageTitle">Price History</h1>
+        <!-- SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-left">
+                <div class="small">Today's Price</div>
+                <h2 id="todayPrice">₹0.00</h2>
+                <div id="updatedDate">Updated: --</div>
+            </div>
+            <div class="summary-right">
+                <div id="trendIcon">🟢</div>
+                <div id="trendTitle">No Change</div>
+                <div id="trendValue">₹0.00</div>
+            </div>
+        </div>
 
-</header>
+        <!-- FILTER BUTTONS -->
+        <div class="filter-bar">
+            <button class="filter-btn active" data-range="7">1 Week</button>
+            <button class="filter-btn" data-range="30">1 Month</button>
+            <button class="filter-btn" data-range="180">6 Months</button>
+            <button class="filter-btn" data-range="365">1 Year</button>
+            <button class="filter-btn" data-range="all">All</button>
+        </div>
 
-<div class="container">
+        <!-- CHART -->
+        <h2 class="sectionTitle">Price Trend</h2>
+        <div class="chartCard">
+            <canvas id="priceChart" height="220"></canvas>
+        </div>
 
-<!-- Summary -->
+        <!-- STATISTICS -->
+        <h2 class="sectionTitle">Statistics</h2>
+        <div class="statsGrid">
+            <div class="statCard">
+                <div class="label">Today</div>
+                <div id="todayPriceStat">₹0.00</div>
+            </div>
+            <div class="statCard">
+                <div class="label">Yesterday</div>
+                <div id="yesterdayPrice">₹0.00</div>
+            </div>
+            <div class="statCard">
+                <div class="label">Highest</div>
+                <div id="highestPrice">₹0.00</div>
+            </div>
+            <div class="statCard">
+                <div class="label">Lowest</div>
+                <div id="lowestPrice">₹0.00</div>
+            </div>
+            <div class="statCard">
+                <div class="label">Average</div>
+                <div id="averagePrice">₹0.00</div>
+            </div>
+        </div>
 
-<div class="summary-card">
+        <!-- HISTORY TABLE -->
+        <h2 class="sectionTitle">Price History</h2>
+        <div class="table-wrapper">
+            <table class="historyTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                    <tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-<div class="summary-left">
-<div class="small">Today's Price</div>
-<h2 id="todayPrice">₹0.00</h2>
-<div id="updatedDate">Updated: --</div>
-</div>
+    </div>
 
-<div class="summary-right">
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a href="favourite.html"><i class="fa-solid fa-carrot"></i><span>Prices</span></a>
+        <a class="active" href="history.html"><i class="fa-solid fa-chart-line"></i><span>History</span></a>
+        <a href="info.html"><i class="fa-solid fa-circle-info"></i><span>More</span></a>
+    </nav>
 
-<div id="trendIcon" class="trendIcon">🟢</div>
+    <script>
+        // ── DATA URL ──
+        const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
 
-<div id="trendTitle">No Change</div>
+        // ── DISPLAY NAMES ──
+        const DISPLAY_NAMES = {
+            "Petrol": "Petrol",
+            "Petrol Margao": "Petrol (Margao)",
+            "Diesel": "Diesel",
+            "Diesel Margao": "Diesel (Margao)",
+            "CNG": "CNG",
+            "Auto Gas": "Auto Gas",
+            "LPG": "LPG",
+            "Gold 24K": "Gold (24K)",
+            "Gold 22K": "Gold (22K)",
+            "Gold 21K": "Gold (21K)",
+            "Gold 20K": "Gold (20K)",
+            "Gold 18K": "Gold (18K)",
+            "Silver": "Silver"
+        };
 
-<div id="trendValue">₹0.00</div>
+        // ── STATE ──
+        let fullHistory = [];
+        let currentKey = null;
+        let currentRange = 7;
 
-</div>
-
-</div>
-
-<!-- Trend -->
-
-<h2 class="sectionTitle">Price Trend</h2>
-
-<div class="chartCard">
-
-<svg id="trendChart"
-viewBox="0 0 360 220"
-preserveAspectRatio="none">
-
-<defs>
-
-<linearGradient id="fillGradient"
-x1="0"
-y1="0"
-x2="0"
-y2="1">
-
-<stop offset="0%"
-stop-color="#1b8f2a"
-stop-opacity="0.35"/>
-
-<stop offset="100%"
-stop-color="#1b8f2a"
-stop-opacity="0.05"/>
-
-</linearGradient>
-
-</defs>
-
-<!-- Grid -->
-<g id="gridLines"></g>
-
-<!-- Filled Area -->
-<path
-id="areaPath"
-fill="url(#fillGradient)">
-</path>
-
-<!-- Trend Line -->
-<path
-id="linePath"
-fill="none"
-stroke="#198d24"
-stroke-width="3.5"
-stroke-linecap="round"
-stroke-linejoin="round">
-</path>
-
-<!-- Points -->
-<g id="pointGroup"></g>
-
-<!-- X Labels -->
-<g id="xLabels"></g>
-
-<!-- Y Labels -->
-<g id="yLabels"></g>
-
-</svg>
-
-</div>
-
-<!-- Statistics -->
-
-<h2 class="sectionTitle">Statistics</h2>
-
-<div class="statsGrid">
-
-<div class="statCard">
-<div class="label">Today</div>
-<div id="todayPriceStat">₹0.00</div>
-</div>
-
-<div class="statCard">
-<div class="label">Yesterday</div>
-<div id="yesterdayPrice">₹0.00</div>
-</div>
-
-<div class="statCard">
-<div class="label">Highest</div>
-<div id="highestPrice">₹0.00</div>
-</div>
-
-<div class="statCard">
-<div class="label">Lowest</div>
-<div id="lowestPrice">₹0.00</div>
-</div>
-
-<div class="statCard">
-<div class="label">Average</div>
-<div id="averagePrice">₹0.00</div>
-</div>
-
-</div>
-
-<!-- History -->
-
-<h2 class="sectionTitle">Price History</h2>
-
-<table class="historyTable">
-
-<thead>
-
-<tr>
-
-<th>Date</th>
-
-<th>Price</th>
-
-</tr>
-
-</thead>
-
-<tbody id="historyTable">
-
-</tbody>
-
-</table>
-
-</div>
-
-<script>
-// ── DATA URL ──
-const DATA_URL = "https://raw.githubusercontent.com/vikscan732-del/Goan-farmer-help/main/data/history.json";
-
-// ── DISPLAY NAMES ──
-const DISPLAY_NAMES = {
-    "Petrol": "Petrol",
-    "Petrol Margao": "Petrol (Margao)",
-    "Diesel": "Diesel",
-    "Diesel Margao": "Diesel (Margao)",
-    "CNG": "CNG",
-    "Auto Gas": "Auto Gas",
-    "LPG": "LPG",
-    "Gold 24K": "Gold (24K)",
-    "Gold 22K": "Gold (22K)",
-    "Gold 21K": "Gold (21K)",
-    "Gold 20K": "Gold (20K)",
-    "Gold 18K": "Gold (18K)",
-    "Silver": "Silver"
-};
-
-// ── Get parameter from URL ──
-function getParamFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('vegetable') || params.get('name') || params.get('type') || null;
-}
-
-// ── Format date ──
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const parts = dateStr.split('-');
-    if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    return dateStr;
-}
-
-// ── Main load ──
-async function loadHistory() {
-    const key = getParamFromURL();
-
-    if (!key) {
-        document.getElementById('pageTitle').textContent = 'No Item Selected';
-        document.getElementById('todayPrice').textContent = '—';
-        document.getElementById('updatedDate').textContent = 'Please go back and select an item.';
-        document.querySelector('.summary-right').style.display = 'none';
-        document.querySelector('.chartCard').style.display = 'none';
-        document.querySelector('.statsGrid').style.display = 'none';
-        document.querySelector('.historyTable').style.display = 'none';
-        document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
-        return;
-    }
-
-    const displayName = DISPLAY_NAMES[key] || key;
-    document.getElementById('pageTitle').textContent = displayName + ' History';
-
-    try {
-        const res = await fetch(DATA_URL + '?t=' + Date.now());
-        if (!res.ok) throw new Error('HTTP error ' + res.status);
-        const data = await res.json();
-
-        const history = data[key] || [];
-        if (!history || history.length === 0) {
-            throw new Error('No data for ' + key);
+        // ── Get parameter from URL ──
+        function getParamFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('vegetable') || params.get('name') || params.get('type') || null;
         }
 
-        history.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        const dates = history.map(item => item.date);
-        const prices = history.map(item => item.price);
-        const latestPrice = prices[prices.length - 1];
-        const latestDate = dates[dates.length - 1];
-        const yesterdayPrice = prices.length > 1 ? prices[prices.length - 2] : latestPrice;
-        const highestPrice = Math.max(...prices);
-        const lowestPrice = Math.min(...prices);
-        const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-
-        let trendIcon = '➡️', trendTitle = 'No Change', trendValue = '₹0.00';
-        const diff = latestPrice - yesterdayPrice;
-        if (diff > 0) {
-            trendIcon = '🟢';
-            trendTitle = 'Up';
-            trendValue = '₹' + diff.toFixed(2);
-        } else if (diff < 0) {
-            trendIcon = '🔴';
-            trendTitle = 'Down';
-            trendValue = '₹' + Math.abs(diff).toFixed(2);
+        // ── Format date ──
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
         }
 
-        document.getElementById('todayPrice').textContent = '₹' + latestPrice.toFixed(2);
-        document.getElementById('updatedDate').textContent = 'Updated: ' + formatDate(latestDate);
-        document.getElementById('trendIcon').textContent = trendIcon;
-        document.getElementById('trendTitle').textContent = trendTitle;
-        document.getElementById('trendValue').textContent = trendValue;
+        // ── Parse date ──
+        function parseDate(dateStr) {
+            const parts = dateStr.split('-');
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
 
-        document.getElementById('todayPriceStat').textContent = '₹' + latestPrice.toFixed(2);
-        document.getElementById('yesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
-        document.getElementById('highestPrice').textContent = '₹' + highestPrice.toFixed(2);
-        document.getElementById('lowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
-        document.getElementById('averagePrice').textContent = '₹' + averagePrice.toFixed(2);
+        // ── Filter data by days ──
+        function filterData(history, days) {
+            if (days === 'all' || days === 0) return history;
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - days);
+            return history.filter(item => parseDate(item.date) >= cutoff);
+        }
 
-        const tbody = document.getElementById('historyTable');
-        tbody.innerHTML = '';
-        const reversed = [...history].reverse();
-        reversed.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${formatDate(item.date)}</td><td>₹${item.price.toFixed(2)}</td>`;
-            tbody.appendChild(tr);
+        // ── Draw Chart using Canvas ──
+        function drawChart(canvasId, labels, prices, color = '#2e7d32') {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const width = canvas.parentElement.clientWidth - 24;
+            const height = 220;
+            canvas.width = width * 2;
+            canvas.height = height * 2;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const pad = { top: 30, bottom: 40, left: 40, right: 20 };
+            const chartW = w - pad.left - pad.right;
+            const chartH = h - pad.top - pad.bottom;
+
+            ctx.clearRect(0, 0, w, h);
+
+            if (!labels || labels.length < 2) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '28px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('📊 Not enough data', w / 2, h / 2);
+                return;
+            }
+
+            const minPrice = Math.min(...prices) * 0.95;
+            const maxPrice = Math.max(...prices) * 1.05;
+            const range = maxPrice - minPrice || 1;
+
+            const getX = (i) => pad.left + (i / (labels.length - 1)) * chartW;
+            const getY = (price) => pad.top + chartH - ((price - minPrice) / range) * chartH;
+
+            // Grid lines
+            ctx.strokeStyle = '#e9edf2';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            for (let i = 0; i <= 4; i++) {
+                const y = pad.top + (i / 4) * chartH;
+                ctx.beginPath();
+                ctx.moveTo(pad.left, y);
+                ctx.lineTo(w - pad.right, y);
+                ctx.stroke();
+                const priceVal = maxPrice - (i / 4) * range;
+                ctx.fillStyle = '#64748b';
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('₹' + priceVal.toFixed(0), pad.left - 8, y);
+            }
+            ctx.setLineDash([]);
+
+            // Area fill
+            ctx.beginPath();
+            for (let i = 0; i < prices.length; i++) {
+                const x = getX(i);
+                const y = getY(prices[i]);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            const lastX = getX(prices.length - 1);
+            const firstX = getX(0);
+            ctx.lineTo(lastX, pad.top + chartH);
+            ctx.lineTo(firstX, pad.top + chartH);
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+            grad.addColorStop(0, color + '40');
+            grad.addColorStop(1, color + '05');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Line
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            for (let i = 0; i < prices.length; i++) {
+                const x = getX(i);
+                const y = getY(prices[i]);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Points & labels
+            for (let i = 0; i < prices.length; i++) {
+                const x = getX(i);
+                const y = getY(prices[i]);
+
+                // Circle
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Price label above point
+                if (i % Math.ceil(labels.length / 8) === 0 || i === labels.length - 1) {
+                    ctx.fillStyle = '#0f2b1f';
+                    ctx.font = 'bold 18px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText('₹' + prices[i].toFixed(0), x, y - 10);
+                }
+
+                // Date label
+                if (i % Math.ceil(labels.length / 6) === 0 || i === labels.length - 1) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '16px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    const dateStr = labels[i];
+                    const displayDate = dateStr.length > 10 ? dateStr.slice(0, 10) : dateStr;
+                    ctx.fillText(displayDate, x, pad.top + chartH + 6);
+                }
+            }
+        }
+
+        // ── Render with current filter ──
+        function renderWithFilter() {
+            if (!fullHistory || fullHistory.length === 0) {
+                document.getElementById('historyTable').innerHTML = 
+                    '<tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">No data available</td></tr>';
+                return;
+            }
+
+            const filtered = filterData(fullHistory, currentRange);
+            if (filtered.length === 0) {
+                document.getElementById('historyTable').innerHTML = 
+                    '<tr><td colspan="2" style="text-align:center;color:#7a8f9f;padding:20px;">No data in this range</td></tr>';
+                const canvas = document.getElementById('priceChart');
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                return;
+            }
+
+            const dates = filtered.map(item => item.date);
+            const prices = filtered.map(item => item.price);
+            const latestPrice = prices[prices.length - 1];
+            const latestDate = dates[dates.length - 1];
+            const yesterdayPrice = prices.length > 1 ? prices[prices.length - 2] : latestPrice;
+            const highestPrice = Math.max(...prices);
+            const lowestPrice = Math.min(...prices);
+            const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+
+            // Update summary
+            let trendIcon = '➡️', trendTitle = 'No Change', trendValue = '₹0.00';
+            const diff = latestPrice - yesterdayPrice;
+            if (diff > 0) {
+                trendIcon = '🟢';
+                trendTitle = 'Up';
+                trendValue = '₹' + diff.toFixed(2);
+            } else if (diff < 0) {
+                trendIcon = '🔴';
+                trendTitle = 'Down';
+                trendValue = '₹' + Math.abs(diff).toFixed(2);
+            }
+
+            document.getElementById('todayPrice').textContent = '₹' + latestPrice.toFixed(2);
+            document.getElementById('updatedDate').textContent = 'Updated: ' + formatDate(latestDate);
+            document.getElementById('trendIcon').textContent = trendIcon;
+            document.getElementById('trendTitle').textContent = trendTitle;
+            document.getElementById('trendValue').textContent = trendValue;
+
+            document.getElementById('todayPriceStat').textContent = '₹' + latestPrice.toFixed(2);
+            document.getElementById('yesterdayPrice').textContent = '₹' + yesterdayPrice.toFixed(2);
+            document.getElementById('highestPrice').textContent = '₹' + highestPrice.toFixed(2);
+            document.getElementById('lowestPrice').textContent = '₹' + lowestPrice.toFixed(2);
+            document.getElementById('averagePrice').textContent = '₹' + averagePrice.toFixed(2);
+
+            // Update table
+            const tbody = document.getElementById('historyTable');
+            tbody.innerHTML = '';
+            const reversed = [...filtered].reverse();
+            reversed.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${formatDate(item.date)}</td><td>₹${item.price.toFixed(2)}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            // Draw chart
+            drawChart('priceChart', dates, prices);
+        }
+
+        // ── Main load ──
+        async function loadHistory() {
+            const key = getParamFromURL();
+
+            if (!key) {
+                document.getElementById('pageTitle').textContent = 'No Item Selected';
+                document.getElementById('todayPrice').textContent = '—';
+                document.getElementById('updatedDate').textContent = 'Please go back and select an item.';
+                document.querySelector('.summary-right').style.display = 'none';
+                document.querySelector('.chartCard').style.display = 'none';
+                document.querySelector('.statsGrid').style.display = 'none';
+                document.querySelector('.table-wrapper').style.display = 'none';
+                document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
+                document.querySelector('.filter-bar').style.display = 'none';
+                return;
+            }
+
+            const displayName = DISPLAY_NAMES[key] || key;
+            document.getElementById('pageTitle').textContent = displayName + ' History';
+            currentKey = key;
+
+            try {
+                const res = await fetch(DATA_URL + '?t=' + Date.now());
+                if (!res.ok) throw new Error('HTTP error ' + res.status);
+                const data = await res.json();
+
+                const history = data[key] || [];
+                if (!history || history.length === 0) {
+                    throw new Error('No data for "' + key + '". Available keys: ' + Object.keys(data).join(', '));
+                }
+
+                history.sort((a, b) => new Date(a.date) - new Date(b.date));
+                fullHistory = history;
+
+                // Show all elements
+                document.querySelector('.summary-right').style.display = 'block';
+                document.querySelector('.chartCard').style.display = 'block';
+                document.querySelector('.statsGrid').style.display = 'grid';
+                document.querySelector('.table-wrapper').style.display = 'block';
+                document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'block');
+                document.querySelector('.filter-bar').style.display = 'flex';
+
+                renderWithFilter();
+
+            } catch (err) {
+                console.error('Error loading history:', err);
+                document.getElementById('todayPrice').textContent = 'Error';
+                document.getElementById('updatedDate').textContent = err.message;
+                document.querySelector('.summary-right').style.display = 'none';
+                document.querySelector('.chartCard').style.display = 'none';
+                document.querySelector('.statsGrid').style.display = 'none';
+                document.querySelector('.table-wrapper').style.display = 'none';
+                document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
+                document.querySelector('.filter-bar').style.display = 'none';
+            }
+        }
+
+        // ── Back button ──
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.history.back();
         });
 
-        drawChart(dates, prices);
+        // ── Filter buttons ──
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
 
-    } catch (err) {
-        console.error('Error loading history:', err);
-        document.getElementById('todayPrice').textContent = 'Error';
-        document.getElementById('updatedDate').textContent = 'Could not load data for ' + displayName;
-        document.querySelector('.summary-right').style.display = 'none';
-        document.querySelector('.chartCard').style.display = 'none';
-        document.querySelector('.statsGrid').style.display = 'none';
-        document.querySelector('.historyTable').style.display = 'none';
-        document.querySelectorAll('.sectionTitle').forEach(el => el.style.display = 'none');
-    }
-}
+                const range = this.dataset.range;
+                currentRange = range === 'all' ? 0 : parseInt(range);
+                renderWithFilter();
+            });
+        });
 
-// ── Draw Chart ──
-function drawChart(dates, prices) {
-    const svg = document.getElementById('trendChart');
-    if (!svg) return;
-
-    const viewBoxWidth = 360, viewBoxHeight = 220;
-    const padding = { top: 20, bottom: 30, left: 40, right: 15 };
-    const chartWidth = viewBoxWidth - padding.left - padding.right;
-    const chartHeight = viewBoxHeight - padding.top - padding.bottom;
-
-    const minPrice = Math.min(...prices) * 0.95;
-    const maxPrice = Math.max(...prices) * 1.05;
-    const range = maxPrice - minPrice || 1;
-
-    const getX = (i) => padding.left + (i / (prices.length - 1)) * chartWidth;
-    const getY = (price) => padding.top + chartHeight - ((price - minPrice) / range) * chartHeight;
-
-    // Grid
-    const gridGroup = document.getElementById('gridLines');
-    gridGroup.innerHTML = '';
-    for (let i = 0; i <= 4; i++) {
-        const y = padding.top + (i / 4) * chartHeight;
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', padding.left);
-        line.setAttribute('y1', y);
-        line.setAttribute('x2', viewBoxWidth - padding.right);
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', '#e9edf2');
-        line.setAttribute('stroke-width', '0.5');
-        line.setAttribute('stroke-dasharray', '3,3');
-        gridGroup.appendChild(line);
-    }
-
-    // Y Labels
-    const yLabelsGroup = document.getElementById('yLabels');
-    yLabelsGroup.innerHTML = '';
-    for (let i = 0; i <= 4; i++) {
-        const y = padding.top + (i / 4) * chartHeight;
-        const priceVal = maxPrice - (i / 4) * range;
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', padding.left - 6);
-        text.setAttribute('y', y + 4);
-        text.setAttribute('text-anchor', 'end');
-        text.setAttribute('font-size', '10');
-        text.setAttribute('fill', '#6b7a8a');
-        text.textContent = '₹' + priceVal.toFixed(0);
-        yLabelsGroup.appendChild(text);
-    }
-
-    // X Labels
-    const xLabelsGroup = document.getElementById('xLabels');
-    xLabelsGroup.innerHTML = '';
-    const step = Math.max(1, Math.floor(dates.length / 6));
-    for (let i = 0; i < dates.length; i += step) {
-        const x = getX(i);
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', x);
-        text.setAttribute('y', viewBoxHeight - 4);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '9');
-        text.setAttribute('fill', '#6b7a8a');
-        text.textContent = formatDate(dates[i]);
-        xLabelsGroup.appendChild(text);
-    }
-    const lastX = getX(dates.length - 1);
-    const lastText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    lastText.setAttribute('x', lastX);
-    lastText.setAttribute('y', viewBoxHeight - 4);
-    lastText.setAttribute('text-anchor', 'middle');
-    lastText.setAttribute('font-size', '9');
-    lastText.setAttribute('fill', '#6b7a8a');
-    lastText.textContent = formatDate(dates[dates.length - 1]);
-    xLabelsGroup.appendChild(lastText);
-
-    // Line
-    let pathD = '';
-    let areaD = '';
-    for (let i = 0; i < prices.length; i++) {
-        const x = getX(i);
-        const y = getY(prices[i]);
-        if (i === 0) {
-            pathD += `M ${x} ${y}`;
-            areaD += `M ${x} ${y}`;
-        } else {
-            pathD += ` L ${x} ${y}`;
-            areaD += ` L ${x} ${y}`;
-        }
-    }
-    const lastXArea = getX(prices.length - 1);
-    const firstXArea = getX(0);
-    areaD += ` L ${lastXArea} ${padding.top + chartHeight}`;
-    areaD += ` L ${firstXArea} ${padding.top + chartHeight} Z`;
-
-    document.getElementById('linePath').setAttribute('d', pathD);
-    document.getElementById('areaPath').setAttribute('d', areaD);
-
-    // Points
-    const pointGroup = document.getElementById('pointGroup');
-    pointGroup.innerHTML = '';
-    for (let i = 0; i < prices.length; i++) {
-        const x = getX(i);
-        const y = getY(prices[i]);
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', x);
-        circle.setAttribute('cy', y);
-        circle.setAttribute('r', '3.5');
-        circle.setAttribute('fill', '#198d24');
-        circle.setAttribute('stroke', '#fff');
-        circle.setAttribute('stroke-width', '1.5');
-        pointGroup.appendChild(circle);
-    }
-}
-
-// ── Back button ──
-document.getElementById('backBtn').addEventListener('click', () => {
-    window.history.back();
-});
-
-// ── Load ──
-document.addEventListener('DOMContentLoaded', loadHistory);
-</script>
+        // ── Load ──
+        document.addEventListener('DOMContentLoaded', loadHistory);
+    </script>
 
 </body>
 </html>
